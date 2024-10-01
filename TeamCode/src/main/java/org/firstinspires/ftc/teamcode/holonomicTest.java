@@ -26,10 +26,17 @@ public class holonomicTest extends OpMode {
 
     @Override
     public void loop() {
+
         // maps power values to stick positions
-        double drive = -gamepad1.left_stick_y; // left stick: up and down
-        double strafe = gamepad1.left_stick_x; // left stick: left and right
-        double rotate = gamepad1.right_stick_x; // right stick: left and right
+        double drive = -gamepad1.right_stick_x; // left stick: up and down
+        double strafe = gamepad1.right_stick_y; // left stick: left and right
+        double rotate = gamepad1.left_stick_x; // right stick: left and right
+        /* As of 4:09PM 10/1/24: Forward/Backward drive is on left stick, move stick left to right (needs to be forward backward)
+           Strafe and Rotate are on right stick (strafe must be on right), rotate is left to right as needed, strafe is forward
+           backward (should be left to right on left stick).
+         */
+
+
 
         /* i don't know how any of this part works, i consulted chat gpt 💀
          * i will figure out the specifics once we can get the robot moving */
