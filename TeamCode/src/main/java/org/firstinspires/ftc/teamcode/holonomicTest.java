@@ -16,7 +16,7 @@ public class holonomicTest extends OpMode {
     @Override
     public void init() {
         // maps hardware config and notifies us that our robot is initialized
-        frontLeftMotor = hardwareMap.get(DcMotor.class, "front_left_motor_");
+        frontLeftMotor = hardwareMap.get(DcMotor.class, "front_left_motor");
         frontRightMotor = hardwareMap.get(DcMotor.class, "front_right_motor");
         backLeftMotor = hardwareMap.get(DcMotor.class, "back_left_motor");
         backRightMotor = hardwareMap.get(DcMotor.class, "back_right_motor");
