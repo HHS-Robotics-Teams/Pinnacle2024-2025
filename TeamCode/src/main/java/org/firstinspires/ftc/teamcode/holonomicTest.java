@@ -20,6 +20,9 @@ public class holonomicTest extends OpMode {
     private DcMotor slideMotor;
     private CRServo intakeCRServo;
 
+    double INTAKECURRENTPOWER;
+    double INTAKEPOWER = 0.92;
+
     @Override
     public void init() {
 
@@ -76,11 +79,18 @@ public class holonomicTest extends OpMode {
 
 // ---------------------------- Intake Servo Control ----------------------------
 
+        // Intake CR Servo
         if (gamepad1.a) {
+            INTAKECURRENTPOWER = INTAKEPOWER;
             intakeCRServo.setDirection(DcMotorSimple.Direction.FORWARD);
         } else if (gamepad1.b) {
+            INTAKECURRENTPOWER = INTAKEPOWER;
             intakeCRServo.setDirection(DcMotorSimple.Direction.REVERSE);
+        } else {
+            INTAKECURRENTPOWER = 0;
         }
+        intakeCRServo.setPower(INTAKECURRENTPOWER);
+
 
 // ---------------------------- Telemetry For Debugging ----------------------------
 
