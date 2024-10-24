@@ -10,31 +10,35 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name="Pinnacle TeleOp", group="idk")
 public class pinnacleTeleOp extends OpMode {
 
-    // our four motors
+/* ============================== OpMode Attributes and Variables ============================== */
+     
+    // ---------- Wheel Motors ----------
     private DcMotor frontLeftMotor;
     private DcMotor frontRightMotor;
     private DcMotor backLeftMotor;
     private DcMotor backRightMotor;
 
+    // ---------- Intake + Arm Motors ---------- 
     private DcMotor tiltMotor;
     private DcMotor slideMotor;
     private CRServo intakeCRServo;
     private Servo intakeWristServo;
 
-    double INTAKECURRENTPOWER;
-    double INTAKEPOWER = 0.92;
-    int slideStartPosition = 0;
-    int tiltStartPosition = 0;
-    int moveTicks = 20;
+    double intakeCurrentPower;
+    double intakePower = 1;
     double tiltPower = 1;
     double slidePower = 1;
 
+    int slideStartPosition = 0;
+    int tiltStartPosition = 0;
+
+    int armTicks = 20;
+    int slideTicks = 50;
+
+/* ============================== Hardware Configuration Mapping ============================== */
+
     @Override
     public void init() {
-
-        /*
-         * --------------- Hardware Configuration Mapping ---------------
-         */
 
         // ---------- Wheels ----------
         frontLeftMotor = hardwareMap.get(DcMotor.class, "front_left_motor");
@@ -48,9 +52,7 @@ public class pinnacleTeleOp extends OpMode {
         intakeCRServo = hardwareMap.get(CRServo.class, "wheel_servo");
         intakeWristServo = hardwareMap.get(Servo.class, "wrist_servo");
 
-        /*
-         * --------------- Hardware Settings Fixes ---------------
-         */
+/* ============================== Hardware Settings Fixes ============================== */
 
         // ---------- Reverse Left Side For Proper Strafing ----------
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -83,92 +85,79 @@ public class pinnacleTeleOp extends OpMode {
     @Override
     public void loop() {
 
-        /*
-         * ---------------------------- Driving and Wheels ----------------------------
-         */
+/* ============================== Driving and Wheels ============================== */
 
-        // maps power values to stick positions
+        // ---------- Maps Wheels to Joysticks ----------
         double rotate = -gamepad1.right_stick_x; // right stick: left and right
         double strafe = gamepad1.left_stick_x;   // left stick: left and right
         double drive = -gamepad1.left_stick_y;   //  left stick: up and down
 
-
-        /* i don't know how any of this part works, i consulted chat gpt 💀
-         * i will figure out the specifics once we can get the robot moving - Damien */
-        // I also dont understand this, its way complex math - James //
-
-        // wheel calculations
+        // ---------- Wheel Calculations ----------
         double frontLeftPower = drive + strafe - rotate;
         double frontRightPower = drive - strafe + rotate;
         double backLeftPower = drive - strafe - rotate;
         double backRightPower = drive + strafe + rotate;
 
-
-        // set motor power
+        // ---------- Set Wheel Power ----------
         frontLeftMotor.setPower(frontLeftPower);
         frontRightMotor.setPower(frontRightPower);
         backLeftMotor.setPower(backLeftPower);
         backRightMotor.setPower(backRightPower);
 
-
-        /*
-         * ---------------------------- Intake Servo Control ----------------------------
-         */
-
-        // Intake CR Servo
-        if (gamepad1.a) {
-            INTAKECURRENTPOWER = INTAKEPOWER;
-            intakeCRServo.setDirection(DcMotorSimple.Direction.FORWARD);
-        } else if (gamepad1.b) {
-            INTAKECURRENTPOWER = INTAKEPOWER;
-            intakeCRServo.setDirection(DcMotorSimple.Direction.REVERSE);
-        } else {
-            INTAKECURRENTPOWER = 0;
-        }
-        intakeCRServo.setPower(INTAKECURRENTPOWER);
-
-        if (gamepad1.right_trigger > 0.3) {
-            intakeWristServo.setPosition(0);
-        } else if (gamepad1.left_trigger > 0.3) {
-            intakeWristServo.setPosition(1);
-        } else {
-            intakeWristServo.setPosition(0.5);
-        }
-
-        // --------------------------------------------------------------------------------
-
-
+        // ---------- Set Arm and Intake Power ----------
         tiltMotor.setPower(tiltPower);
-
         slideMotor.setPower(slidePower);
 
 
-        // ---------- Slide controls ----------
+/* ============================== Robot Controls ============================== */
+
+        // ---------- Intake Wheel Servo ----------
+        if (gamepad1.a) {
+            intakeCurrentPower = intakePower;
+            intakeCRServo.setDirection(DcMotorSimple.Direction.FORWARD);
+        } else if (gamepad1.b) {
+            intakeCurrentPower = intakePower;
+            intakeCRServo.setDirection(DcMotorSimple.Direction.REVERSE);
+        } else {
+            intakeCurrentPower = 0;
+        }
+        intakeCRServo.setPower(intakeCurrentPower);
+
+        // ---------- Intake Wrist Servo ----------
+        if (gamepad1.right_trigger > 0.3) {
+            intakeWristServo.setPosition(0);
+        }  else if (gamepad1.left_trigger > 0.3) {
+            intakeWristServo.setPosition(1);
+        } else {
+            intakeWristServo.setPosition(intakeWristServo.getCurrentPosition());
+        }
+
+        // ---------- Slide Movement ----------
+        
         if (gamepad1.dpad_right) {
-            slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + moveTicks);
+            slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + slideTicks);
         }
-
         if (gamepad1.dpad_left) {
-            slideMotor.setTargetPosition(slideMotor.getCurrentPosition() - moveTicks);
+            slideMotor.setTargetPosition(slideMotor.getCurrentPosition() - slideTicks);
         }
 
-        // ---------- Tilt controls ----------
+        // ---------- Tilt Movement ----------
+
         if (gamepad1.dpad_up) {
-            tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + moveTicks);
+            tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + armTicks);
         }
-
         if (gamepad1.dpad_down) {
-            tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() - moveTicks);
+            tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() - armTicks);
         }
 
-        // ---------- Adjust arm tilting speed ----------
+        // ---------- Adjust Arm Tilting Speed ----------
 
         if (gamepad1.back && gamepad1.b) {
             int iteration;
             iteration = 0;
             if (iteration < 1) {
-                if (moveTicks > 0) {
-                    moveTicks++;
+                if (armTicks > 0) {
+                    armTicks++;
                     iteration++;
                 }
             }
@@ -178,13 +167,12 @@ public class pinnacleTeleOp extends OpMode {
             int iteration;
             iteration = 0;
             if (iteration < 1) {
-                if (moveTicks > 0) {
-                    moveTicks--;
+                if (armTicks > 0) {
+                    armTicks--;
                     iteration++;
                 }
             }
         }
-
 
         if(gamepad1.y){
             tiltPower=tiltPower+.05;
@@ -193,21 +181,7 @@ public class pinnacleTeleOp extends OpMode {
             tiltPower=tiltPower-.05;
         }
 
-
-
-
-
-
-
-
-
-
-
-        // -------------------------------------------------------------------------------------
-
-        /*
-         * ---------------------------- Telemetry For Debugging ----------------------------
-         */
+        /* ============================== Telemetry For Debugging ============================== */
 
         // ---------- Wheels and Driving ----------
         telemetry.addData("Front Left Power: ", frontLeftPower);
@@ -222,7 +196,7 @@ public class pinnacleTeleOp extends OpMode {
         telemetry.addData("Slide Motor Power: ", slideMotor.getPower());
         telemetry.addData("Tilt Motor Power: ", tiltMotor.getPower());
         telemetry.addData("Current Tilt Position: ", tiltMotor.getCurrentPosition());
-        telemetry.addData("Move Speed: ", moveTicks);
+        telemetry.addData("Move Speed: ", armTicks);
         telemetry.addData("Intake Spin Power: ", intakeCRServo.getDirection());
 
         // ---------- Update ----------
@@ -233,13 +207,15 @@ public class pinnacleTeleOp extends OpMode {
 
     @Override
     public void stop() {
-        // stops the motors
+
+        // ---------- Stops All Motors ----------
         frontLeftMotor.setPower(0);
         frontRightMotor.setPower(0);
         backLeftMotor.setPower(0);
         backRightMotor.setPower(0);
         slideMotor.setPower(0);
         tiltMotor.setPower(0);
+
     }
 
 }
