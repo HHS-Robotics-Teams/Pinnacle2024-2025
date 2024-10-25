@@ -172,9 +172,9 @@ public class pinnacleTeleOp extends OpMode {
         }
 
         if (gamepad1.dpad_down) { // 🔘 D-Pad down
-            if (tiltMotor.getCurrentPosition() > 90) {
-                if (tiltMotor.getCurrentPosition() - armTicks < 90) {
-                    tiltMotor.setTargetPosition(90);
+            if (tiltMotor.getCurrentPosition() > 82) {
+                if (tiltMotor.getCurrentPosition() - armTicks < 82) {
+                    tiltMotor.setTargetPosition(82);
                 } else {
                     tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() - armTicks);
                 }
