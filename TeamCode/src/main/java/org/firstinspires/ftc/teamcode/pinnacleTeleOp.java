@@ -142,20 +142,12 @@ public class pinnacleTeleOp extends OpMode {
         
         if (gamepad1.dpad_right) { // 🔘 D-Pad right
             if (slideMotor.getCurrentPosition() < 1455) {
-                if (slideMotor.getCurrentPosition() + slideTicks > 1455) {
-                    slideMotor.setTargetPosition(1455);
-                } else {
-                    slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + slideTicks);
-                }
+                slideMotor.setTargetPosition(Math.min(slideMotor.getCurrentPosition() + slideTicks, 1455));
             }
         }
         if (gamepad1.dpad_left) { // 🔘 D-Pad left
             if (slideMotor.getCurrentPosition() > 5) {
-                if (slideMotor.getCurrentPosition() - slideTicks < 5) {
-                    slideMotor.setTargetPosition(5);
-                } else {
-                slideMotor.setTargetPosition(slideMotor.getCurrentPosition() - slideTicks);
-                }
+                slideMotor.setTargetPosition(Math.max(slideMotor.getCurrentPosition() - slideTicks, 5));
             }
         }
 
@@ -163,21 +155,13 @@ public class pinnacleTeleOp extends OpMode {
 
         if (gamepad1.dpad_up) { // 🔘 D-Pad up
             if (tiltMotor.getCurrentPosition() < 550) {
-                if (tiltMotor.getCurrentPosition() + armTicks > 550){
-                    tiltMotor.setTargetPosition(550);
-                } else {
-                    tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + armTicks);
-                }
+                tiltMotor.setTargetPosition(Math.min(tiltMotor.getCurrentPosition() + armTicks, 550));
             }
         }
 
         if (gamepad1.dpad_down) { // 🔘 D-Pad down
             if (tiltMotor.getCurrentPosition() > 82) {
-                if (tiltMotor.getCurrentPosition() - armTicks < 82) {
-                    tiltMotor.setTargetPosition(82);
-                } else {
-                    tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() - armTicks);
-                }
+                tiltMotor.setTargetPosition(Math.max(tiltMotor.getCurrentPosition() - armTicks, 82));
             }
         }
 
