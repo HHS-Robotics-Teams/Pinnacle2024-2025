@@ -6,12 +6,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.excutil.Input;
 
 @TeleOp(name="Pinnacle TeleOp", group="idk")
 public class pinnacleTeleOp extends OpMode {
 
 /* ============================== OpMode Attributes and Variables ============================== */
-     
+
+    Input input = new Input();
+
     // ---------- Wheel Motors ----------
     private DcMotor frontLeftMotor;
     private DcMotor frontRightMotor;
@@ -91,6 +94,8 @@ public class pinnacleTeleOp extends OpMode {
 
 /* ============================== Driving and Wheels ============================== */
 
+        input.pollGamepad(gamepad1);
+
         // ---------- Maps Wheels to Joysticks ----------
         double rotate = -gamepad1.right_stick_x; // right stick: left and right
         double strafe = gamepad1.left_stick_x;   // left stick: left and right
@@ -116,7 +121,7 @@ public class pinnacleTeleOp extends OpMode {
 /* ============================== Robot Controls ============================== */
 
         // ---------- Intake Wheel Servo ----------
-        if (gamepad1.a && !gamepad1.back) { // 🔘 A button
+        if (input.a.held() && !input.back.held()) { // 🔘 A button
             intakeCurrentPower = intakePower;
             intakeCRServo.setDirection(DcMotorSimple.Direction.FORWARD);
         } else if (gamepad1.b && !gamepad1.back) { // 🔘 B button
