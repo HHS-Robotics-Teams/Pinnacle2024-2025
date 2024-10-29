@@ -124,7 +124,7 @@ public class pinnacleTeleOp extends OpMode {
         if (input.a.held() && !input.back.held()) { // 🔘 A button
             intakeCurrentPower = intakePower;
             intakeCRServo.setDirection(DcMotorSimple.Direction.FORWARD);
-        } else if (gamepad1.b && !gamepad1.back) { // 🔘 B button
+        } else if (input.b.held() && !input.back.held()) { // 🔘 B button
             intakeCurrentPower = intakePower;
             intakeCRServo.setDirection(DcMotorSimple.Direction.REVERSE);
         } else {
@@ -133,24 +133,24 @@ public class pinnacleTeleOp extends OpMode {
         intakeCRServo.setPower(intakeCurrentPower);
 
         // ---------- Intake Wrist Servo ----------
-        if (gamepad1.right_trigger > 0.5 && gamepad1.left_trigger < 0.5) { // 🔘 Right trigger
+        if (input.right_trigger.held() && !input.left_trigger.held()) { // 🔘 Right trigger
             intakeWristServo.setPosition(0);
         } /* both trigger values are stated to prevent confusion between one trigger and both triggers */
-        if (gamepad1.left_trigger > 0.5 && gamepad1.right_trigger < 0.5) { // 🔘 Left trigger
+        if (input.left_trigger.held() && !input.right_trigger.held()) { // 🔘 Left trigger
             intakeWristServo.setPosition(1);
         }
-        if (gamepad1.left_trigger > 0.5 && gamepad1.right_trigger > 0.5) { // 🔘 Both triggers
+        if (input.left_trigger.held() && input.right_trigger.held()) { // 🔘 Both triggers
             intakeWristServo.setPosition(0.5);
         }
 
         // ---------- Slide Movement ----------
         
-        if (gamepad1.dpad_right) { // 🔘 D-Pad right
+        if (input.dpad_right.held()) { // 🔘 D-Pad right
             if (slideMotor.getCurrentPosition() < 1455) {
                 slideMotor.setTargetPosition(Math.min(slideMotor.getCurrentPosition() + slideTicks, 1455));
             }
         }
-        if (gamepad1.dpad_left) { // 🔘 D-Pad left
+        if (input.dpad_left.held()) { // 🔘 D-Pad left
             if (slideMotor.getCurrentPosition() > 5) {
                 slideMotor.setTargetPosition(Math.max(slideMotor.getCurrentPosition() - slideTicks, 5));
             }
@@ -158,23 +158,22 @@ public class pinnacleTeleOp extends OpMode {
 
         // ---------- Tilt Movement ----------
 
-        if (gamepad1.dpad_up) { // 🔘 D-Pad up
+        if (input.dpad_up.held()) { // 🔘 D-Pad up
             if (tiltMotor.getCurrentPosition() < 550) {
                 tiltMotor.setTargetPosition(Math.min(tiltMotor.getCurrentPosition() + armTicks, 550));
             }
         }
 
-        if (gamepad1.dpad_down) { // 🔘 D-Pad down
+        if (input.dpad_down.held()) { // 🔘 D-Pad down
             if (tiltMotor.getCurrentPosition() > 82) {
                 tiltMotor.setTargetPosition(Math.max(tiltMotor.getCurrentPosition() - armTicks, 82));
             }
         }
 
         // Random testing position
-        if (gamepad1.y){ // 🔘 Y button
+        if (input.y){ // 🔘 Y button
             tiltMotor.setTargetPosition(400);
         }
-
 
 
         /* ============================== Telemetry For Debugging ============================== */
