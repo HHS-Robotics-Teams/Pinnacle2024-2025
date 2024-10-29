@@ -25,6 +25,9 @@ public class pinnacleTeleOp extends OpMode {
     private DcMotor tiltMotor;
     private DcMotor slideMotor;
     private CRServo intakeCRServo;
+
+    private CRServo leftClaw;
+    private CRServo rightClaw;
     private Servo intakeWristServo;
 
     double intakeCurrentPower;
@@ -58,6 +61,10 @@ public class pinnacleTeleOp extends OpMode {
         tiltMotor = hardwareMap.get(DcMotor.class, "tilt_motor");
         intakeCRServo = hardwareMap.get(CRServo.class, "wheel_servo");
         intakeWristServo = hardwareMap.get(Servo.class, "wrist_servo");
+
+        // ---------- Claws ----------
+        leftClaw = hardwareMap.get(CRServo.class, "left_claw");
+        rightClaw = hardwareMap.get(CRServo.class, "right_claw");
 
 /* ============================== Hardware Settings Fixes ============================== */
 
@@ -146,12 +153,12 @@ public class pinnacleTeleOp extends OpMode {
         // ---------- Slide Movement ----------
         
         if (input.dpad_right.held()) { // 🔘 D-Pad right
-            if (slideMotor.getCurrentPosition() < 1455) {
+            if (slideMotor.getCurrentPosition() < 1455) {// Min Slide height is 1455 ticks
                 slideMotor.setTargetPosition(Math.min(slideMotor.getCurrentPosition() + slideTicks, 1455));
             }
         }
         if (input.dpad_left.held()) { // 🔘 D-Pad left
-            if (slideMotor.getCurrentPosition() > 5) {
+            if (slideMotor.getCurrentPosition() > 5) { // Min Slide height is 5 ticks
                 slideMotor.setTargetPosition(Math.max(slideMotor.getCurrentPosition() - slideTicks, 5));
             }
         }
@@ -159,22 +166,54 @@ public class pinnacleTeleOp extends OpMode {
         // ---------- Tilt Movement ----------
 
         if (input.dpad_up.held()) { // 🔘 D-Pad up
-            if (tiltMotor.getCurrentPosition() < 550) {
+            if (tiltMotor.getCurrentPosition() < 550) { // Max Tilt Height is 550 ticks
                 tiltMotor.setTargetPosition(Math.min(tiltMotor.getCurrentPosition() + armTicks, 550));
             }
         }
 
         if (input.dpad_down.held()) { // 🔘 D-Pad down
-            if (tiltMotor.getCurrentPosition() > 82) {
+            if (tiltMotor.getCurrentPosition() > 82) { // Min Tilt Height is 82 ticks
                 tiltMotor.setTargetPosition(Math.max(tiltMotor.getCurrentPosition() - armTicks, 82));
             }
         }
 
         // Random testing position
-        if (input.y){ // 🔘 Y button
-            tiltMotor.setTargetPosition(400);
+      //  if (input.y){ // 🔘 Y button
+       //     tiltMotor.setTargetPosition(400);
+       // }
+
+
+        // ----------- Claw Movement -----------
+
+        if (input.left_bumper.held()) {
+            leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+            leftClaw.setPower(1);
+            rightClaw.setPower(1);
+        }
+        if (input.right_bumper.held()) { // Claw controls made by Benny
+            leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+            leftClaw.setPower(1); // Debugged by Damien
+            rightClaw.setPower(1);
+        }
+        if (!input.right_bumper.held() && !input.left_bumper.held()){
+            leftClaw.setPower(0);
+            rightClaw.setPower(0);
         }
 
+        // ---------- Macros ------------
+        if(input.a.held() && input.back.held()) {
+            if (slideMotor.getCurrentPosition() < 1455) {
+                slideMotor.setTargetPosition(1455);
+            }
+        }
+
+        if(input.b.held() && input.back.held()) {
+            if (slideMotor.getCurrentPosition() > 5) {
+                slideMotor.setTargetPosition(5);
+            }
+        }
 
         /* ============================== Telemetry For Debugging ============================== */
 
