@@ -42,7 +42,7 @@ public class pinnacleTeleOp extends OpMode {
     String slideSpeedLabelNormal;
     String slideSpeedLabelFast;
     String slideSpeedLabel;
-    int armTicks = 20;
+    int armTicks = 100;
     int slideTicks = 80;
 
 /* ============================== Hardware Configuration Mapping ============================== */
@@ -166,13 +166,13 @@ public class pinnacleTeleOp extends OpMode {
         // ---------- Tilt Movement ----------
 
         if (input.dpad_up.held()) { // 🔘 D-Pad up
-            if (tiltMotor.getCurrentPosition() < 550) { // Max Tilt Height is 550 ticks
+            if (tiltMotor.getCurrentPosition() < 10000) { // Max Tilt Height is 550 ticks
                 tiltMotor.setTargetPosition(Math.min(tiltMotor.getCurrentPosition() + armTicks, 550));
             }
         }
 
         if (input.dpad_down.held()) { // 🔘 D-Pad down
-            if (tiltMotor.getCurrentPosition() > 82) { // Min Tilt Height is 82 ticks
+            if (tiltMotor.getCurrentPosition() > 0) { // Min Tilt Height is 82 ticks
                 tiltMotor.setTargetPosition(Math.max(tiltMotor.getCurrentPosition() - armTicks, 82));
             }
         }
