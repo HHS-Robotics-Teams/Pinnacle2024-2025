@@ -21,7 +21,7 @@ public class pinnacleTeleOp extends OpMode {
     private DcMotor backLeftMotor;
     private DcMotor backRightMotor;
 
-    // ---------- Intake + Arm Motors ---------- 
+    // ---------- Intake + Arm Motors ----------
     private DcMotor tiltMotor;
     private DcMotor slideMotor;
     private CRServo intakeCRServo;
@@ -151,7 +151,7 @@ public class pinnacleTeleOp extends OpMode {
         }
 
         // ---------- Slide Movement ----------
-        
+
         if (input.dpad_right.held()) { // 🔘 D-Pad right
             if (slideMotor.getCurrentPosition() < 1455) {// Min Slide height is 1455 ticks
                 slideMotor.setTargetPosition(Math.min(slideMotor.getCurrentPosition() + slideTicks, 1455));
@@ -166,8 +166,8 @@ public class pinnacleTeleOp extends OpMode {
         // ---------- Tilt Movement ----------
 
         if (input.dpad_up.held()) { // 🔘 D-Pad up
-            if (tiltMotor.getCurrentPosition() < 10000) { // Max Tilt Height is 550 ticks
-                tiltMotor.setTargetPosition(Math.min(tiltMotor.getCurrentPosition() + armTicks, 550));
+            if (tiltMotor.getCurrentPosition() < 10000) { // Max Tilt Height is 550 (1453) ticks
+                tiltMotor.setTargetPosition(Math.min(tiltMotor.getCurrentPosition() + armTicks, 1453));
             }
         }
 
