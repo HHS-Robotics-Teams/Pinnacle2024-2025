@@ -140,24 +140,24 @@ public class pinnacleTeleOp extends OpMode {
         intakeCRServo.setPower(intakeCurrentPower);
 
         // ---------- Intake Wrist Servo ----------
-        if (input.right_trigger.held() && !input.left_trigger.held()) { // 🔘 Right trigger
+        if (input.x.held() && !input.y.held()) { // 🔘 X button
             intakeWristServo.setPosition(0);
         } /* both trigger values are stated to prevent confusion between one trigger and both triggers */
-        if (input.left_trigger.held() && !input.right_trigger.held()) { // 🔘 Left trigger
+        if (input.y.held() && input.x.held()) { // 🔘 X and Y buttons
             intakeWristServo.setPosition(1);
         }
-        if (input.left_trigger.held() && input.right_trigger.held()) { // 🔘 Both triggers
+        if (input.y.held() && !input.x.held()) { // 🔘 Y button
             intakeWristServo.setPosition(0.5);
         }
 
         // ---------- Slide Movement ----------
 
-        if (input.dpad_right.held()) { // 🔘 D-Pad right
+        if (input.right_trigger.held()) { // 🔘 D-Pad right
             if (slideMotor.getCurrentPosition() < 1455) {// Min Slide height is 1455 ticks
                 slideMotor.setTargetPosition(Math.min(slideMotor.getCurrentPosition() + slideTicks, 1455));
             }
         }
-        if (input.dpad_left.held()) { // 🔘 D-Pad left
+        if (input.left_trigger.held()) { // 🔘 D-Pad left
             if (slideMotor.getCurrentPosition() > 5) { // Min Slide height is 5 ticks
                 slideMotor.setTargetPosition(Math.max(slideMotor.getCurrentPosition() - slideTicks, 5));
             }
@@ -166,14 +166,14 @@ public class pinnacleTeleOp extends OpMode {
         // ---------- Tilt Movement ----------
 
         if (input.dpad_up.held()) { // 🔘 D-Pad up
-            if (tiltMotor.getCurrentPosition() < 10000) { // Max Tilt Height is 550 (1453) ticks
-                tiltMotor.setTargetPosition(Math.min(tiltMotor.getCurrentPosition() + armTicks, 1453));
+            if (tiltMotor.getCurrentPosition() < 1475) { // Max Tilt Height is 550 (1453) ticks
+                tiltMotor.setTargetPosition(Math.min(tiltMotor.getCurrentPosition() + armTicks, 1475));
             }
         }
 
         if (input.dpad_down.held()) { // 🔘 D-Pad down
-            if (tiltMotor.getCurrentPosition() > 0) { // Min Tilt Height is 82 ticks
-                tiltMotor.setTargetPosition(Math.max(tiltMotor.getCurrentPosition() - armTicks, 82));
+            if (tiltMotor.getCurrentPosition() > 75) { // Min Tilt Height is 82 ticks
+                tiltMotor.setTargetPosition(Math.max(tiltMotor.getCurrentPosition() - armTicks, 75));
             }
         }
 
