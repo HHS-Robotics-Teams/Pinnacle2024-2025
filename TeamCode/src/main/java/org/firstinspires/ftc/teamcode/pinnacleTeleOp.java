@@ -38,10 +38,6 @@ public class pinnacleTeleOp extends OpMode {
     int slideStartPosition = 0;
     int tiltStartPosition = 0;
 
-    String slideSpeedLabelSlow;
-    String slideSpeedLabelNormal;
-    String slideSpeedLabelFast;
-    String slideSpeedLabel;
     int armTicks = 100;
     int slideTicks = 80;
 
@@ -166,8 +162,8 @@ public class pinnacleTeleOp extends OpMode {
         // ---------- Tilt Movement ----------
 
         if (input.dpad_up.held()) { // 🔘 D-Pad up
-            if (tiltMotor.getCurrentPosition() < 1475) { // Max Tilt Height is 550 (1453) ticks
-                tiltMotor.setTargetPosition(Math.min(tiltMotor.getCurrentPosition() + armTicks, 1475));
+            if (tiltMotor.getCurrentPosition() < 1935) { // Max Tilt Height is 550 (1453) ticks
+                tiltMotor.setTargetPosition(Math.min(tiltMotor.getCurrentPosition() + armTicks, 1935));
             }
         }
 
