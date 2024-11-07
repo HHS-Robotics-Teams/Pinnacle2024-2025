@@ -79,8 +79,10 @@ public class pinnacleTeleOp extends OpMode {
         // ---------- Enable Encoder Based Movement ----------
         tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         tiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         tiltMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // ---------- Stop Arm From Slamming Backwards ----------
         tiltMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -105,10 +107,10 @@ public class pinnacleTeleOp extends OpMode {
         double drive = -gamepad1.left_stick_y;   //  left stick: up and down
 
         // ---------- Wheel Calculations ----------
-        double frontLeftPower = drive + strafe - rotate;
-        double frontRightPower = drive - strafe + rotate;
-        double backLeftPower = drive - strafe - rotate;
-        double backRightPower = drive + strafe + rotate;
+        double frontLeftPower = drive + strafe + rotate;
+        double frontRightPower = drive - strafe - rotate;
+        double backLeftPower = drive - strafe + rotate;
+        double backRightPower = drive + strafe - rotate;
 
         // ---------- Set Wheel Power ----------
         frontLeftMotor.setPower(frontLeftPower);
@@ -159,11 +161,15 @@ public class pinnacleTeleOp extends OpMode {
             }
         }
 
+        if (!input.left_trigger.held() && !input.right_trigger.held()){
+            slideMotor.setTargetPosition(slideMotor.getCurrentPosition());
+        }
+
         // ---------- Tilt Movement ----------
 
         if (input.dpad_up.held()) { // 🔘 D-Pad up
-            if (tiltMotor.getCurrentPosition() < 1935) { // Max Tilt Height is 550 (1453) ticks
-                tiltMotor.setTargetPosition(Math.min(tiltMotor.getCurrentPosition() + armTicks, 1935));
+            if (tiltMotor.getCurrentPosition() < 2600) { // Max Tilt Height is 550 (1453) ticks
+                tiltMotor.setTargetPosition(Math.min(tiltMotor.getCurrentPosition() + armTicks, 2600));
             }
         }
 
