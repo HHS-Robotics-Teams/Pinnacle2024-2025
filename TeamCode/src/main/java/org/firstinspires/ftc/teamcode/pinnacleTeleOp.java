@@ -37,6 +37,7 @@ public class pinnacleTeleOp extends OpMode {
 
     int slideStartPosition = 0;
     int tiltStartPosition = 0;
+    int tiltUpThreshold = 800;
 
     int armTicks = 100;
     int slideTicks = 80;
@@ -102,15 +103,22 @@ public class pinnacleTeleOp extends OpMode {
         input.pollGamepad(gamepad1);
 
         // ---------- Maps Wheels to Joysticks ----------
-        double rotate = -gamepad1.left_stick_x; // right stick: left and right
-        double strafe = gamepad1.right_stick_x;   // left stick: left and right
+        double rotate = gamepad1.right_stick_x; // right stick: left and right
+        double strafe = -gamepad1.left_stick_x;   // left stick: left and right
         double drive = -gamepad1.left_stick_y;   //  left stick: up and down
+
+        // ---------- Slowdown While Arm Up ----------
+        if(tiltMotor.getCurrentPosition() > tiltUpThreshold) {
+            rotate = rotate / 3;
+            strafe = strafe / 2;
+            drive = drive / 4;
+        }
 
         // ---------- Wheel Calculations ----------
         double frontLeftPower = drive + strafe + rotate;
         double frontRightPower = drive - strafe - rotate;
-        double backLeftPower = drive + strafe - rotate;
-        double backRightPower = drive - strafe + rotate;
+        double backLeftPower = drive - strafe + rotate;
+        double backRightPower = drive + strafe - rotate;
 
         // ---------- Set Wheel Power ----------
         frontLeftMotor.setPower(frontLeftPower);
@@ -151,7 +159,7 @@ public class pinnacleTeleOp extends OpMode {
         // ---------- Slide Movement ----------
 
         if (input.right_trigger.held()) { // 🔘 D-Pad right
-            if (slideMotor.getCurrentPosition() < 1455) {// Min Slide height is 1455 ticks
+            if (slideMotor.getCurrentPosition() < 1455) {// Max Slide height is 1455 ticks
                 slideMotor.setTargetPosition(Math.min(slideMotor.getCurrentPosition() + slideTicks, 1455));
             }
         }
