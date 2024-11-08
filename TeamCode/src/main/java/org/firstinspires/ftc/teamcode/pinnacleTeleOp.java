@@ -102,15 +102,15 @@ public class pinnacleTeleOp extends OpMode {
         input.pollGamepad(gamepad1);
 
         // ---------- Maps Wheels to Joysticks ----------
-        double rotate = -gamepad1.right_stick_x; // right stick: left and right
-        double strafe = gamepad1.left_stick_x;   // left stick: left and right
+        double rotate = -gamepad1.left_stick_x; // right stick: left and right
+        double strafe = gamepad1.right_stick_x;   // left stick: left and right
         double drive = -gamepad1.left_stick_y;   //  left stick: up and down
 
         // ---------- Wheel Calculations ----------
         double frontLeftPower = drive + strafe + rotate;
         double frontRightPower = drive - strafe - rotate;
-        double backLeftPower = drive - strafe + rotate;
-        double backRightPower = drive + strafe - rotate;
+        double backLeftPower = drive + strafe - rotate;
+        double backRightPower = drive - strafe + rotate;
 
         // ---------- Set Wheel Power ----------
         frontLeftMotor.setPower(frontLeftPower);
