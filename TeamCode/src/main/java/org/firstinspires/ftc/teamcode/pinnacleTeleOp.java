@@ -6,22 +6,28 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.excutil.Input;
 
 @TeleOp(name="Pinnacle TeleOp", group="idk")
 public class pinnacleTeleOp extends OpMode {
 
 /* ============================== OpMode Attributes and Variables ============================== */
-     
+
+    Input input = new Input();
+
     // ---------- Wheel Motors ----------
     private DcMotor frontLeftMotor;
     private DcMotor frontRightMotor;
     private DcMotor backLeftMotor;
     private DcMotor backRightMotor;
 
-    // ---------- Intake + Arm Motors ---------- 
+    // ---------- Intake + Arm Motors ----------
     private DcMotor tiltMotor;
     private DcMotor slideMotor;
     private CRServo intakeCRServo;
+
+    private CRServo leftClaw;
+    private CRServo rightClaw;
     private Servo intakeWristServo;
 
     double intakeCurrentPower;
@@ -31,12 +37,9 @@ public class pinnacleTeleOp extends OpMode {
 
     int slideStartPosition = 0;
     int tiltStartPosition = 0;
+    int tiltUpThreshold = 800;
 
-    String slideSpeedLabelSlow;
-    String slideSpeedLabelNormal;
-    String slideSpeedLabelFast;
-    String slideSpeedLabel;
-    int armTicks = 20;
+    int armTicks = 100;
     int slideTicks = 80;
 
 /* ============================== Hardware Configuration Mapping ============================== */
@@ -56,6 +59,10 @@ public class pinnacleTeleOp extends OpMode {
         intakeCRServo = hardwareMap.get(CRServo.class, "wheel_servo");
         intakeWristServo = hardwareMap.get(Servo.class, "wrist_servo");
 
+        // ---------- Claws ----------
+        leftClaw = hardwareMap.get(CRServo.class, "left_claw");
+        rightClaw = hardwareMap.get(CRServo.class, "right_claw");
+
 /* ============================== Hardware Settings Fixes ============================== */
 
         // ---------- Reverse Left Side For Proper Strafing ----------
@@ -73,8 +80,10 @@ public class pinnacleTeleOp extends OpMode {
         // ---------- Enable Encoder Based Movement ----------
         tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         tiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         tiltMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // ---------- Stop Arm From Slamming Backwards ----------
         tiltMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -91,16 +100,25 @@ public class pinnacleTeleOp extends OpMode {
 
 /* ============================== Driving and Wheels ============================== */
 
+        input.pollGamepad(gamepad1);
+
         // ---------- Maps Wheels to Joysticks ----------
-        double rotate = -gamepad1.right_stick_x; // right stick: left and right
-        double strafe = gamepad1.left_stick_x;   // left stick: left and right
+        double rotate = gamepad1.right_stick_x; // right stick: left and right
+        double strafe = -gamepad1.left_stick_x;   // left stick: left and right
         double drive = -gamepad1.left_stick_y;   //  left stick: up and down
 
+        // ---------- Slowdown While Arm Up ----------
+        if(tiltMotor.getCurrentPosition() > tiltUpThreshold) {
+            rotate = rotate / 3;
+            strafe = strafe / 2;
+            drive = drive / 4;
+        }
+
         // ---------- Wheel Calculations ----------
-        double frontLeftPower = drive + strafe - rotate;
-        double frontRightPower = drive - strafe + rotate;
-        double backLeftPower = drive - strafe - rotate;
-        double backRightPower = drive + strafe + rotate;
+        double frontLeftPower = drive + strafe + rotate;
+        double frontRightPower = drive - strafe - rotate;
+        double backLeftPower = drive - strafe + rotate;
+        double backRightPower = drive + strafe - rotate;
 
         // ---------- Set Wheel Power ----------
         frontLeftMotor.setPower(frontLeftPower);
@@ -116,10 +134,10 @@ public class pinnacleTeleOp extends OpMode {
 /* ============================== Robot Controls ============================== */
 
         // ---------- Intake Wheel Servo ----------
-        if (gamepad1.a && !gamepad1.back) { // 🔘 A button
+        if (input.a.held() && !input.back.held()) { // 🔘 A button
             intakeCurrentPower = intakePower;
             intakeCRServo.setDirection(DcMotorSimple.Direction.FORWARD);
-        } else if (gamepad1.b && !gamepad1.back) { // 🔘 B button
+        } else if (input.b.held() && !input.back.held()) { // 🔘 B button
             intakeCurrentPower = intakePower;
             intakeCRServo.setDirection(DcMotorSimple.Direction.REVERSE);
         } else {
@@ -128,65 +146,84 @@ public class pinnacleTeleOp extends OpMode {
         intakeCRServo.setPower(intakeCurrentPower);
 
         // ---------- Intake Wrist Servo ----------
-        if (gamepad1.right_trigger > 0.5 && gamepad1.left_trigger < 0.5) { // 🔘 Right trigger
+        if (input.x.held() && !input.y.held()) { // 🔘 X button
             intakeWristServo.setPosition(0);
         } /* both trigger values are stated to prevent confusion between one trigger and both triggers */
-        if (gamepad1.left_trigger > 0.5 && gamepad1.right_trigger < 0.5) { // 🔘 Left trigger
+        if (input.y.held() && input.x.held()) { // 🔘 X and Y buttons
             intakeWristServo.setPosition(1);
         }
-        if (gamepad1.left_trigger > 0.5 && gamepad1.right_trigger > 0.5) { // 🔘 Both triggers
+        if (input.y.held() && !input.x.held()) { // 🔘 Y button
             intakeWristServo.setPosition(0.5);
         }
 
         // ---------- Slide Movement ----------
-        
-        if (gamepad1.dpad_right) { // 🔘 D-Pad right
-            if (slideMotor.getCurrentPosition() < 1455) {
-                if (slideMotor.getCurrentPosition() + slideTicks > 1455) {
-                    slideMotor.setTargetPosition(1455);
-                } else {
-                    slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + slideTicks);
-                }
+
+        if (input.right_trigger.held()) { // 🔘 D-Pad right
+            if (slideMotor.getCurrentPosition() < 1455) {// Max Slide height is 1455 ticks
+                slideMotor.setTargetPosition(Math.min(slideMotor.getCurrentPosition() + slideTicks, 1455));
             }
         }
-        if (gamepad1.dpad_left) { // 🔘 D-Pad left
-            if (slideMotor.getCurrentPosition() > 5) {
-                if (slideMotor.getCurrentPosition() - slideTicks < 5) {
-                    slideMotor.setTargetPosition(5);
-                } else {
-                slideMotor.setTargetPosition(slideMotor.getCurrentPosition() - slideTicks);
-                }
+        if (input.left_trigger.held()) { // 🔘 D-Pad left
+            if (slideMotor.getCurrentPosition() > 5) { // Min Slide height is 5 ticks
+                slideMotor.setTargetPosition(Math.max(slideMotor.getCurrentPosition() - slideTicks, 5));
             }
+        }
+
+        if (!input.left_trigger.held() && !input.right_trigger.held()){
+            slideMotor.setTargetPosition(slideMotor.getCurrentPosition());
         }
 
         // ---------- Tilt Movement ----------
 
-        if (gamepad1.dpad_up) { // 🔘 D-Pad up
-            if (tiltMotor.getCurrentPosition() < 550) {
-                if (tiltMotor.getCurrentPosition() + armTicks > 550){
-                    tiltMotor.setTargetPosition(550);
-                } else {
-                    tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + armTicks);
-                }
+        if (input.dpad_up.held()) { // 🔘 D-Pad up
+            if (tiltMotor.getCurrentPosition() < 2600) { // Max Tilt Height is 550 (1453) ticks
+                tiltMotor.setTargetPosition(Math.min(tiltMotor.getCurrentPosition() + armTicks, 2600));
             }
         }
 
-        if (gamepad1.dpad_down) { // 🔘 D-Pad down
-            if (tiltMotor.getCurrentPosition() > 82) {
-                if (tiltMotor.getCurrentPosition() - armTicks < 82) {
-                    tiltMotor.setTargetPosition(82);
-                } else {
-                    tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() - armTicks);
-                }
+        if (input.dpad_down.held()) { // 🔘 D-Pad down
+            if (tiltMotor.getCurrentPosition() > 75) { // Min Tilt Height is 82 ticks
+                tiltMotor.setTargetPosition(Math.max(tiltMotor.getCurrentPosition() - armTicks, 75));
             }
         }
 
         // Random testing position
-        if (gamepad1.y){ // 🔘 Y button
-            tiltMotor.setTargetPosition(400);
+      //  if (input.y){ // 🔘 Y button
+       //     tiltMotor.setTargetPosition(400);
+       // }
+
+
+        // ----------- Claw Movement -----------
+
+        if (input.left_bumper.held()) {
+            leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+            leftClaw.setPower(1);
+            rightClaw.setPower(1);
+        }
+        if (input.right_bumper.held()) { // Claw controls made by Benny
+            leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+            leftClaw.setPower(1); // Debugged by Damien
+            rightClaw.setPower(1);
+        }
+        if (!input.right_bumper.held() && !input.left_bumper.held()){
+            leftClaw.setPower(0);
+            rightClaw.setPower(0);
         }
 
+        // ---------- Macros ------------
+        if(input.a.held() && input.back.held()) {
+            if (slideMotor.getCurrentPosition() < 1455) {
+                slideMotor.setTargetPosition(1455);
+            }
+        }
 
+        if(input.b.held() && input.back.held()) {
+            if (slideMotor.getCurrentPosition() > 5) {
+                slideMotor.setTargetPosition(5);
+            }
+        }
 
         /* ============================== Telemetry For Debugging ============================== */
 
