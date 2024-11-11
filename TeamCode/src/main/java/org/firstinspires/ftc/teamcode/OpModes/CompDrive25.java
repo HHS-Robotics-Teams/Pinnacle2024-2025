@@ -45,11 +45,11 @@ import org.firstinspires.ftc.teamcode.excutil.Input;
 @TeleOp(name = "CompDrive25", group = "Test jr")
 public class CompDrive25 extends OpMode {
 
-    private Input input;
+    public Input input;
 
     @Override
     public void init() {
-        Input input = new Input();
+        input = new Input();
 
         RobotComponents.init(hardwareMap);
 
@@ -121,24 +121,24 @@ public class CompDrive25 extends OpMode {
         }
         // --------------- Manual Arm Tilt -------------------
             // Arm up
-        if (input.left_bumper.held() || input.left_bumper.down() && (tiltMotor.getCurrentPosition() >= TiltMaxPosition)) {
+        if (input.left_bumper.held() && (tiltMotor.getCurrentPosition() >= TiltMaxPosition)) {
             tiltMotor.setTargetPosition(tiltMotor.getTargetPosition() +5 );
         }
 
             // Arm Down
-        if (input.left_trigger.held() || input.left_trigger.down() && (tiltMotor.getCurrentPosition() <= TiltMinPosition)) {
+        if (input.left_trigger.held() && (tiltMotor.getCurrentPosition() <= TiltMinPosition)) {
            tiltMotor.setTargetPosition(tiltMotor.getTargetPosition() -5 );
         }
 
         // -------------- Manual Extension --------------------
 
             // Slide out
-        if (input.dpad_up.held() || input.dpad_up.down() && (slideMotor.getCurrentPosition() >= SlideMaxPosition) ) {
+        if (input.dpad_up.held() && (slideMotor.getCurrentPosition() >= SlideMaxPosition) ) {
             slideMotor.setTargetPosition(slideMotor.getCurrentPosition()+5);
         }
 
             // Slide in
-        if (input.dpad_down.held() || input.dpad_down.down() && (slideMotor.getCurrentPosition() <= SlideMinPosition))  {
+        if (input.dpad_down.held() && (slideMotor.getCurrentPosition() <= SlideMinPosition))  {
             slideMotor.setTargetPosition(slideMotor.getCurrentPosition()-5);
 
         }
@@ -243,6 +243,7 @@ public class CompDrive25 extends OpMode {
             // ---------- Flags -----------
             telemetry.addData("Climb control status", climbPositionReached ? "True" : "False");
             telemetry.addData("Wrist control status", IntakeWristPositionReached ? "True" : "False");
+
             // ---------- Update ----------
             telemetry.update();
 
