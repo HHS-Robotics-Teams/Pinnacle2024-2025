@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.IntakeRotateThreshold;
-import static org.firstinspires.ftc.teamcode.OpModes.Constants.armRetracting;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.IntakeWristPositionReached;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.IntakeCurrentPower;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.IntakePower;
@@ -24,6 +23,10 @@ import static org.firstinspires.ftc.teamcode.OpModes.Constants.TiltUpThreshold;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.WristCenter;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.WristLeft;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.WristRight;
+import static org.firstinspires.ftc.teamcode.OpModes.Constants.armRetractingHighBasket;
+import static org.firstinspires.ftc.teamcode.OpModes.Constants.armRetractingHighChamber;
+import static org.firstinspires.ftc.teamcode.OpModes.Constants.armRetractingLowBasket;
+import static org.firstinspires.ftc.teamcode.OpModes.Constants.armRetractingLowChamber;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.climbPositionReached;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.currentRetractionStep;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.backLeftMotor;
@@ -107,7 +110,7 @@ public class CompDrive25 extends OpMode {
 
 
         // ----------- Arm Flags ------------
-        if (tiltMotor.getCurrentPosition() < IntakeRotateThreshold) {
+        if (tiltMotor.getCurrentPosition() <= IntakeRotateThreshold) {
             IntakeWristPositionReached = false;
             intakeWristServo.setPosition(WristCenter);
         }
@@ -123,7 +126,7 @@ public class CompDrive25 extends OpMode {
             intakeWristServo.setPosition(WristCenter);
         }
 
-        // pickup
+        // ---------- Pickup ------------------
 
         if (gamepad1.right_stick_button ){
             tiltMotor.setTargetPosition(TiltHomePosition);
@@ -132,24 +135,23 @@ public class CompDrive25 extends OpMode {
         }
         // --------------- Manual Arm Tilt -------------------
             // Arm up
-        if (input.left_bumper.held() && (tiltMotor.getCurrentPosition() <= TiltMaxPosition)) {
+        if (input.dpad_up.held() && (tiltMotor.getCurrentPosition() <= TiltMaxPosition)) {
             tiltMotor.setTargetPosition(tiltMotor.getTargetPosition() +20 );
         }
 
             // Arm Down
-        if (input.left_trigger.held() && (tiltMotor.getCurrentPosition() >= TiltMinPosition)) {
+        if (input.dpad_down.held() && (tiltMotor.getCurrentPosition() >= TiltMinPosition)) {
            tiltMotor.setTargetPosition(tiltMotor.getTargetPosition() -20 );
         }
 
         // -------------- Manual Extension --------------------
-
             // Slide out
-        if (input.dpad_up.held() && (slideMotor.getCurrentPosition() <= SlideMaxPosition) ) {
+        if (input.left_bumper.held() && (slideMotor.getCurrentPosition() <= SlideMaxPosition) ) {
             slideMotor.setTargetPosition(slideMotor.getCurrentPosition()+60);
         }
 
             // Slide in
-        if (input.dpad_down.held() && (slideMotor.getCurrentPosition() >= SlideMinPosition))  {
+        if (input.left_trigger.held() && (slideMotor.getCurrentPosition() >= SlideMinPosition))  {
             slideMotor.setTargetPosition(slideMotor.getCurrentPosition()-60);
 
         }
@@ -177,13 +179,13 @@ public class CompDrive25 extends OpMode {
 
         /* ============================== Scoring ============================== */
 
-        // ------------ High Bucket -------------
+        // ------------ High Basket-------------
         if (input.y.down()) {
-            armRetracting = true;
+            armRetractingHighBasket = true;
             IntakeWristPositionReached = false;
         }
 
-        if(armRetracting){
+        if(armRetractingHighBasket){
             switch(currentRetractionStep){
                 case(1):
                     slideMotor.setTargetPosition(SlideMinPosition);
@@ -196,40 +198,85 @@ public class CompDrive25 extends OpMode {
                     intakeWristServo.setPosition(WristCenter);
                     slideMotor.setTargetPosition(SlideHighBucket);
                     currentRetractionStep = 1;
-                    armRetracting = false;
+                    armRetractingHighBasket = false;
                     break;
             }
         }
 
-        // ------------ Low Bucket ---------------
+        // ------------ Low Basket ---------------
         if (input.b.down()) {
+            armRetractingLowBasket = true;
             IntakeWristPositionReached = false;
-            slideMotor.setTargetPosition(SlideMinPosition);
-            tiltMotor.setTargetPosition(TiltLowBucket);
-            intakeWristServo.setPosition(WristCenter);
-            slideMotor.setTargetPosition(SlideLowBucket);
+        }
+
+        if(armRetractingLowBasket){
+            switch(currentRetractionStep){
+                case(1):
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    if(Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50){
+                        currentRetractionStep++;
+                    }
+                    break;
+                case(2):
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    tiltMotor.setTargetPosition(TiltLowBucket);
+                    intakeWristServo.setPosition(WristCenter);
+                    slideMotor.setTargetPosition(SlideLowBucket);
+                    armRetractingLowBasket = false;
+                    break;
+            }
         }
 
         // ------------ High Chamber --------------
         if (input.x.down()) {
+            armRetractingHighChamber = true;
             IntakeWristPositionReached = true;
-            slideMotor.setTargetPosition(SlideMinPosition);
-            tiltMotor.setTargetPosition(TiltHighChamber);
-            intakeWristServo.setPosition(WristLeft);
-            slideMotor.setTargetPosition(SlideHighChamber);
 
             telemetry.speak("rodo control reached");
         }
 
+        if(armRetractingHighChamber){
+            switch(currentRetractionStep){
+                case(1):
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    if(Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50){
+                        currentRetractionStep++;
+                    }
+                    break;
+                case(2):
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    tiltMotor.setTargetPosition(TiltHighChamber);
+                    intakeWristServo.setPosition(WristLeft);
+                    slideMotor.setTargetPosition(SlideHighChamber);
+                    armRetractingHighChamber = false;
+                    break;
+            }
+        }
+
+
         // ------------- Low Chamber ----------------
         if (input.a.down()) {
+            armRetractingLowChamber = true;
             IntakeWristPositionReached = true;
-            slideMotor.setTargetPosition(SlideMinPosition);
-            tiltMotor.setTargetPosition(TiltLowBucket);
-            intakeWristServo.setPosition(WristLeft);
-            slideMotor.setTargetPosition(SlideLowChamber);
 
             telemetry.speak("rodo control reached");
+        }
+        if(armRetractingLowChamber){
+            switch(currentRetractionStep){
+                case(1):
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    if(Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50){
+                        currentRetractionStep++;
+                    }
+                    break;
+                case(2):
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    tiltMotor.setTargetPosition(TiltLowBucket);
+                    intakeWristServo.setPosition(WristLeft);
+                    slideMotor.setTargetPosition(SlideLowChamber);
+                    armRetractingLowChamber = false;
+                    break;
+            }
         }
 
         /* ============================== Climbing ============================== */

@@ -25,7 +25,7 @@ public class Constants {
     // slide motor positions
     public static int SlideTicks = 80;
     public static int SlideStartPosition = 0;
-    public static int SlideMinPosition = 10;
+    public static int SlideMinPosition = 5;
     public static int SlideMaxPosition = 1455;
     public static int SlideHighChamber = 450;
     public static int SlideLowChamber = 250;
@@ -37,15 +37,13 @@ public class Constants {
     public static double WristCenter = .5;
     public static int WristRight = 0;
 
-
-
-
     // Flags
     public static Boolean IntakeWristPositionReached = false;
-
     public static Boolean climbPositionReached = false;
-
-    public static Boolean armRetracting = false;
+    public static Boolean armRetractingHighBasket = false;
+    public static Boolean armRetractingLowBasket  = false;
+    public static Boolean armRetractingHighChamber  = false;
+    public static Boolean armRetractingLowChamber  = false;
 
     //Finite state machine runners
     public static int currentRetractionStep = 1;
