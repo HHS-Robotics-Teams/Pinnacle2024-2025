@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import static org.firstinspires.ftc.teamcode.OpModes.Constants.InitPositionReached;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.IntakeRotateThreshold;
+import static org.firstinspires.ftc.teamcode.OpModes.Constants.armRetracting;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.IntakeWristPositionReached;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.IntakeCurrentPower;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.IntakePower;
@@ -16,6 +16,7 @@ import static org.firstinspires.ftc.teamcode.OpModes.Constants.TiltHighBucket;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.TiltHighChamber;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.TiltHomePosition;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.TiltLowBucket;
+import static org.firstinspires.ftc.teamcode.OpModes.Constants.TiltLowChamber;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.TiltMaxPosition;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.TiltMinPosition;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.TiltPower;
@@ -24,6 +25,7 @@ import static org.firstinspires.ftc.teamcode.OpModes.Constants.WristCenter;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.WristLeft;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.WristRight;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.climbPositionReached;
+import static org.firstinspires.ftc.teamcode.OpModes.Constants.currentRetractionStep;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.backLeftMotor;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.backRightMotor;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.frontLeftMotor;
@@ -58,17 +60,15 @@ public class CompDrive25 extends OpMode {
         telemetry.update();
 
     }
+    @Override
+    public void start() {
+        tiltMotor.setTargetPosition(TiltMinPosition);
+        slideMotor.setTargetPosition(SlideMinPosition);
+        intakeWristServo.setPosition(WristLeft);
+    }
 
     @Override
     public void loop() {
-        /* ============================== Initialization Position ============================== */
-        if (!InitPositionReached){
-            tiltMotor.setTargetPosition(TiltMinPosition);
-            slideMotor.setTargetPosition(SlideMinPosition);
-            intakeWristServo.setPosition(WristLeft);
-
-            InitPositionReached = true;
-        }
 
 
         input.pollGamepad(gamepad1);
@@ -79,6 +79,13 @@ public class CompDrive25 extends OpMode {
         double rotate = gamepad1.right_stick_x; // right stick: left and right
         double strafe = -gamepad1.left_stick_x;   // left stick: left and right
         double drive = -gamepad1.left_stick_y;   //  left stick: up and down
+
+        // ---------- Slowdown While Arm Up ----------
+        if (tiltMotor.getTargetPosition() >= TiltUpThreshold) {
+            rotate = rotate / 3;
+            strafe = strafe / 3;
+            drive = drive / 4;
+        }
 
         // ---------- Wheel Calculations ----------
         double frontLeftPower = drive + strafe + rotate;
@@ -92,12 +99,6 @@ public class CompDrive25 extends OpMode {
         backLeftMotor.setPower(backLeftPower);
         backRightMotor.setPower(backRightPower);
 
-        // ---------- Slowdown While Arm Up ----------
-        if (tiltMotor.getCurrentPosition() > TiltUpThreshold) {
-            rotate = rotate / 3;
-            strafe = strafe / 2;
-            drive = drive / 4;
-        }
 
         // ---------- Set Arm and Intake Power ----------
         tiltMotor.setPower(TiltPower);
@@ -111,35 +112,45 @@ public class CompDrive25 extends OpMode {
             intakeWristServo.setPosition(WristCenter);
         }
 
+
+
         /* ============================== Robot Controls ============================== */
 
         // ----------- Home -----------------
-        if (gamepad1.left_stick_button || gamepad1.right_stick_button) {
+        if (gamepad1.left_stick_button) {
+            tiltMotor.setTargetPosition(TiltLowChamber);
+            slideMotor.setTargetPosition(SlideLowChamber);
+            intakeWristServo.setPosition(WristCenter);
+        }
+
+        // pickup
+
+        if (gamepad1.right_stick_button ){
             tiltMotor.setTargetPosition(TiltHomePosition);
             slideMotor.setTargetPosition(SlideMinPosition);
             intakeWristServo.setPosition(WristCenter);
         }
         // --------------- Manual Arm Tilt -------------------
             // Arm up
-        if (input.left_bumper.held() && (tiltMotor.getCurrentPosition() >= TiltMaxPosition)) {
-            tiltMotor.setTargetPosition(tiltMotor.getTargetPosition() +5 );
+        if (input.left_bumper.held() && (tiltMotor.getCurrentPosition() <= TiltMaxPosition)) {
+            tiltMotor.setTargetPosition(tiltMotor.getTargetPosition() +20 );
         }
 
             // Arm Down
-        if (input.left_trigger.held() && (tiltMotor.getCurrentPosition() <= TiltMinPosition)) {
-           tiltMotor.setTargetPosition(tiltMotor.getTargetPosition() -5 );
+        if (input.left_trigger.held() && (tiltMotor.getCurrentPosition() >= TiltMinPosition)) {
+           tiltMotor.setTargetPosition(tiltMotor.getTargetPosition() -20 );
         }
 
         // -------------- Manual Extension --------------------
 
             // Slide out
-        if (input.dpad_up.held() && (slideMotor.getCurrentPosition() >= SlideMaxPosition) ) {
-            slideMotor.setTargetPosition(slideMotor.getCurrentPosition()+5);
+        if (input.dpad_up.held() && (slideMotor.getCurrentPosition() <= SlideMaxPosition) ) {
+            slideMotor.setTargetPosition(slideMotor.getCurrentPosition()+60);
         }
 
             // Slide in
-        if (input.dpad_down.held() && (slideMotor.getCurrentPosition() <= SlideMinPosition))  {
-            slideMotor.setTargetPosition(slideMotor.getCurrentPosition()-5);
+        if (input.dpad_down.held() && (slideMotor.getCurrentPosition() >= SlideMinPosition))  {
+            slideMotor.setTargetPosition(slideMotor.getCurrentPosition()-60);
 
         }
 
@@ -154,10 +165,10 @@ public class CompDrive25 extends OpMode {
         // ---------- Intake Wheel Servo ----------
         if (input.right_bumper.held()) { //
             IntakeCurrentPower = IntakePower;
-            intakeCRServo.setDirection(DcMotorSimple.Direction.FORWARD);
+            intakeCRServo.setDirection(DcMotorSimple.Direction.REVERSE);
         } else if (input.right_trigger.held()) {
             IntakeCurrentPower = IntakePower;
-            intakeCRServo.setDirection(DcMotorSimple.Direction.REVERSE);
+            intakeCRServo.setDirection(DcMotorSimple.Direction.FORWARD);
         } else {
             IntakeCurrentPower = 0;
         }
@@ -168,13 +179,32 @@ public class CompDrive25 extends OpMode {
 
         // ------------ High Bucket -------------
         if (input.y.down()) {
-            tiltMotor.setTargetPosition(TiltHighBucket);
-            intakeWristServo.setPosition(WristCenter);
-            slideMotor.setTargetPosition(SlideHighBucket);
+            armRetracting = true;
+            IntakeWristPositionReached = false;
+        }
+
+        if(armRetracting){
+            switch(currentRetractionStep){
+                case(1):
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    if(Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50){
+                        currentRetractionStep++;
+                    }
+                    break;
+                case(2):
+                    tiltMotor.setTargetPosition(TiltHighBucket);
+                    intakeWristServo.setPosition(WristCenter);
+                    slideMotor.setTargetPosition(SlideHighBucket);
+                    currentRetractionStep = 1;
+                    armRetracting = false;
+                    break;
+            }
         }
 
         // ------------ Low Bucket ---------------
         if (input.b.down()) {
+            IntakeWristPositionReached = false;
+            slideMotor.setTargetPosition(SlideMinPosition);
             tiltMotor.setTargetPosition(TiltLowBucket);
             intakeWristServo.setPosition(WristCenter);
             slideMotor.setTargetPosition(SlideLowBucket);
@@ -183,6 +213,7 @@ public class CompDrive25 extends OpMode {
         // ------------ High Chamber --------------
         if (input.x.down()) {
             IntakeWristPositionReached = true;
+            slideMotor.setTargetPosition(SlideMinPosition);
             tiltMotor.setTargetPosition(TiltHighChamber);
             intakeWristServo.setPosition(WristLeft);
             slideMotor.setTargetPosition(SlideHighChamber);
@@ -193,6 +224,7 @@ public class CompDrive25 extends OpMode {
         // ------------- Low Chamber ----------------
         if (input.a.down()) {
             IntakeWristPositionReached = true;
+            slideMotor.setTargetPosition(SlideMinPosition);
             tiltMotor.setTargetPosition(TiltLowBucket);
             intakeWristServo.setPosition(WristLeft);
             slideMotor.setTargetPosition(SlideLowChamber);
@@ -208,18 +240,22 @@ public class CompDrive25 extends OpMode {
                 leftClaw.setPower(1);
                 rightClaw.setPower(1);
 
-                climbPositionReached = true;
+
 
                 telemetry.speak("climb position reached");
             }
-            if (input.start.held() && climbPositionReached) { // Claw controls made by Benny
+            else if (input.start.held()) { // Claw controls made by Benny
                 leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
                 rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
                 leftClaw.setPower(1); // Debugged by Damien
                 rightClaw.setPower(1);
 
-                climbPositionReached = false;
+
             }
+            else {
+                leftClaw.setPower(0);
+                rightClaw.setPower(0);
+        }
 
 
             /* ============================== Telemetry For Debugging ============================== */

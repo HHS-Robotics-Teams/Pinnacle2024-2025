@@ -66,6 +66,7 @@ public class RobotComponents {
 
         // ---------- Stop Arm From Slamming Backwards ----------
         tiltMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        tiltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
     }
