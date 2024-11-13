@@ -15,32 +15,7 @@ public class pinnacleTeleOp extends OpMode {
 
     Input input = new Input();
 
-    // ---------- Wheel Motors ----------
-    private DcMotor frontLeftMotor;
-    private DcMotor frontRightMotor;
-    private DcMotor backLeftMotor;
-    private DcMotor backRightMotor;
-
-    // ---------- Intake + Arm Motors ----------
-    private DcMotor tiltMotor;
-    private DcMotor slideMotor;
-    private CRServo intakeCRServo;
-
-    private CRServo leftClaw;
-    private CRServo rightClaw;
-    private Servo intakeWristServo;
-
-    double intakeCurrentPower;
-    double intakePower = 1;
-    double tiltPower = 1;
-    double slidePower = 1;
-
-    int slideStartPosition = 0;
-    int tiltStartPosition = 0;
-    int tiltUpThreshold = 800;
-
-    int armTicks = 100;
-    int slideTicks = 80;
+   
 
 /* ============================== Hardware Configuration Mapping ============================== */
 
@@ -48,45 +23,43 @@ public class pinnacleTeleOp extends OpMode {
     public void init() {
 
         // ---------- Wheels ----------
-        frontLeftMotor = hardwareMap.get(DcMotor.class, "front_left_motor");
-        frontRightMotor = hardwareMap.get(DcMotor.class, "front_right_motor");
-        backLeftMotor = hardwareMap.get(DcMotor.class, "back_left_motor");
-        backRightMotor = hardwareMap.get(DcMotor.class, "back_right_motor");
+        Constants.frontLeftMotor = hardwareMap.get(DcMotor.class, "front_left_motor");
+        Constants.frontRightMotor = hardwareMap.get(DcMotor.class, "front_right_motor");
+        Constants.backLeftMotor = hardwareMap.get(DcMotor.class, "back_left_motor");
+        Constants.backRightMotor = hardwareMap.get(DcMotor.class, "back_right_motor");
 
         // ---------- Arm and Intake ----------
-        slideMotor = hardwareMap.get(DcMotor.class, "slide_motor");
-        tiltMotor = hardwareMap.get(DcMotor.class, "tilt_motor");
-        intakeCRServo = hardwareMap.get(CRServo.class, "wheel_servo");
-        intakeWristServo = hardwareMap.get(Servo.class, "wrist_servo");
+        Constants.slideMotor = hardwareMap.get(DcMotor.class, "slide_motor");
+        Constants.tiltMotor = hardwareMap.get(DcMotor.class, "tilt_motor");
+        Constants.intakeCRServo = hardwareMap.get(CRServo.class, "wheel_servo");
+        Constants.intakeWristServo = hardwareMap.get(Servo.class, "wrist_servo");
 
         // ---------- Claws ----------
-        leftClaw = hardwareMap.get(CRServo.class, "left_claw");
-        rightClaw = hardwareMap.get(CRServo.class, "right_claw");
+        Constants.leftClaw = hardwareMap.get(CRServo.class, "left_claw");
+        Constants.rightClaw = hardwareMap.get(CRServo.class, "right_claw");
 
 /* ============================== Hardware Settings Fixes ============================== */
 
         // ---------- Reverse Left Side For Proper Strafing ----------
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        Constants.frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        Constants.backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // ---------- Resist Gravity and Inertia so Arm and Slide Stay In Place ----------
-        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        tiltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Constants.slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Constants.tiltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // ---------- Error Evasion ----------
-        tiltMotor.setTargetPosition(tiltStartPosition);
-        slideMotor.setTargetPosition(slideStartPosition);
+        Constants.tiltMotor.setTargetPosition(Constants.tiltStartPosition);
+        Constants.slideMotor.setTargetPosition(Constants.slideStartPosition);
 
         // ---------- Enable Encoder Based Movement ----------
-        tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        tiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        tiltMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Constants.tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Constants.tiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Constants.slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Constants.tiltMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // ---------- Stop Arm From Slamming Backwards ----------
-        tiltMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        Constants.tiltMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         // ---------- Confirmation Printing ----------
@@ -103,125 +76,114 @@ public class pinnacleTeleOp extends OpMode {
         input.pollGamepad(gamepad1);
 
         // ---------- Maps Wheels to Joysticks ----------
-        double rotate = gamepad1.right_stick_x; // right stick: left and right
-        double strafe = -gamepad1.left_stick_x;   // left stick: left and right
+        double rotate = -gamepad1.right_stick_x; // right stick: left and right
+        double strafe = gamepad1.left_stick_x;   // left stick: left and right
         double drive = -gamepad1.left_stick_y;   //  left stick: up and down
 
-        // ---------- Slowdown While Arm Up ----------
-        if(tiltMotor.getCurrentPosition() > tiltUpThreshold) {
-            rotate = rotate / 3;
-            strafe = strafe / 2;
-            drive = drive / 4;
-        }
-
         // ---------- Wheel Calculations ----------
-        double frontLeftPower = drive + strafe + rotate;
-        double frontRightPower = drive - strafe - rotate;
-        double backLeftPower = drive - strafe + rotate;
-        double backRightPower = drive + strafe - rotate;
+        double frontLeftPower = drive + strafe - rotate;
+        double frontRightPower = drive - strafe + rotate;
+        double backLeftPower = drive - strafe - rotate;
+        double backRightPower = drive + strafe + rotate;
 
         // ---------- Set Wheel Power ----------
-        frontLeftMotor.setPower(frontLeftPower);
-        frontRightMotor.setPower(frontRightPower);
-        backLeftMotor.setPower(backLeftPower);
-        backRightMotor.setPower(backRightPower);
+        Constants.frontLeftMotor.setPower(frontLeftPower);
+        Constants.frontRightMotor.setPower(frontRightPower);
+        Constants.backLeftMotor.setPower(backLeftPower);
+        Constants.backRightMotor.setPower(backRightPower);
 
         // ---------- Set Arm and Intake Power ----------
-        tiltMotor.setPower(tiltPower);
-        slideMotor.setPower(slidePower);
+        Constants.tiltMotor.setPower(Constants.tiltPower);
+        Constants.slideMotor.setPower(Constants.slidePower);
 
 
 /* ============================== Robot Controls ============================== */
 
         // ---------- Intake Wheel Servo ----------
         if (input.a.held() && !input.back.held()) { // 🔘 A button
-            intakeCurrentPower = intakePower;
-            intakeCRServo.setDirection(DcMotorSimple.Direction.FORWARD);
+            Constants.intakeCurrentPower = Constants.intakePower;
+            Constants.intakeCRServo.setDirection(DcMotorSimple.Direction.FORWARD);
         } else if (input.b.held() && !input.back.held()) { // 🔘 B button
-            intakeCurrentPower = intakePower;
-            intakeCRServo.setDirection(DcMotorSimple.Direction.REVERSE);
+            Constants.intakeCurrentPower = Constants.intakePower;
+            Constants.intakeCRServo.setDirection(DcMotorSimple.Direction.REVERSE);
         } else {
-            intakeCurrentPower = 0;
+            Constants.intakeCurrentPower = 0;
         }
-        intakeCRServo.setPower(intakeCurrentPower);
+        Constants.intakeCRServo.setPower(Constants.intakeCurrentPower);
 
         // ---------- Intake Wrist Servo ----------
         if (input.x.held() && !input.y.held()) { // 🔘 X button
-            intakeWristServo.setPosition(0);
+            Constants.intakeWristServo.setPosition(0);
         } /* both trigger values are stated to prevent confusion between one trigger and both triggers */
         if (input.y.held() && input.x.held()) { // 🔘 X and Y buttons
-            intakeWristServo.setPosition(1);
+            Constants.intakeWristServo.setPosition(1);
         }
         if (input.y.held() && !input.x.held()) { // 🔘 Y button
-            intakeWristServo.setPosition(0.5);
+            Constants.intakeWristServo.setPosition(0.5);
         }
 
         // ---------- Slide Movement ----------
 
         if (input.right_trigger.held()) { // 🔘 D-Pad right
-            if (slideMotor.getCurrentPosition() < 1455) {// Max Slide height is 1455 ticks
-                slideMotor.setTargetPosition(Math.min(slideMotor.getCurrentPosition() + slideTicks, 1455));
+            if (Constants.slideMotor.getCurrentPosition() < 1455) {// Min Slide height is 1455 ticks
+                Constants.slideMotor.setTargetPosition(Math.min(Constants.slideMotor.getCurrentPosition() + Constants.slideTicks, 1455));
             }
         }
         if (input.left_trigger.held()) { // 🔘 D-Pad left
-            if (slideMotor.getCurrentPosition() > 5) { // Min Slide height is 5 ticks
-                slideMotor.setTargetPosition(Math.max(slideMotor.getCurrentPosition() - slideTicks, 5));
+            if (Constants.slideMotor.getCurrentPosition() > 5) { // Min Slide height is 5 ticks
+                Constants.slideMotor.setTargetPosition(Math.max(Constants.slideMotor.getCurrentPosition() - Constants.slideTicks, 5));
             }
-        }
-
-        if (!input.left_trigger.held() && !input.right_trigger.held()){
-            slideMotor.setTargetPosition(slideMotor.getCurrentPosition());
         }
 
         // ---------- Tilt Movement ----------
 
         if (input.dpad_up.held()) { // 🔘 D-Pad up
-            if (tiltMotor.getCurrentPosition() < 2600) { // Max Tilt Height is 550 (1453) ticks
-                tiltMotor.setTargetPosition(Math.min(tiltMotor.getCurrentPosition() + armTicks, 2600));
+            if (Constants.tiltMotor.getCurrentPosition() < 1475) { // Max Tilt Height is 550 (1453) ticks
+                Constants.tiltMotor.setTargetPosition(Math.min(Constants.tiltMotor.getCurrentPosition() + Constants.armTicks, 1475));
             }
         }
 
         if (input.dpad_down.held()) { // 🔘 D-Pad down
-            if (tiltMotor.getCurrentPosition() > 75) { // Min Tilt Height is 82 ticks
-                tiltMotor.setTargetPosition(Math.max(tiltMotor.getCurrentPosition() - armTicks, 75));
+            if (Constants.tiltMotor.getCurrentPosition() > 75) { // Min Tilt Height is 82 ticks
+                Constants.tiltMotor.setTargetPosition(Math.max(Constants.tiltMotor.getCurrentPosition() - Constants.armTicks, 75));
             }
         }
 
         // Random testing position
       //  if (input.y){ // 🔘 Y button
-       //     tiltMotor.setTargetPosition(400);
+       //     Constants.tiltMotor.setTargetPosition(400);
        // }
 
 
         // ----------- Claw Movement -----------
 
         if (input.left_bumper.held()) {
-            leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
-            rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
-            leftClaw.setPower(1);
-            rightClaw.setPower(1);
+            Constants.leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+            Constants.rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+            Constants.leftClaw.setPower(1);
+            Constants.rightClaw.setPower(1);
         }
         if (input.right_bumper.held()) { // Claw controls made by Benny
-            leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
-            rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
-            leftClaw.setPower(1); // Debugged by Damien
-            rightClaw.setPower(1);
+            Constants.leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+            Constants.rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+            Constants.leftClaw.setPower(1); // Debugged by Damien
+            Constants.rightClaw.setPower(1);
         }
         if (!input.right_bumper.held() && !input.left_bumper.held()){
-            leftClaw.setPower(0);
-            rightClaw.setPower(0);
+            Constants.leftClaw.setPower(0);
+            Constants.rightClaw.setPower(0);
         }
 
         // ---------- Macros ------------
         if(input.a.held() && input.back.held()) {
-            if (slideMotor.getCurrentPosition() < 1455) {
-                slideMotor.setTargetPosition(1455);
+            if (Constants.slideMotor.getCurrentPosition() < 1455) {
+                Constants.slideMotor.setTargetPosition(1455);
             }
         }
 
         if(input.b.held() && input.back.held()) {
-            if (slideMotor.getCurrentPosition() > 5) {
-                slideMotor.setTargetPosition(5);
+            if (Constants.slideMotor.getCurrentPosition() > 5) {
+                Constants.slideMotor.setTargetPosition(5);
             }
         }
 
@@ -237,11 +199,11 @@ public class pinnacleTeleOp extends OpMode {
         telemetry.addData("Rotate Power: ", rotate);
 
         // ---------- Arm and Intake ----------
-        telemetry.addData("Slide Motor Power: ", slideMotor.getPower());
-        telemetry.addData("Tilt Motor Power: ", tiltMotor.getPower());
-        telemetry.addData("Current Tilt Position: ", tiltMotor.getCurrentPosition());
-        telemetry.addData("Current Slide Position ", slideMotor.getCurrentPosition());
-        telemetry.addData("Intake Spin Power: ", intakeCRServo.getDirection());
+        telemetry.addData("Slide Motor Power: ", Constants.slideMotor.getPower());
+        telemetry.addData("Tilt Motor Power: ", Constants.tiltMotor.getPower());
+        telemetry.addData("Current Tilt Position: ", Constants.tiltMotor.getCurrentPosition());
+        telemetry.addData("Current Slide Position ", Constants.slideMotor.getCurrentPosition());
+        telemetry.addData("Intake Spin Power: ", Constants.intakeCRServo.getDirection());
 
         // ---------- Update ----------
         telemetry.update();
@@ -253,12 +215,12 @@ public class pinnacleTeleOp extends OpMode {
     public void stop() {
 
         // ---------- Stops All Motors ----------
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-        slideMotor.setPower(0);
-        tiltMotor.setPower(0);
+        Constants.frontLeftMotor.setPower(0);
+        Constants.frontRightMotor.setPower(0);
+        Constants.backLeftMotor.setPower(0);
+        Constants.backRightMotor.setPower(0);
+        Constants.slideMotor.setPower(0);
+        Constants.tiltMotor.setPower(0);
 
     }
 

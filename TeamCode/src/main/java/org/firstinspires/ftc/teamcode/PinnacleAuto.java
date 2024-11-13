@@ -53,7 +53,7 @@ public class PinnacleAuto extends OpMode {
 
         // Make initial movements automatically so the arm doesn't drag against the ground.
         tiltMotor.setPower(1);
-        tiltMotor.setTargetPosition(300);
+        tiltMotor.setTargetPosition(250);
         setStartTime();
 
     }
@@ -63,7 +63,7 @@ public class PinnacleAuto extends OpMode {
 
         tiltMotor.setPower(.5);
 
-        if (tiltMotor.getCurrentPosition() >= 200) {
+        if (tiltMotor.getCurrentPosition() >= 250) {
 
             while (startTime - getRuntime() < 1.5) { // Move forward for 2.5 seconds.
                 frontLeftMotor.setPower(.5);
