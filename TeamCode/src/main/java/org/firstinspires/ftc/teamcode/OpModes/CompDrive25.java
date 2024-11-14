@@ -18,6 +18,7 @@ import static org.firstinspires.ftc.teamcode.OpModes.Constants.TiltLowBucket;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.TiltLowChamber;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.TiltMaxPosition;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.TiltMinPosition;
+import static org.firstinspires.ftc.teamcode.OpModes.Constants.TiltPickupPosition;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.TiltPower;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.TiltUpThreshold;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.WristCenter;
@@ -25,6 +26,7 @@ import static org.firstinspires.ftc.teamcode.OpModes.Constants.WristLeft;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.WristRight;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.armRetractingHighBasket;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.armRetractingHighChamber;
+import static org.firstinspires.ftc.teamcode.OpModes.Constants.armRetractingHome;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.armRetractingLowBasket;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.armRetractingLowChamber;
 import static org.firstinspires.ftc.teamcode.OpModes.Constants.climbPositionReached;
@@ -121,15 +123,31 @@ public class CompDrive25 extends OpMode {
 
         // ----------- Home -----------------
         if (gamepad1.left_stick_button) {
-            tiltMotor.setTargetPosition(TiltLowChamber);
-            slideMotor.setTargetPosition(SlideLowChamber);
-            intakeWristServo.setPosition(WristCenter);
+            armRetractingHome = true;
+        }
+
+        if(armRetractingHome){
+            switch(currentRetractionStep){
+                case(1):
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    if(Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50){
+                        currentRetractionStep++;
+                    }
+                    break;
+                case(2):
+                    tiltMotor.setTargetPosition(TiltLowChamber);
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    intakeWristServo.setPosition(WristCenter);
+                    currentRetractionStep = 1;
+                    armRetractingHome = false;
+                    break;
+            }
         }
 
         // ---------- Pickup ------------------
 
         if (gamepad1.right_stick_button ){
-            tiltMotor.setTargetPosition(TiltHomePosition);
+            tiltMotor.setTargetPosition(TiltPickupPosition);
             slideMotor.setTargetPosition(SlideMinPosition);
             intakeWristServo.setPosition(WristCenter);
         }
