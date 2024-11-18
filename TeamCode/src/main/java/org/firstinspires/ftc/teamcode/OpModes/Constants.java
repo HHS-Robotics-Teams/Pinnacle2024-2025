@@ -38,6 +38,11 @@ public class Constants {
     public static double WristCenter = .5;
     public static int WristRight = 0;
 
+    // rotate positions
+    public static int intakeleft = 0;
+
+    public static double intakeforward = .3;
+
     // Flags
     public static Boolean IntakeWristPositionReached = false;
     public static Boolean climbPositionReached = false;

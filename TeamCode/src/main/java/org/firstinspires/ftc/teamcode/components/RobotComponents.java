@@ -24,6 +24,7 @@ public class RobotComponents {
     public static CRServo leftClaw = null;
     public static CRServo rightClaw = null;
     public static Servo intakeWristServo = null;
+    public static Servo intakerotateServo = null;
 
     public static void init(HardwareMap hardwareMap) {
         // ---------- Wheels ----------
@@ -37,6 +38,7 @@ public class RobotComponents {
         tiltMotor = hardwareMap.get(DcMotor.class, "tilt_motor");
         intakeCRServo = hardwareMap.get(CRServo.class, "wheel_servo");
         intakeWristServo = hardwareMap.get(Servo.class, "wrist_servo");
+        intakerotateServo = hardwareMap.get(Servo.class, "rotate_sevo");
 
         // ---------- Claws ----------
         leftClaw = hardwareMap.get(CRServo.class, "left_claw");
