@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Constants.intakeCRServo;
+import static org.firstinspires.ftc.teamcode.Constants.intakeWristServo;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -31,8 +34,8 @@ public class pinnacleTeleOp extends OpMode {
         // ---------- Arm and Intake ----------
         Constants.slideMotor = hardwareMap.get(DcMotor.class, "slide_motor");
         Constants.tiltMotor = hardwareMap.get(DcMotor.class, "tilt_motor");
-        Constants.intakeCRServo = hardwareMap.get(CRServo.class, "wheel_servo");
-        Constants.intakeWristServo = hardwareMap.get(Servo.class, "wrist_servo");
+        intakeCRServo = hardwareMap.get(CRServo.class, "wheel_servo");
+        intakeWristServo = hardwareMap.get(Servo.class, "wrist_servo");
 
         // ---------- Claws ----------
         Constants.leftClaw = hardwareMap.get(CRServo.class, "left_claw");
@@ -102,24 +105,24 @@ public class pinnacleTeleOp extends OpMode {
         // ---------- Intake Wheel Servo ----------
         if (input.a.held() && !input.back.held()) { // 🔘 A button
             Constants.intakeCurrentPower = Constants.intakePower;
-            Constants.intakeCRServo.setDirection(DcMotorSimple.Direction.FORWARD);
+            intakeCRServo.setDirection(DcMotorSimple.Direction.FORWARD);
         } else if (input.b.held() && !input.back.held()) { // 🔘 B button
             Constants.intakeCurrentPower = Constants.intakePower;
-            Constants.intakeCRServo.setDirection(DcMotorSimple.Direction.REVERSE);
+            intakeCRServo.setDirection(DcMotorSimple.Direction.REVERSE);
         } else {
             Constants.intakeCurrentPower = 0;
         }
-        Constants.intakeCRServo.setPower(Constants.intakeCurrentPower);
+        intakeCRServo.setPower(Constants.intakeCurrentPower);
 
         // ---------- Intake Wrist Servo ----------
         if (input.x.held() && !input.y.held()) { // 🔘 X button
-            Constants.intakeWristServo.setPosition(0);
+            intakeWristServo.setPosition(0);
         } /* both trigger values are stated to prevent confusion between one trigger and both triggers */
         if (input.y.held() && input.x.held()) { // 🔘 X and Y buttons
-            Constants.intakeWristServo.setPosition(1);
+            intakeWristServo.setPosition(1);
         }
         if (input.y.held() && !input.x.held()) { // 🔘 Y button
-            Constants.intakeWristServo.setPosition(0.5);
+            intakeWristServo.setPosition(0.5);
         }
 
         // ---------- Slide Movement ----------
@@ -203,7 +206,7 @@ public class pinnacleTeleOp extends OpMode {
         telemetry.addData("Tilt Motor Power: ", Constants.tiltMotor.getPower());
         telemetry.addData("Current Tilt Position: ", Constants.tiltMotor.getCurrentPosition());
         telemetry.addData("Current Slide Position ", Constants.slideMotor.getCurrentPosition());
-        telemetry.addData("Intake Spin Power: ", Constants.intakeCRServo.getDirection());
+        telemetry.addData("Intake Spin Power: ", intakeCRServo.getDirection());
 
         // ---------- Update ----------
         telemetry.update();
