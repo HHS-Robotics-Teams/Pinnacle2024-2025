@@ -1,27 +1,32 @@
 package org.firstinspires.ftc.teamcode.Constants;
 
+import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class RobotHardware {
 
-    public static DcMotor frontLeftMotor = null;
-    public static DcMotor frontRightMotor = null;
-    public static DcMotor backLeftMotor = null;
-    public static DcMotor backRightMotor = null;
+    public static DcMotor frontLeftMotor;
+    public static DcMotor frontRightMotor;
+    public static DcMotor backLeftMotor;
+    public static DcMotor backRightMotor;
 
     // ---------- Intake + Arm Motors ----------
-    public static DcMotor tiltMotor = null;
-    public static DcMotor slideMotor = null;
-    public static CRServo intakeCRServo = null;
+    public static DcMotor tiltMotor;
+    public static DcMotor slideMotor;
+    public static CRServo intakeCRServo;
 
-    public static CRServo leftClaw = null;
-    public static CRServo rightClaw = null;
-    public static Servo intakeWristServo = null;
-    public static Servo intakerotateServo = null;
+    public static CRServo leftClaw;
+    public static CRServo rightClaw;
+    public static Servo intakeWristServo;
+
+    // public static Servo intakerotateServo;
+
+    public static BNO055IMU imu;
 
     public static void init(HardwareMap hardwareMap) {
         // ---------- Wheels ----------
@@ -40,6 +45,9 @@ public class RobotHardware {
         // ---------- Claws ----------
         leftClaw = hardwareMap.get(CRServo.class, "left_claw");
         rightClaw = hardwareMap.get(CRServo.class, "right_claw");
+
+        // ---------- IMU ----------
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         /* ============================== Hardware Settings Fixes ============================== */
 
