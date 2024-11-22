@@ -88,6 +88,10 @@ public class SampleMecanumDrive extends MecanumDrive {
             1f, 1f, 1f, 1f
     };
 
+    public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+    public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+
+
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
@@ -131,10 +135,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
         // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
-        front_left = hardwareMap.get(DcMotorEx.class, "front_left");
-        front_right = hardwareMap.get(DcMotorEx.class, "front_right");
-        back_left = hardwareMap.get(DcMotorEx.class, "back_left");
-        back_right = hardwareMap.get(DcMotorEx.class, "back_right");
+        front_left = hardwareMap.get(DcMotorEx.class, "front_left_motor");
+        front_right = hardwareMap.get(DcMotorEx.class, "front_right_motor");
+        back_left = hardwareMap.get(DcMotorEx.class, "back_left_motor");
+        back_right = hardwareMap.get(DcMotorEx.class, "back_right_motor");
 
         motors = Arrays.asList(front_left, back_left, front_right, back_right);
 

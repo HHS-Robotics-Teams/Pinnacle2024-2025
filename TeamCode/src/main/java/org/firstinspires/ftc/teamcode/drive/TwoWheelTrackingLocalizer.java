@@ -40,11 +40,11 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
     public static double WHEEL_RADIUS = 1; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double PARALLEL_X = -6.5; // X is the up and down direction
-    public static double PARALLEL_Y = 0; // Y is the strafe direction
+    public static double PARALLEL_X = 1.75; // X is the up and down direction
+    public static double PARALLEL_Y = -4.0; // Y is the strafe direction
 
-    public static double PERPENDICULAR_X = -4.5;
-    public static double PERPENDICULAR_Y = -3.75;
+    public static double PERPENDICULAR_X = 1;
+    public static double PERPENDICULAR_Y = 0.5;
 
     // Parallel/Perpendicular to the forward axis
     // Parallel wheel is parallel to the forward axis
@@ -53,8 +53,8 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
 
     private SampleMecanumDrive drive;
 
-    public static double X_MULTIPLIER = 1.0191082803; // Multiplier in the X direction
-    public static double Y_MULTIPLIER = 0.9776536313; // Multiplier in the Y direction
+    public static double X_MULTIPLIER = 1.1911124685042; // Multiplier in the X direction
+    public static double Y_MULTIPLIER = 1.001057524392; // Multiplier in the Y direction
 
     // back_right motor is perpendicular
     // front_left is parallel
@@ -67,8 +67,8 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
 
         this.drive = drive;
 
-        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "back_left"));
-        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "back_right"));
+        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "back_right_motor"));
+        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "back_left_motor"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
         parallelEncoder.setDirection(Encoder.Direction.REVERSE);
