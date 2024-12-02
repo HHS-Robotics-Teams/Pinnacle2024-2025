@@ -23,8 +23,8 @@ public class RobotHardware {
     public static CRServo leftClaw;
     public static CRServo rightClaw;
     public static Servo intakeWristServo;
+    public static Servo intakeElbowServo;
 
-    // public static Servo intakerotateServo;
 
     public static BNO055IMU imu;
 
@@ -40,7 +40,7 @@ public class RobotHardware {
         tiltMotor = hardwareMap.get(DcMotor.class, "tilt_motor");
         intakeCRServo = hardwareMap.get(CRServo.class, "wheel_servo");
         intakeWristServo = hardwareMap.get(Servo.class, "wrist_servo");
-        // intakerotateServo = hardwareMap.get(Servo.class, "rotate_sevo");
+        intakeElbowServo = hardwareMap.get(Servo.class, "elbow_servo");
 
         // ---------- Claws ----------
         leftClaw = hardwareMap.get(CRServo.class, "left_claw");

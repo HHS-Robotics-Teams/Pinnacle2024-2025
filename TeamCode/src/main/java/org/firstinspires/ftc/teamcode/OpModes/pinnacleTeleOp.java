@@ -31,11 +31,13 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingLowBa
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingLowChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.climbPositionReached;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentRetractionStep;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.specimenMode;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.backLeftMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.backRightMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.frontLeftMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.frontRightMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeCRServo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.leftClaw;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.rightClaw;
@@ -76,6 +78,7 @@ public class pinnacleTeleOp extends OpMode {
         tiltMotor.setTargetPosition(TiltMinPosition);
         slideMotor.setTargetPosition(SlideMinPosition);
         intakeWristServo.setPosition(WristLeft);
+        intakeElbowServo.setPosition(0.0);
 
     }
 
@@ -93,9 +96,9 @@ public class pinnacleTeleOp extends OpMode {
 
         // ---------- Slowdown While Arm Up ----------
         if (tiltMotor.getTargetPosition() >= TiltUpThreshold) {
-            rotate = rotate / 3;
-            strafe = strafe / 3;
-            drive = drive / 4;
+            rotate = rotate / 2;
+            strafe = strafe / 2;
+            drive = drive / 3;
         }
 
         // ---------- Wheel Calculations ----------
@@ -143,8 +146,7 @@ public class pinnacleTeleOp extends OpMode {
                     tiltMotor.setTargetPosition(TiltLowChamber);
                     slideMotor.setTargetPosition(SlideMinPosition);
                     intakeWristServo.setPosition(WristCenter);
-                    currentRetractionStep = 1;
-                    armRetractingHome = false;
+                    currentRetractionStep = 1; armRetractingHome = false;
                     break;
             }
         }
@@ -154,6 +156,7 @@ public class pinnacleTeleOp extends OpMode {
             tiltMotor.setTargetPosition(TiltPickupPosition);
             slideMotor.setTargetPosition(SlideMinPosition);
             intakeWristServo.setPosition(WristCenter);
+            intakeElbowServo.setPosition(0.5); specimenMode = true;
         }
 
         // ---------- Manual Arm Tilt ----------

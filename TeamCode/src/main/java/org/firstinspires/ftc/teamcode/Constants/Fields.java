@@ -36,10 +36,9 @@ public class Fields {
     public static double WristCenter = .5;
     public static int WristRight = 0;
 
-    // rotate positions
-    public static int intakeleft = 0;
-
-    public static double intakeforward = .3;
+    // Elbow positions
+    public static double ElbowStarting = 0.12;
+    public static double ElbowSpecimenScoring = 0.4;
 
     // Flags
     public static Boolean IntakeWristPositionReached = false;
@@ -49,6 +48,8 @@ public class Fields {
     public static Boolean armRetractingHighChamber  = false;
     public static Boolean armRetractingLowChamber  = false;
     public static Boolean armRetractingHome = false;
+    public static Boolean sampleMode = false;
+    public static Boolean specimenMode = false;
 
     //Finite state machine runners
     public static int currentRetractionStep = 1;

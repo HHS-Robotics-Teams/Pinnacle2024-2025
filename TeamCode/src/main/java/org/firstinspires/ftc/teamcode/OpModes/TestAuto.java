@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -19,6 +24,10 @@ public class TestAuto extends LinearOpMode {
 
         // Build a simple trajectory
         Trajectory forwardTrajectory = drive.trajectoryBuilder(startPose)
+                .addDisplacementMarker(() -> {
+                    tiltMotor.setTargetPosition(TiltHighChamber);
+                    slideMotor.setTargetPosition(SlideHighChamber);
+        })
                 .forward(24) // Move forward 24 inches
                 .build();
 
