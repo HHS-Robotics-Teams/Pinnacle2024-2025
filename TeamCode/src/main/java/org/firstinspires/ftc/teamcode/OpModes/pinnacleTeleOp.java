@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 // Look at all these import statements :3
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowSpecimenScoring;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowStarting;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakeCurrentPower;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakePower;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakeRotateThreshold;
@@ -14,6 +16,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlidePower;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltLowBucket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltLowChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMaxPosition;
@@ -24,6 +27,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltUpThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSpecimenWallPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHighBasket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHome;
@@ -78,7 +82,7 @@ public class pinnacleTeleOp extends OpMode {
         tiltMotor.setTargetPosition(TiltMinPosition);
         slideMotor.setTargetPosition(SlideMinPosition);
         intakeWristServo.setPosition(WristLeft);
-        intakeElbowServo.setPosition(0.0);
+        intakeElbowServo.setPosition(ElbowStarting);
 
     }
 
@@ -143,20 +147,21 @@ public class pinnacleTeleOp extends OpMode {
                     break;
 
                 case (2):
-                    tiltMotor.setTargetPosition(TiltLowChamber);
+                    tiltMotor.setTargetPosition(TiltHomePosition);
                     slideMotor.setTargetPosition(SlideMinPosition);
                     intakeWristServo.setPosition(WristCenter);
+                    intakeElbowServo.setPosition(ElbowStarting);
                     currentRetractionStep = 1; armRetractingHome = false;
                     break;
             }
         }
 
-        // ---------- Pickup ----------
+        // ---------- Specimen Wall Pickup ----------
         if (gamepad1.right_stick_button) {
             tiltMotor.setTargetPosition(TiltPickupPosition);
             slideMotor.setTargetPosition(SlideMinPosition);
-            intakeWristServo.setPosition(WristCenter);
-            intakeElbowServo.setPosition(0.5); specimenMode = true;
+            intakeWristServo.setPosition(WristSpecimenWallPickup);
+            intakeElbowServo.setPosition(ElbowSpecimenScoring); specimenMode = true;
         }
 
         // ---------- Manual Arm Tilt ----------
@@ -220,6 +225,7 @@ public class pinnacleTeleOp extends OpMode {
                     tiltMotor.setTargetPosition(TiltHighBucket);
                     intakeWristServo.setPosition(WristCenter);
                     slideMotor.setTargetPosition(SlideHighBucket);
+                    intakeElbowServo.setPosition(ElbowStarting);
                     currentRetractionStep = 1;
                     armRetractingHighBasket = false;
                     break;
@@ -246,6 +252,7 @@ public class pinnacleTeleOp extends OpMode {
                     tiltMotor.setTargetPosition(TiltLowBucket);
                     intakeWristServo.setPosition(WristCenter);
                     slideMotor.setTargetPosition(SlideLowBucket);
+                    intakeElbowServo.setPosition(ElbowStarting);
                     armRetractingLowBasket = false;
                     break;
             }
@@ -270,8 +277,9 @@ public class pinnacleTeleOp extends OpMode {
                 case(2):
                     slideMotor.setTargetPosition(SlideMinPosition);
                     tiltMotor.setTargetPosition(TiltHighChamber);
-                    intakeWristServo.setPosition(WristLeft);
+                    intakeWristServo.setPosition(WristCenter);
                     slideMotor.setTargetPosition(SlideHighChamber);
+                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
                     armRetractingHighChamber = false;
                     break;
             }
@@ -297,8 +305,9 @@ public class pinnacleTeleOp extends OpMode {
                 case (2):
                     slideMotor.setTargetPosition(SlideMinPosition);
                     tiltMotor.setTargetPosition(TiltLowBucket);
-                    intakeWristServo.setPosition(WristLeft);
+                    intakeWristServo.setPosition(WristCenter);
                     slideMotor.setTargetPosition(SlideLowChamber);
+                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
                     armRetractingLowChamber = false;
                     break;
             }

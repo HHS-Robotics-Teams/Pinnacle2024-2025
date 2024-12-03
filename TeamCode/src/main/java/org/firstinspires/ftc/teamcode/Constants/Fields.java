@@ -10,8 +10,8 @@ public class Fields {
     // tilt motor positions
     public static int ArmTicks = 100;
     public static int IntakeRotateThreshold = 100;
-    public static int TiltHomePosition = 60;
-    public static int TiltPickupPosition = 90;
+    public static int TiltHomePosition = 650;
+    public static int TiltPickupPosition = 650;
     public static int TiltStartPosition = 0;
     public static int TiltMinPosition = 75;
     public static int TiltMaxPosition = 2600;
@@ -32,13 +32,15 @@ public class Fields {
     public static int SlideLowBucket = 50;
 
     // Wrist Positions
-    public static int WristLeft = 1;
+    public static double WristLeft = 1.0;
     public static double WristCenter = .5;
-    public static int WristRight = 0;
+    public static double WristRight = 0.0;
+    public static double WristSpecimenWallPickup = 0.55;
 
     // Elbow positions
-    public static double ElbowStarting = 0.12;
-    public static double ElbowSpecimenScoring = 0.4;
+    public static double ElbowStarting = 0.4;
+    public static double ElbowSpecimenScoring = 0.12;
+
 
     // Flags
     public static Boolean IntakeWristPositionReached = false;
