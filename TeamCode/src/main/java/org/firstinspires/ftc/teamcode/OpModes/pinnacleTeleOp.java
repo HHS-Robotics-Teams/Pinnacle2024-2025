@@ -127,12 +127,9 @@ public class pinnacleTeleOp extends OpMode {
             intakeWristServo.setPosition(WristCenter);
         }
 
-
-
         /* ============================== Robot Controls ============================== */
 
         // ---------- Home ----------
-
         if (gamepad1.left_stick_button) {
             armRetractingHome = true;
         }
@@ -184,7 +181,7 @@ public class pinnacleTeleOp extends OpMode {
 
         // ---------- Intake Wrist Servo ----------
         if (input.dpad_left.down() && IntakeWristPositionReached) {
-            intakeWristServo.setPosition(WristLeft);
+            intakeWristServo.setPosition(WristCenter);
         }
 
         if (input.dpad_right.down() && IntakeWristPositionReached) {
@@ -202,7 +199,6 @@ public class pinnacleTeleOp extends OpMode {
             IntakeCurrentPower = 0;
         }
         intakeCRServo.setPower(IntakeCurrentPower);
-
 
         /* ============================== Scoring ============================== */
 
