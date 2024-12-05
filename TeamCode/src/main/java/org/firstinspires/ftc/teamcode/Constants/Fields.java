@@ -11,10 +11,10 @@ public class Fields {
     public static int ArmTicks = 100;
     public static int IntakeRotateThreshold = 100;
     public static int TiltHomePosition = 650;
-    public static int TiltPickupPosition = 650;
+    public static int TiltPickupPosition = 625;
     public static int TiltStartPosition = 0;
     public static int TiltMinPosition = 75;
-    public static int TiltMaxPosition = 2600;
+    public static int TiltMaxPosition = 1700;
     public static int TiltUpThreshold = 1000;
     public static int TiltHighChamber = 1245;
     public static int TiltLowChamber = 500;

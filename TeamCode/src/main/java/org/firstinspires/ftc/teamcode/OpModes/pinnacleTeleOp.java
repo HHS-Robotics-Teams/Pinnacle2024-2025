@@ -189,10 +189,10 @@ public class pinnacleTeleOp extends OpMode {
         }
 
         // ---------- Intake Wheel Servo ----------
-        if (input.right_bumper.held()) { //
+        if (input.right_trigger.held()) { //
             IntakeCurrentPower = IntakePower;
             intakeCRServo.setDirection(DcMotorSimple.Direction.REVERSE);
-        } else if (input.right_trigger.held()) {
+        } else if (input.right_bumper.held()) {
             IntakeCurrentPower = IntakePower;
             intakeCRServo.setDirection(DcMotorSimple.Direction.FORWARD);
         } else {

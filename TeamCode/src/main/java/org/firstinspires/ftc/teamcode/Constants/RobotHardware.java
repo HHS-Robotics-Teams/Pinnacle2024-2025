@@ -26,7 +26,7 @@ public class RobotHardware {
     public static Servo intakeElbowServo;
 
 
-    public static BNO055IMU imu;
+    public static BHI260IMU imu;
 
     public static void init(HardwareMap hardwareMap) {
         // ---------- Wheels ----------
@@ -47,7 +47,7 @@ public class RobotHardware {
         rightClaw = hardwareMap.get(CRServo.class, "right_claw");
 
         // ---------- IMU ----------
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu = hardwareMap.get(BHI260IMU.class, "imu");
 
         /* ============================== Hardware Settings Fixes ============================== */
 
