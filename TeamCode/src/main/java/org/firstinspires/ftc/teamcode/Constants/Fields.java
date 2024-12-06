@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.Constants;
 
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeCRServo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
+
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 public class Fields {
     // motor powers
     public static double IntakePower = 1;
@@ -11,7 +17,7 @@ public class Fields {
     public static int ArmTicks = 100;
     public static int IntakeRotateThreshold = 100;
     public static int TiltHomePosition = 650;
-    public static int TiltPickupPosition = 625;
+    public static int TiltPickupPosition = 474;
     public static int TiltStartPosition = 0;
     public static int TiltMinPosition = 75;
     public static int TiltMaxPosition = 1700;
@@ -35,12 +41,11 @@ public class Fields {
     public static double WristLeft = 1.0;
     public static double WristCenter = .5;
     public static double WristRight = 0.0;
-    public static double WristSpecimenWallPickup = 0.55;
+    public static double WristSpecimenWallPickup = 0.54;
 
     // Elbow positions
     public static double ElbowStarting = 0.4;
     public static double ElbowSpecimenScoring = 0.12;
-
 
     // Flags
     public static Boolean IntakeWristPositionReached = false;
@@ -55,5 +60,11 @@ public class Fields {
 
     //Finite state machine runners
     public static int currentRetractionStep = 1;
+
+
+    public static void applyPowers() {
+        tiltMotor.setPower(1);
+        slideMotor.setPower(1);
+    }
 
 }
