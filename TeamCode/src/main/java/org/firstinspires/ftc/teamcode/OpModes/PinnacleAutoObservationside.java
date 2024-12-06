@@ -55,7 +55,7 @@ public class PinnacleAutoObservationside extends LinearOpMode {
                     tiltMotor.setTargetPosition(TiltHighChamber);
                     slideMotor.setTargetPosition(SlideHighChamber);
                 })
-                .forward(20.25)
+                .forward(20.1)
                 .addDisplacementMarker(() -> {
                     intakeWristServo.setPosition(WristRight);
                     slideMotor.setTargetPosition(SlideHighChamber);
@@ -68,7 +68,7 @@ public class PinnacleAutoObservationside extends LinearOpMode {
                     intakeWristServo.setPosition(WristSpecimenWallPickup);
                 })
                 .turn(Math.toRadians(90))
-                .forward(50)
+                .back(50)
                 .addDisplacementMarker(() -> {
                     tiltMotor.setTargetPosition(TiltMinPosition);
                     slideMotor.setTargetPosition(SlideMinPosition);
@@ -76,7 +76,7 @@ public class PinnacleAutoObservationside extends LinearOpMode {
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
                 })
                 .turn(Math.toRadians(-90))
-                .back(5)
+                .back(7)
                 .build();
 
         waitForStart();

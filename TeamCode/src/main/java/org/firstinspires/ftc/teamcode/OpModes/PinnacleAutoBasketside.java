@@ -55,27 +55,26 @@ public class PinnacleAutoBasketside extends LinearOpMode {
                     tiltMotor.setTargetPosition(TiltHighChamber);
                     slideMotor.setTargetPosition(SlideHighChamber);
                 })
-                .forward(20.25)
+                .forward(20.5)
                 .addDisplacementMarker(() -> {
                     intakeWristServo.setPosition(WristRight);
                     slideMotor.setTargetPosition(SlideHighChamber);
                 })
-                .back(20)
+                .back(23)
                 .addDisplacementMarker(() -> {
                     slideMotor.setTargetPosition(SlideMinPosition);
                     tiltMotor.setTargetPosition(350);
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
                     intakeWristServo.setPosition(WristSpecimenWallPickup);
                 })
-                .turn(Math.toRadians(-90))
-                .forward(48)
+                .turn(Math.toRadians(90))
+                .back(50)
                 .addDisplacementMarker(() -> {
                     tiltMotor.setTargetPosition(TiltMinPosition);
                     slideMotor.setTargetPosition(SlideMinPosition);
                     intakeWristServo.setPosition(WristLeft);
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
                 })
-                .turn(Math.toRadians(-90))
                 .build();
 
         waitForStart();
