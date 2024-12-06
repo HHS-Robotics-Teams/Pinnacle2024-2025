@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "Test Auto", group = "idk")
+@Autonomous(name = "Pinnacle Basketside Auto", group = "idk")
 public class PinnacleAutoBasketside extends LinearOpMode {
 
     @Override

@@ -56,7 +56,7 @@ import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 
 @TeleOp(name = "Pinnacle TeleOp", group = "idk")
-public class pinnacleTeleOp extends OpMode {
+public class PinnacleTeleOp extends OpMode {
 
     public Input input;
 
