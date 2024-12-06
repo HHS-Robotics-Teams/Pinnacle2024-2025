@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Autonomous(name="Pinnacle Auto", group="idk")
-public class PinnacleAuto extends OpMode {
+public class OldAuto extends OpMode {
 
     double startTime;
 

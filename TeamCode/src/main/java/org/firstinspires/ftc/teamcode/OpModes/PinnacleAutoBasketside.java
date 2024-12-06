@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name = "Test Auto", group = "idk")
-public class TestAuto extends LinearOpMode {
+public class PinnacleAutoBasketside extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -75,6 +75,7 @@ public class TestAuto extends LinearOpMode {
                     intakeWristServo.setPosition(WristLeft);
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
                 })
+                .turn(Math.toRadians(-90))
                 .build();
 
         waitForStart();
