@@ -50,30 +50,36 @@ public class PinnacleAutoBasketside extends LinearOpMode {
 
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
                 .addDisplacementMarker(() -> {
-                    tiltMotor.setTargetPosition(TiltHighChamber);
-                })
-                .addDisplacementMarker(() -> {
-                    slideMotor.setTargetPosition(SlideHighChamber);
-                })
-                .forward(19)
-                .addDisplacementMarker(() -> {
-                    intakeWristServo.setPosition(WristRight);
-                })
-                .addDisplacementMarker(() -> {
-                    slideMotor.setTargetPosition(SlideHighChamber);
-                })
-                .back(23)
-                .addDisplacementMarker(() -> {
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
                 })
                 .addDisplacementMarker(() -> {
                     intakeWristServo.setPosition(WristSpecimenWallPickup);
                 })
                 .addDisplacementMarker(() -> {
+                    slideMotor.setTargetPosition(SlideHighChamber);
+                })
+                .addDisplacementMarker(() -> {
+                    tiltMotor.setTargetPosition(TiltHighChamber);
+                })
+                .forward(19-.15)
+                .addDisplacementMarker(() -> {
+                    slideMotor.setTargetPosition(SlideHighChamber);
+                })
+                .addDisplacementMarker(() -> {
+                    intakeWristServo.setPosition(WristRight);
+                })
+                .back(20)
+                .addDisplacementMarker(() -> {
                     slideMotor.setTargetPosition(SlideMinPosition);
                 })
                 .addDisplacementMarker(() -> {
                     tiltMotor.setTargetPosition(350);
+                })
+                .addDisplacementMarker(() -> {
+                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                })
+                .addDisplacementMarker(() -> {
+                    intakeWristServo.setPosition(WristSpecimenWallPickup);
                 })
                 .turn(Math.toRadians(90))
                 .back(50)

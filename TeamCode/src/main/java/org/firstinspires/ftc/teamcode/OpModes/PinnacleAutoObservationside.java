@@ -43,6 +43,8 @@ public class PinnacleAutoObservationside extends LinearOpMode {
             tiltMotor.setTargetPosition(TiltMinPosition);
             slideMotor.setTargetPosition(0);
         }
+
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         Pose2d startPose = new Pose2d(11, 61, Math.toRadians(90));
@@ -61,7 +63,7 @@ public class PinnacleAutoObservationside extends LinearOpMode {
                 .addDisplacementMarker(() -> {
                     tiltMotor.setTargetPosition(TiltHighChamber);
                 })
-                .forward(19)
+                .forward(19 - 2)
                 .addDisplacementMarker(() -> {
                     slideMotor.setTargetPosition(SlideHighChamber);
                 })
@@ -85,6 +87,8 @@ public class PinnacleAutoObservationside extends LinearOpMode {
                 .back(50)
                 .addDisplacementMarker(() -> {
                     tiltMotor.setTargetPosition(TiltMinPosition);
+                })
+                .addDisplacementMarker(() -> {
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
                 })
                 .addDisplacementMarker(() -> {
