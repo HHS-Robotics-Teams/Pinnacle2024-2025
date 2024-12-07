@@ -50,30 +50,44 @@ public class PinnacleAutoBasketside extends LinearOpMode {
 
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
                 .addDisplacementMarker(() -> {
-                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
-                    intakeWristServo.setPosition(WristSpecimenWallPickup);
                     tiltMotor.setTargetPosition(TiltHighChamber);
+                })
+                .addDisplacementMarker(() -> {
                     slideMotor.setTargetPosition(SlideHighChamber);
                 })
-                .forward(20.5)
+                .forward(19)
                 .addDisplacementMarker(() -> {
                     intakeWristServo.setPosition(WristRight);
+                })
+                .addDisplacementMarker(() -> {
                     slideMotor.setTargetPosition(SlideHighChamber);
                 })
                 .back(23)
                 .addDisplacementMarker(() -> {
-                    slideMotor.setTargetPosition(SlideMinPosition);
-                    tiltMotor.setTargetPosition(350);
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                })
+                .addDisplacementMarker(() -> {
                     intakeWristServo.setPosition(WristSpecimenWallPickup);
+                })
+                .addDisplacementMarker(() -> {
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                })
+                .addDisplacementMarker(() -> {
+                    tiltMotor.setTargetPosition(350);
                 })
                 .turn(Math.toRadians(90))
                 .back(50)
                 .addDisplacementMarker(() -> {
-                    tiltMotor.setTargetPosition(TiltMinPosition);
-                    slideMotor.setTargetPosition(SlideMinPosition);
                     intakeWristServo.setPosition(WristLeft);
+                })
+                .addDisplacementMarker(() -> {
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                })
+                .addDisplacementMarker(() -> {
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                })
+                .addDisplacementMarker(() -> {
+                    tiltMotor.setTargetPosition(TiltMinPosition);
                 })
                 .build();
 

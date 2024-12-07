@@ -17,7 +17,7 @@ public class Fields {
     public static int ArmTicks = 100;
     public static int IntakeRotateThreshold = 100;
     public static int TiltHomePosition = 650;
-    public static int TiltPickupPosition = 474;
+    public static int TiltPickupPosition = 495;
     public static int TiltStartPosition = 0;
     public static int TiltMinPosition = 75;
     public static int TiltMaxPosition = 1700;
@@ -64,7 +64,7 @@ public class Fields {
 
     public static void applyPowers() {
         tiltMotor.setPower(1);
-        slideMotor.setPower(1);
+        slideMotor.setPower(.8);
     }
 
 }

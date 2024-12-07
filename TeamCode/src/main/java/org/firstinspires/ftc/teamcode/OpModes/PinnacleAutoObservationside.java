@@ -51,29 +51,50 @@ public class PinnacleAutoObservationside extends LinearOpMode {
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
                 .addDisplacementMarker(() -> {
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                })
+                .addDisplacementMarker(() -> {
                     intakeWristServo.setPosition(WristSpecimenWallPickup);
-                    tiltMotor.setTargetPosition(TiltHighChamber);
+                })
+                .addDisplacementMarker(() -> {
                     slideMotor.setTargetPosition(SlideHighChamber);
                 })
-                .forward(20.1)
+                .addDisplacementMarker(() -> {
+                    tiltMotor.setTargetPosition(TiltHighChamber);
+                })
+                .forward(19)
+                .addDisplacementMarker(() -> {
+                    slideMotor.setTargetPosition(SlideHighChamber);
+                })
                 .addDisplacementMarker(() -> {
                     intakeWristServo.setPosition(WristRight);
-                    slideMotor.setTargetPosition(SlideHighChamber);
                 })
                 .back(20)
                 .addDisplacementMarker(() -> {
                     slideMotor.setTargetPosition(SlideMinPosition);
+                })
+                .addDisplacementMarker(() -> {
                     tiltMotor.setTargetPosition(350);
+                })
+                .addDisplacementMarker(() -> {
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                })
+                .addDisplacementMarker(() -> {
                     intakeWristServo.setPosition(WristSpecimenWallPickup);
                 })
                 .turn(Math.toRadians(90))
                 .back(50)
                 .addDisplacementMarker(() -> {
                     tiltMotor.setTargetPosition(TiltMinPosition);
-                    slideMotor.setTargetPosition(SlideMinPosition);
-                    intakeWristServo.setPosition(WristLeft);
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                })
+                .addDisplacementMarker(() -> {
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                })
+                .addDisplacementMarker(() -> {
+                    intakeWristServo.setPosition(WristLeft);
+                })
+                .addDisplacementMarker(() -> {
+
                 })
                 .turn(Math.toRadians(-90))
                 .back(7)

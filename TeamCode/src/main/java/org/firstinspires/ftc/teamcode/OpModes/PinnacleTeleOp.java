@@ -18,6 +18,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltLowBucket;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltLowChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMaxPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltPickupPosition;
@@ -81,7 +82,7 @@ public class PinnacleTeleOp extends OpMode {
         tiltMotor.setTargetPosition(TiltMinPosition);
         slideMotor.setTargetPosition(SlideMinPosition);
         intakeWristServo.setPosition(WristLeft);
-        intakeElbowServo.setPosition(ElbowStarting);
+        intakeElbowServo.setPosition(ElbowSpecimenScoring);
 
     }
 
@@ -271,9 +272,9 @@ public class PinnacleTeleOp extends OpMode {
                     break;
                 case(2):
                     slideMotor.setTargetPosition(SlideMinPosition);
-                    tiltMotor.setTargetPosition(TiltHighChamber);
+                    tiltMotor.setTargetPosition(TiltLowChamber);
                     intakeWristServo.setPosition(WristCenter);
-                    slideMotor.setTargetPosition(SlideHighChamber);
+                    slideMotor.setTargetPosition(SlideLowChamber);
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
                     armRetractingHighChamber = false;
                     break;
@@ -310,14 +311,15 @@ public class PinnacleTeleOp extends OpMode {
 
         /* ============================== Climbing ============================== */
 
-        if (input.back.held()) {
+        if (input.start.held()) {
+            tiltMotor.setTargetPosition(TiltLowBucket);
             leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
             rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
             leftClaw.setPower(1);
             rightClaw.setPower(1);
 
             telemetry.speak("climb position reached");
-        } else if (input.start.held()) { // Claw controls made by Benny
+        } else if (input.back.held()) { // Claw controls made by Benny
             leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
             rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
             leftClaw.setPower(1); // Debugged by Damien
