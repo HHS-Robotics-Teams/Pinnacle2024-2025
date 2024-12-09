@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OpModes.Auto;
 
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowSpecimenScoring;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowStarting;
@@ -28,8 +28,8 @@ import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "Pinnacle Observationside Auto", group = "idk")
-public class PinnacleAutoObservationside extends LinearOpMode {
+@Autonomous(name = "Pinnacle Basketside Auto", group = "idk")
+public class PinnacleAutoBasketside extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -43,11 +43,9 @@ public class PinnacleAutoObservationside extends LinearOpMode {
             tiltMotor.setTargetPosition(TiltMinPosition);
             slideMotor.setTargetPosition(0);
         }
-
-
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(11, 61, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(11, 61, Math.toRadians(-90));
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
@@ -63,7 +61,7 @@ public class PinnacleAutoObservationside extends LinearOpMode {
                 .addDisplacementMarker(() -> {
                     tiltMotor.setTargetPosition(TiltHighChamber);
                 })
-                .forward(19 - 2)
+                .forward(19-.15)
                 .addDisplacementMarker(() -> {
                     slideMotor.setTargetPosition(SlideHighChamber);
                 })
@@ -86,7 +84,7 @@ public class PinnacleAutoObservationside extends LinearOpMode {
                 .turn(Math.toRadians(90))
                 .back(50)
                 .addDisplacementMarker(() -> {
-                    tiltMotor.setTargetPosition(TiltMinPosition);
+                    intakeWristServo.setPosition(WristLeft);
                 })
                 .addDisplacementMarker(() -> {
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
@@ -95,13 +93,8 @@ public class PinnacleAutoObservationside extends LinearOpMode {
                     slideMotor.setTargetPosition(SlideMinPosition);
                 })
                 .addDisplacementMarker(() -> {
-                    intakeWristServo.setPosition(WristLeft);
+                    tiltMotor.setTargetPosition(TiltMinPosition);
                 })
-                .addDisplacementMarker(() -> {
-
-                })
-                .turn(Math.toRadians(-90))
-                .back(7)
                 .build();
 
         waitForStart();

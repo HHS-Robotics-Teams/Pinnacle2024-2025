@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OpModes.Telop;
 
 // Look at all these import statements :3
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowSpecimenScoring;
