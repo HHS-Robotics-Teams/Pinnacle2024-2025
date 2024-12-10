@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 
-@TeleOp(name = "Intake Elbow Testing", group = "idk")
+@TeleOp(name = "Intake Elbow Testing", group = "testing")
 public class IntakeElbowTesting extends OpMode {
 
     public Input input;

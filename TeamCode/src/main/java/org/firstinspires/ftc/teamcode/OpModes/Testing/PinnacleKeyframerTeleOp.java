@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.Telop;
+package org.firstinspires.ftc.teamcode.OpModes.Testing;
 
 // Look at all these import statements :3
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowSpecimenScoring;
@@ -8,14 +8,12 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakePower;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakeRotateThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakeWristPositionReached;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighBucket;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideLowBucket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideLowChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMaxPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlidePower;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucket;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltLowBucket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltLowChamber;
@@ -47,18 +45,33 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.leftClaw;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.rightClaw;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
+import static org.firstinspires.ftc.teamcode.OpModes.Auto.PinnacleAutoObservationside.START_POSE;
+import static org.firstinspires.ftc.teamcode.excutil.keyframer.Keyframer.component;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ReadWriteFile;
 
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
+import org.firstinspires.ftc.teamcode.OpModes.Auto.PinnacleAutoObservationside;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.excutil.Input;
+import org.firstinspires.ftc.teamcode.excutil.keyframer.Keyframer;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 
-@TeleOp(name = "Pinnacle TeleOp", group = "competition")
-public class PinnacleTeleOp extends OpMode {
+@TeleOp(name = "Keyframing", group = "util")
+public class PinnacleKeyframerTeleOp extends OpMode {
 
     public Input input;
+    public Input input2;
+
+    public Keyframer keyframer;
+
+    SampleMecanumDrive driveClass;
 
     @Override
     public void init() {
@@ -67,15 +80,28 @@ public class PinnacleTeleOp extends OpMode {
 
         // ---------- Input Class ----------
         input = new Input();
+        input2 = new Input();
 
         // ---------- Map Hardware ----------
         RobotHardware.init(hardwareMap);
+
+        driveClass  = new SampleMecanumDrive(hardwareMap);
+
+        keyframer = new Keyframer(
+                driveClass,
+                component("Tilt Motor", tiltMotor),
+                component("Slide Motor", slideMotor),
+                component("Intake Wrist Servo", intakeWristServo),
+                component("Intake Elbow Servo", intakeElbowServo)
+        );
 
         // ---------- Confirmation Printing ----------
         telemetry.addData("Status:", "✅ Robot is initialized.");
         telemetry.update();
 
     }
+
+
 
     @Override
     public void start() {
@@ -86,12 +112,76 @@ public class PinnacleTeleOp extends OpMode {
         intakeWristServo.setPosition(WristLeft);
         intakeElbowServo.setPosition(ElbowSpecimenScoring);
 
+        driveClass.setPoseEstimate(START_POSE);
+
     }
+
+    boolean inKeyframeMode = false;
+
+    String tempMessage = "";
+    long tempMessageStarted = 0;
+
+    void showTempMessage(String what) {
+        tempMessage = what;
+        tempMessageStarted = System.currentTimeMillis();
+    }
+
 
     @Override
     public void loop() {
 
+
+        driveClass.update();
+
+
         input.pollGamepad(gamepad1); // Pass gamepad input through custom class
+        input2.pollGamepad(gamepad2);
+
+
+
+        if (input.guide.down()) {
+            inKeyframeMode = !inKeyframeMode;
+            if (keyframer.keyframes.isEmpty()) {
+                keyframer.takeKeyframe();
+            }
+        }
+
+
+
+
+
+        if (inKeyframeMode) {
+            if (input.start.down()) {
+                keyframer.clearKeyframes();
+                keyframer.takeKeyframe();
+                showTempMessage("Reset keyframes");
+            }
+
+            if (input.dpad_right.down()) {
+                keyframer.takeKeyframe();
+                showTempMessage("Took a keyframe");
+            }
+
+            if (input.dpad_left.down()) {
+                keyframer.popKeyframe();
+                showTempMessage("Deleted last keyframe");
+            }
+
+            if (input.dpad_down.down()) {
+                keyframer.export();
+            }
+
+
+            telemetry.addData("Mode", "Keyframing");
+            telemetry.addData("# Keyframes", keyframer.keyframes.size());
+            if (tempMessageStarted + 3_500 > System.currentTimeMillis()) {
+                telemetry.addData("Note", tempMessage);
+            }
+
+            telemetry.update();
+
+            return;
+        }
 
         /* ============================== Driving and Wheels ============================== */
 
@@ -122,6 +212,8 @@ public class PinnacleTeleOp extends OpMode {
         // ---------- Set Arm and Intake Power ----------
         tiltMotor.setPower(TiltPower);
         slideMotor.setPower(SlidePower);
+
+
 
         // ---------- Arm Flags ----------
         if (tiltMotor.getCurrentPosition() <= IntakeRotateThreshold) {
@@ -352,6 +444,12 @@ public class PinnacleTeleOp extends OpMode {
         // ---------- Flags -----------
         telemetry.addData("Climb control status", climbPositionReached ? "True" : "False");
         telemetry.addData("Wrist control status", IntakeWristPositionReached ? "True" : "False");
+
+        // ----- Moving -----
+
+
+
+
 
         // ---------- Update ----------
         telemetry.update();

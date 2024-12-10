@@ -80,6 +80,7 @@ public class Input {
 
     public ButtonState back = new ButtonState();
     public ButtonState start = new ButtonState();
+    public ButtonState guide = new ButtonState();
 
     /**
      * @see #pollGamepad(Gamepad)
@@ -111,6 +112,7 @@ public class Input {
 
         updateState(back, gamepad.back);
         updateState(start, gamepad.start);
+        updateState(guide, gamepad.guide);
     }
 
     private void updateState(ButtonState state, boolean heldNow) {

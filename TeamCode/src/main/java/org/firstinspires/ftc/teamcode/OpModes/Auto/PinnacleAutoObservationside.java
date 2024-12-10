@@ -31,6 +31,8 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 @Autonomous(name = "Pinnacle Observationside Auto", group = "idk")
 public class PinnacleAutoObservationside extends LinearOpMode {
 
+    public static final Pose2d START_POSE = new Pose2d(11, 61, Math.toRadians(90));
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -47,7 +49,7 @@ public class PinnacleAutoObservationside extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(11, 61, Math.toRadians(90));
+        Pose2d startPose = START_POSE;
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
