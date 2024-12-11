@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Constants;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.batteryVoltageSensor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeCRServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
@@ -61,10 +63,25 @@ public class Fields {
     //Finite state machine runners
     public static int currentRetractionStep = 1;
 
-
     public static void applyPowers() {
         tiltMotor.setPower(1);
         slideMotor.setPower(.8);
     }
+
+    // Battery Voltage Multiplier
+        /* BVM stands for battery voltage multiplier. It will be used to extend all distances and
+        * rotations for the robot. BVM = ideal battery voltage divided by current battery voltage.
+        * BVM = idealBatteryV/actualVoltage
+        */
+    public static final double IDEALBATTERYV = 14.0;
+    public static double BVM;
+
+    public static void applyBVM() {
+        double actualVoltage = batteryVoltageSensor.getVoltage();
+        BVM = IDEALBATTERYV / actualVoltage;
+        telemetry.addData("battery volatage", batteryVoltageSensor.getVoltage());
+        telemetry.addData("BVM", BVM);
+    }
+
 
 }

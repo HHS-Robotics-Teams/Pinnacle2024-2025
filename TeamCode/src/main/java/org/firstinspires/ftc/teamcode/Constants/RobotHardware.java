@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class RobotHardware {
 
@@ -24,6 +25,7 @@ public class RobotHardware {
     public static CRServo rightClaw;
     public static Servo intakeWristServo;
     public static Servo intakeElbowServo;
+    public static VoltageSensor batteryVoltageSensor;
 
 
     public static BHI260IMU imu;
@@ -45,6 +47,9 @@ public class RobotHardware {
         // ---------- Claws ----------
         leftClaw = hardwareMap.get(CRServo.class, "left_claw");
         rightClaw = hardwareMap.get(CRServo.class, "right_claw");
+
+        // ---------- Battery Voltage -----------
+        batteryVoltageSensor = hardwareMap.voltageSensor.get("Control Hub");
 
         // ---------- IMU ----------
         imu = hardwareMap.get(BHI260IMU.class, "imu");

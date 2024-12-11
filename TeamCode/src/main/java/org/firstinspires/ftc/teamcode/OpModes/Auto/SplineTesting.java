@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode.OpModes.Auto;
 
-
+import static org.firstinspires.ftc.teamcode.Constants.Fields.BVM;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowSpecimenScoring;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.IDEALBATTERYV;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltPickupPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSpecimenWallPickup;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.applyBVM;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.batteryVoltageSensor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
@@ -24,13 +25,12 @@ import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-@Autonomous
-public class Observationside1_3 extends LinearOpMode {
+@Autonomous (name = "Spline testing ",group = "testing ")
+public class SplineTesting extends LinearOpMode {
 
 
     @Override
     public void runOpMode() throws InterruptedException {
-
         RobotHardware.init(hardwareMap);
         applyPowers();
 
@@ -40,49 +40,27 @@ public class Observationside1_3 extends LinearOpMode {
             tiltMotor.setTargetPosition(TiltMinPosition);
             slideMotor.setTargetPosition(0);
         }
+        while (opModeIsActive()){
+            applyBVM();
+        }
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(11, 61, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(11, -61, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
-                .addTemporalMarker(() -> {
-                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
-                    intakeWristServo.setPosition(WristSpecimenWallPickup);
-                    slideMotor.setTargetPosition(SlideHighChamber);
-                    tiltMotor.setTargetPosition(TiltHighChamber);
-                    })
-                .forward(17)
-                .addTemporalMarker(() -> {
-                    slideMotor.setTargetPosition(SlideHighChamber);
-                    intakeWristServo.setPosition(WristRight);
-                })
-                .back(14)
-                .addTemporalMarker(() -> {
-                    tiltMotor.setTargetPosition(TiltMinPosition);
-                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
-                    slideMotor.setTargetPosition(SlideMinPosition);
+                // move preload to high chamber
+                .addDisplacementMarker(() -> {
                     intakeWristServo.setPosition(WristLeft);
-                })
-                .splineToLinearHeading(new Pose2d(40, 54, Math.toRadians(-90)), Math.toRadians(0))
-                .forward(20)
-                .back(20)
-                .strafeLeft(10)
-                .addTemporalMarker(()-> {
-                    tiltMotor.setTargetPosition(TiltPickupPosition);
-                    slideMotor.setTargetPosition(SlideMinPosition);
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
-                    intakeWristServo.setPosition(WristSpecimenWallPickup);
+                    tiltMotor.setTargetPosition(TiltMinPosition);
+                    slideMotor.setTargetPosition(0);
                 })
-                .forward(20)
-                
-
-
-
-
-
-
-
+                .forward(14 * BVM)
+                .waitSeconds(5)
+                .splineToLinearHeading(new Pose2d(48, -12, Math.toRadians(90)), Math.toRadians(0))
+                .waitSeconds(5)
                 .build();
         waitForStart();
 
@@ -95,5 +73,4 @@ public class Observationside1_3 extends LinearOpMode {
         telemetry.addData("Status", "Autonomous Complete");
         telemetry.update();
     }
-
 }
