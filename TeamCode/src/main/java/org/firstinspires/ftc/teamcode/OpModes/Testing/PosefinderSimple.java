@@ -23,6 +23,10 @@ public class PosefinderSimple extends OpMode {
 
     @Override
     public void loop() {
+
+
+
+
         telemetry.addData("slide pos", slideMotor.getCurrentPosition());
         telemetry.addData("tilt pos", tiltMotor.getCurrentPosition());
         telemetry.addData("battery voltage", batteryVoltageSensor.getVoltage());

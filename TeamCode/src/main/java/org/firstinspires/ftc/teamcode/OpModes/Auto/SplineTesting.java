@@ -39,38 +39,36 @@ public class SplineTesting extends LinearOpMode {
             intakeElbowServo.setPosition(ElbowSpecimenScoring);
             tiltMotor.setTargetPosition(TiltMinPosition);
             slideMotor.setTargetPosition(0);
+
+
+            SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+            Pose2d startPose = new Pose2d(11, -61, Math.toRadians(270));
+            drive.setPoseEstimate(startPose);
+
+            TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
+                    // move preload to high chamber
+                    .addDisplacementMarker(() -> {
+                        intakeWristServo.setPosition(WristLeft);
+                        intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                        tiltMotor.setTargetPosition(TiltMinPosition);
+                        slideMotor.setTargetPosition(0);
+                    })
+                    .forward(14)
+                    .waitSeconds(5)
+                    .splineToLinearHeading(new Pose2d(48, -12, Math.toRadians(90)), Math.toRadians(0))
+                    .waitSeconds(5)
+                    .build();
+            waitForStart();
+
+            if (isStopRequested()) {
+                return;
+            }
+
+            drive.followTrajectorySequence(forwardTrajectory);
+
+            telemetry.addData("Status", "Autonomous Complete");
+            telemetry.update();
         }
-        while (opModeIsActive()){
-            applyBVM();
-        }
-
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
-        Pose2d startPose = new Pose2d(11, -61, Math.toRadians(270));
-        drive.setPoseEstimate(startPose);
-
-        TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
-                // move preload to high chamber
-                .addDisplacementMarker(() -> {
-                    intakeWristServo.setPosition(WristLeft);
-                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
-                    tiltMotor.setTargetPosition(TiltMinPosition);
-                    slideMotor.setTargetPosition(0);
-                })
-                .forward(14 * BVM)
-                .waitSeconds(5)
-                .splineToLinearHeading(new Pose2d(48, -12, Math.toRadians(90)), Math.toRadians(0))
-                .waitSeconds(5)
-                .build();
-        waitForStart();
-
-        if (isStopRequested()) {
-            return;
-        }
-
-        drive.followTrajectorySequence(forwardTrajectory);
-
-        telemetry.addData("Status", "Autonomous Complete");
-        telemetry.update();
     }
 }

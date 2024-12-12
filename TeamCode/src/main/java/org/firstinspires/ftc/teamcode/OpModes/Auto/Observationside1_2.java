@@ -15,6 +15,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSpecimenWallPickup;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.applyBVM;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.batteryVoltageSensor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeCRServo;
@@ -47,17 +48,12 @@ public class Observationside1_2 extends LinearOpMode {
 
 
 
+
         while (opModeInInit()) {
             intakeWristServo.setPosition(WristLeft);
             intakeElbowServo.setPosition(ElbowSpecimenScoring);
             tiltMotor.setTargetPosition(TiltMinPosition);
             slideMotor.setTargetPosition(0);
-        }
-        while (opModeIsActive()){
-            double actualVoltage = batteryVoltageSensor.getVoltage();
-            BVM = IDEALBATTERYV / actualVoltage;
-            telemetry.addData("battery volatage", batteryVoltageSensor.getVoltage());
-            telemetry.addData("BVM",BVM);
         }
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -67,47 +63,64 @@ public class Observationside1_2 extends LinearOpMode {
 
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
                 // move preload to high chamber
-                .addDisplacementMarker(() -> {
+                .addTemporalMarker(() -> {
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
                     intakeWristServo.setPosition(WristSpecimenWallPickup);
                     slideMotor.setTargetPosition(SlideHighChamber);
                     tiltMotor.setTargetPosition(TiltHighChamber);
                     })
-                .forward(18 * BVM)
-                // sore preload
-                .addDisplacementMarker(() -> {
+                .forward(18)
+                // score preload
+                .addTemporalMarker(() -> {
                     slideMotor.setTargetPosition(SlideHighChamber);
                     intakeWristServo.setPosition(WristRight);
                 })
                 // move to 1st sample
-                .back(18 * BVM)
-                .addDisplacementMarker(() -> {
+                .back(18)
+                .addTemporalMarker(() -> {
                     tiltMotor.setTargetPosition(TiltHomePosition);
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
                     slideMotor.setTargetPosition(SlideMinPosition);
                     intakeWristServo.setPosition(WristLeft);
                 })
-                .strafeRight(26 * BVM)
-                .forward(44 * BVM)
-                .strafeRight(10.25 * BVM)
-                .back(33 * BVM)
-                .forward(33 * BVM)
-                .strafeRight(10.25 * BVM)
-                .back(33 * BVM)
-                .forward(4 * BVM)
-                .turn(Math.toRadians(170 * BVM))
-                .addDisplacementMarker(() -> {
+                .strafeRight(26)
+                .forward(44)
+                .strafeRight(11 )
+                .back(33)
+                .forward(33)
+                .strafeRight(11)
+                .back(33 )
+                .forward(4)
+                .turn(Math.toRadians(153))
+                .addTemporalMarker(() -> {
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
                     intakeWristServo.setPosition(WristSpecimenWallPickup);
                 })
-                .addDisplacementMarker(() -> {
-                    tiltMotor.setTargetPosition(676);
-                    slideMotor.setTargetPosition(250); //428
+                .waitSeconds(0.5)
+                .forward(5)
+                .addTemporalMarker(() -> {
+                    tiltMotor.setTargetPosition(656);
+                    slideMotor.setTargetPosition(280); //428
+                    intakeCRServo.setPower(1);
                 })
-                .addTemporalMarker(3,() -> {
-                    intakeCRServo.setPower(-1);
+                .waitSeconds(1)
+                .addTemporalMarker(() -> {
+                    tiltMotor.setTargetPosition(656);
+                    slideMotor.setTargetPosition(290); //428
+                    intakeCRServo.setPower(0);
                 })
-                .forward(4 * BVM)
+                .waitSeconds(1)
+                .addTemporalMarker(() -> {
+                    tiltMotor.setTargetPosition(656);
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                })
+                .turn(Math.toRadians(-153))
+                .strafeLeft(48)
+                .addTemporalMarker(() -> {
+                    tiltMotor.setTargetPosition(656);
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                })
+
 
 
                 /*.splineToLinearHeading(new Pose2d(48, -12, Math.toRadians(-90)), Math.toRadians(0))
@@ -145,6 +158,7 @@ public class Observationside1_2 extends LinearOpMode {
         telemetry.addData("slide pos", slideMotor.getCurrentPosition());
         telemetry.addData("tilt ticks", tiltMotor.getTargetPosition());
         telemetry.addData("tilt pos", tiltMotor.getCurrentPosition());
+        telemetry.addData("BVM",BVM);
         telemetry.update();
     }
 

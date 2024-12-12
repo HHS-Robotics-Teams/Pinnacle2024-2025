@@ -8,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSpecimenWallPickup;
@@ -23,14 +24,15 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-@Disabled
 
-// Still a work in progress values from the observation side auto right now
+
+// Still a work in progress
 @Autonomous (name = "Basket side 1+3+Park", group = "idk")
 public class Basketside1_3_park extends LinearOpMode {
     @Override
@@ -38,83 +40,65 @@ public class Basketside1_3_park extends LinearOpMode {
         RobotHardware.init(hardwareMap);
         applyPowers();
 
+
         while (opModeInInit()) {
             intakeWristServo.setPosition(WristLeft);
             intakeElbowServo.setPosition(ElbowSpecimenScoring);
             tiltMotor.setTargetPosition(TiltMinPosition);
             slideMotor.setTargetPosition(0);
         }
-        while (opModeIsActive()){
-            double actualVoltage = batteryVoltageSensor.getVoltage();
-            BVM = IDEALBATTERYV / actualVoltage;
-            telemetry.addData("battery volatage", batteryVoltageSensor.getVoltage());
-            telemetry.addData("BVM",BVM);
-        }
+
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(-11, -61, Math.toRadians(-90));
+        Pose2d startPose = new Pose2d(-11, -61, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
                 // move preload to high chamber
-                .addDisplacementMarker(() -> {
+                .addTemporalMarker(() -> {
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
                     intakeWristServo.setPosition(WristSpecimenWallPickup);
                     slideMotor.setTargetPosition(SlideHighChamber);
                     tiltMotor.setTargetPosition(TiltHighChamber);
                 })
-                .forward(18 * BVM)
+                .forward(18)
                 // sore preload
-                .addDisplacementMarker(() -> {
+                .addTemporalMarker(() -> {
                     slideMotor.setTargetPosition(SlideHighChamber);
                     intakeWristServo.setPosition(WristRight);
                 })
                 // move to 1st sample
-                .back(18 * BVM)
-                .addDisplacementMarker(() -> {
+                .back(8)
+                .addTemporalMarker(() -> {
                     tiltMotor.setTargetPosition(TiltHomePosition);
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
                     slideMotor.setTargetPosition(SlideMinPosition);
-                    intakeWristServo.setPosition(WristLeft);
+                    intakeWristServo.setPosition(WristRight);
                 })
-                .strafeRight(26 * BVM)
-                .forward(44 * BVM)
-                .strafeRight(10.25 * BVM)
-                .back(33 * BVM)
-                .forward(33 * BVM)
-                .strafeRight(10.25 * BVM)
-                .back(33 * BVM)
-                .forward(4 * BVM)
-                .turn(Math.toRadians(170 * BVM))
-                .addDisplacementMarker(() -> {
+                .strafeLeft(46)
+                .waitSeconds(.5)
+                // arm moving for sample pickup
+                .addTemporalMarker(()->{
+                    intakeWristServo.setPosition(WristRight);
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
-                    intakeWristServo.setPosition(WristSpecimenWallPickup);
-                })
-                .addDisplacementMarker(() -> {
-                    tiltMotor.setTargetPosition(676);
-                    slideMotor.setTargetPosition(250); //428
-                })
-                .addTemporalMarker(3,() -> {
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    tiltMotor.setTargetPosition(280);
                     intakeCRServo.setPower(-1);
                 })
-                .forward(4 * BVM)
-
-
-                /*.splineToLinearHeading(new Pose2d(48, -12, Math.toRadians(-90)), Math.toRadians(0))
-                .forward(52) //1st sample in observation zone
-                .back(52) //move to 2nd sample
-                .strafeLeft(10)
-                // move to 2nd sample to observation zone
-                .addTemporalMarker(()-> {
-                    tiltMotor.setTargetPosition(TiltPickupPosition);
+                .waitSeconds(.5)
+                // arm tilting down for sample pickup
+                .addTemporalMarker(()->{
                     slideMotor.setTargetPosition(SlideMinPosition);
-                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
-                    intakeWristServo.setPosition(WristSpecimenWallPickup);
+                    tiltMotor.setTargetPosition(240);
+                    intakeCRServo.setPower(-1);
                 })
-                .forward(52)
-                // pick up 1st specimen
-*/
+                .waitSeconds(1)
+                .addTemporalMarker(()->{
+                    intakeCRServo.setPower(0);
+                })
+                .waitSeconds(4)
+
 
 
 

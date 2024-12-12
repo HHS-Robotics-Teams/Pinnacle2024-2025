@@ -79,8 +79,6 @@ public class Fields {
     public static void applyBVM() {
         double actualVoltage = batteryVoltageSensor.getVoltage();
         BVM = IDEALBATTERYV / actualVoltage;
-        telemetry.addData("battery volatage", batteryVoltageSensor.getVoltage());
-        telemetry.addData("BVM", BVM);
     }
 
 
