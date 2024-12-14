@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 @Autonomous(name = "Pinnacle Observationside Auto", group = "idk")
 public class PinnacleAutoObservationside extends LinearOpMode {
 
-    public static final Pose2d START_POSE = new Pose2d(11, 61, Math.toRadians(90));
+    public static final Pose2d START_POSE = new Pose2d(-11, 61, Math.toRadians(90));
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -65,14 +65,14 @@ public class PinnacleAutoObservationside extends LinearOpMode {
                 .addDisplacementMarker(() -> {
                     tiltMotor.setTargetPosition(TiltHighChamber);
                 })
-                .forward(19 - 2)
+                .forward(18)
                 .addDisplacementMarker(() -> {
                     slideMotor.setTargetPosition(SlideHighChamber);
                 })
                 .addDisplacementMarker(() -> {
                     intakeWristServo.setPosition(WristRight);
                 })
-                .back(20)
+                .back(18)
                 .addDisplacementMarker(() -> {
                     slideMotor.setTargetPosition(SlideMinPosition);
                 })

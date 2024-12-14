@@ -1,5 +1,15 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowSpecimenScoring;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -9,12 +19,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 /*
  * This is a simple routine to test translational drive capabilities.
  */
-@Disabled
+
 @Config
 @Autonomous(group = "drive")
 public class StrafeTest extends LinearOpMode {
@@ -23,25 +34,34 @@ public class StrafeTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        RobotHardware.init(hardwareMap);
+        applyPowers();
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        while (opModeInInit()) {
+            intakeWristServo.setPosition(WristLeft);
+            intakeElbowServo.setPosition(ElbowSpecimenScoring);
+            tiltMotor.setTargetPosition(TiltMinPosition);
+            slideMotor.setTargetPosition(0);
 
-        Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
-                .strafeRight(DISTANCE)
-                .build();
+            SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        waitForStart();
+            Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
+                    .strafeRight(DISTANCE)
+                    .build();
 
-        if (isStopRequested()) return;
+            waitForStart();
 
-        drive.followTrajectory(trajectory);
+            if (isStopRequested()) return;
 
-        Pose2d poseEstimate = drive.getPoseEstimate();
-        telemetry.addData("finalX", poseEstimate.getX());
-        telemetry.addData("finalY", poseEstimate.getY());
-        telemetry.addData("finalHeading", poseEstimate.getHeading());
-        telemetry.update();
+            drive.followTrajectory(trajectory);
 
-        while (!isStopRequested() && opModeIsActive()) ;
+            Pose2d poseEstimate = drive.getPoseEstimate();
+            telemetry.addData("finalX", poseEstimate.getX());
+            telemetry.addData("finalY", poseEstimate.getY());
+            telemetry.addData("finalHeading", poseEstimate.getHeading());
+            telemetry.update();
+
+            while (!isStopRequested() && opModeIsActive()) ;
+        }
     }
 }

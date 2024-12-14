@@ -34,18 +34,15 @@ public class LocalizationTest extends LinearOpMode {
         RobotHardware.init(hardwareMap);
         applyPowers();
 
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
 
-        while (opModeIsActive()){
-            intakeWristServo.setPosition(WristLeft);
-            intakeElbowServo.setPosition(ElbowSpecimenScoring);
-            tiltMotor.setTargetPosition(TiltMinPosition);
-            slideMotor.setTargetPosition(0);
-        }
+
 
         while (!isStopRequested()) {
             drive.setWeightedDrivePower(

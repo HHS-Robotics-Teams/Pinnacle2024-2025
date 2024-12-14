@@ -1,11 +1,21 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowSpecimenScoring;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
@@ -22,7 +32,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
  * If you are using SampleTankDrive, you should be tuning AXIAL_PID, CROSS_TRACK_PID, and HEADING_PID.
  * These coefficients can be tuned live in dashboard.
  */
-@Disabled
+
 @Config
 @Autonomous(group = "drive")
 public class FollowerPIDTuner extends LinearOpMode {
@@ -30,28 +40,38 @@ public class FollowerPIDTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        RobotHardware.init(hardwareMap);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        applyPowers();
 
-        Pose2d startPose = new Pose2d(-DISTANCE / 2, -DISTANCE / 2, 0);
+        while (opModeInInit()) {
+            intakeWristServo.setPosition(WristLeft);
+            intakeElbowServo.setPosition(ElbowSpecimenScoring);
+            tiltMotor.setTargetPosition(TiltMinPosition);
+            slideMotor.setTargetPosition(0);
 
-        drive.setPoseEstimate(startPose);
 
-        waitForStart();
+            Pose2d startPose = new Pose2d(-DISTANCE / 2, -DISTANCE / 2, 0);
 
-        if (isStopRequested()) return;
+            drive.setPoseEstimate(startPose);
 
-        while (!isStopRequested()) {
-            TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
-                    .build();
-            drive.followTrajectorySequence(trajSeq);
+            waitForStart();
+
+            if (isStopRequested()) return;
+
+            while (!isStopRequested()) {
+                TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
+                        .forward(DISTANCE)
+                        .turn(Math.toRadians(90))
+                        .forward(DISTANCE)
+                        .turn(Math.toRadians(90))
+                        .forward(DISTANCE)
+                        .turn(Math.toRadians(90))
+                        .forward(DISTANCE)
+                        .turn(Math.toRadians(90))
+                        .build();
+                drive.followTrajectorySequence(trajSeq);
+            }
         }
     }
 }

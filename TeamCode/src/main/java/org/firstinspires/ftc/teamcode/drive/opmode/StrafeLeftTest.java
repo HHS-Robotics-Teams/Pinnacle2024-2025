@@ -9,24 +9,24 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWrist
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+@Autonomous (name = "Strafe left test", group = "drive")
 
-/*
- * This is an example of a more complex path to really test the tuning.
- */
-@Autonomous(group = "drive")
-public class SplineTest extends LinearOpMode {
+public class StrafeLeftTest extends LinearOpMode {
+
+    public static double DISTANCE = 60; // in
+
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         RobotHardware.init(hardwareMap);
         applyPowers();
 
@@ -35,24 +35,27 @@ public class SplineTest extends LinearOpMode {
             intakeElbowServo.setPosition(ElbowSpecimenScoring);
             tiltMotor.setTargetPosition(TiltMinPosition);
             slideMotor.setTargetPosition(0);
+
+            SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+            Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
+                    .strafeLeft(DISTANCE)
+                    .build();
+
+            waitForStart();
+
+            if (isStopRequested()) return;
+
+            drive.followTrajectory(trajectory);
+
+            Pose2d poseEstimate = drive.getPoseEstimate();
+            telemetry.addData("finalX", poseEstimate.getX());
+            telemetry.addData("finalY", poseEstimate.getY());
+            telemetry.addData("finalHeading", poseEstimate.getHeading());
+            telemetry.update();
+
+            while (!isStopRequested() && opModeIsActive()) ;
         }
-
-        waitForStart();
-
-        if (isStopRequested()) return;
-
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d())
-                .splineTo(new Vector2d(30, 30), 0)
-                .build();
-
-        drive.followTrajectory(traj);
-
-        sleep(2000);
-
-        drive.followTrajectory(
-                drive.trajectoryBuilder(traj.end(), true)
-                        .splineTo(new Vector2d(0, 0), Math.toRadians(180))
-                        .build()
-        );
     }
 }
+

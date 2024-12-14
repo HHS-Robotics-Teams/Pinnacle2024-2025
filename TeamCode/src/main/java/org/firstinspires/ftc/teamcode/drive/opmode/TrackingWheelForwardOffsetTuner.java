@@ -1,5 +1,14 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowSpecimenScoring;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -12,6 +21,7 @@ import com.qualcomm.robotcore.util.MovingStatistics;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
+import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 
@@ -34,7 +44,7 @@ import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
  * for the forward offset. You can run this procedure as many times as necessary until a
  * satisfactory result is produced.
  */
-@Disabled
+
 @Config
 @Autonomous(group="drive")
 public class TrackingWheelForwardOffsetTuner extends LinearOpMode {
@@ -47,6 +57,15 @@ public class TrackingWheelForwardOffsetTuner extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        RobotHardware.init(hardwareMap);
+        applyPowers();
+
+        while (opModeInInit()) {
+            intakeWristServo.setPosition(WristLeft);
+            intakeElbowServo.setPosition(ElbowSpecimenScoring);
+            tiltMotor.setTargetPosition(TiltMinPosition);
+            slideMotor.setTargetPosition(0);
+        }
 
         if (!(drive.getLocalizer() instanceof StandardTrackingWheelLocalizer)) {
             RobotLog.setGlobalErrorMsg("StandardTrackingWheelLocalizer is not being set in the "

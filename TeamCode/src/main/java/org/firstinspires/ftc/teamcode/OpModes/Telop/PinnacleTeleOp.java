@@ -174,11 +174,11 @@ public class PinnacleTeleOp extends OpMode {
 
         // ---------- Manual Extension ----------
         if (input.left_bumper.held() && (slideMotor.getCurrentPosition() <= SlideMaxPosition)) {
-            slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 60); // Slide out
+            slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 80); // Slide out
         }
 
         if (input.left_trigger.held() && (slideMotor.getCurrentPosition() >= SlideMinPosition)) {
-            slideMotor.setTargetPosition(slideMotor.getCurrentPosition() - 60); // Slide in
+            slideMotor.setTargetPosition(slideMotor.getCurrentPosition() - 80); // Slide in
         }
 
         // ---------- Intake Wrist Servo ----------

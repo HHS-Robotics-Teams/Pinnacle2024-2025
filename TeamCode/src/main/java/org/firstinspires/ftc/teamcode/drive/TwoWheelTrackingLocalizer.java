@@ -53,8 +53,8 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
 
     private SampleMecanumDrive drive;
 
-    public static double X_MULTIPLIER = 1.1911124685042; // Multiplier in the X direction
-    public static double Y_MULTIPLIER = 1.001057524392; // Multiplier in the Y direction
+    public static double X_MULTIPLIER = .9711926; // Multiplier in the X direction
+    public static double Y_MULTIPLIER = .9769835; // Multiplier in the Y direction
 
     // back_right motor is perpendicular
     // front_left is parallel
@@ -72,7 +72,7 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
         parallelEncoder.setDirection(Encoder.Direction.FORWARD);
-        perpendicularEncoder.setDirection(Encoder.Direction.FORWARD);
+        perpendicularEncoder.setDirection(Encoder.Direction.REVERSE);
     }
 
     public static double encoderTicksToInches(double ticks) {
