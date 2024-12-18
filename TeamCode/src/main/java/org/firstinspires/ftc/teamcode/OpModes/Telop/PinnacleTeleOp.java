@@ -25,6 +25,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltPickupPosition
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltPower;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltUpThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.WristHorizontalPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSpecimenWallPickup;
@@ -232,11 +233,13 @@ public class PinnacleTeleOp extends OpMode {
 
         // ------------ Low Basket ---------------
         if (input.b.down()) {
+            intakeWristServo.setPosition(WristHorizontalPickup);
+            intakeElbowServo.setPosition(ElbowSpecimenScoring);
             armRetractingLowBasket = true;
             IntakeWristPositionReached = false;
         }
 
-        if (armRetractingLowBasket) {
+     /*   if (armRetractingLowBasket) {
             switch (currentRetractionStep) {
                 case (1):
                     slideMotor.setTargetPosition(SlideMinPosition);
@@ -255,7 +258,7 @@ public class PinnacleTeleOp extends OpMode {
                     break;
             }
         }
-
+*/
         // ------------ High Chamber --------------
         if (input.x.down()) {
             armRetractingHighChamber = true;

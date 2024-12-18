@@ -43,6 +43,7 @@ public class Fields {
     public static double WristLeft = 1.0;
     public static double WristCenter = .5;
     public static double WristRight = 0.0;
+    public static double WristHorizontalPickup = .25;
     public static double WristSpecimenWallPickup = 0.54;
 
     // Elbow positions

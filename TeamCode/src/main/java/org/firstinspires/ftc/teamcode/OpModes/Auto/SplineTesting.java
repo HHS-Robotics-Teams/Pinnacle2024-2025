@@ -19,12 +19,13 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-
+@Disabled
 @Autonomous (name = "Spline testing ",group = "testing ")
 public class SplineTesting extends LinearOpMode {
 
@@ -43,7 +44,7 @@ public class SplineTesting extends LinearOpMode {
 
             SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-            Pose2d startPose = new Pose2d(11, -61, Math.toRadians(270));
+            Pose2d startPose = new Pose2d(11, -61, Math.toRadians(90));
             drive.setPoseEstimate(startPose);
 
             TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
@@ -56,7 +57,7 @@ public class SplineTesting extends LinearOpMode {
                     })
                     .forward(14)
                     .waitSeconds(5)
-                    .splineToLinearHeading(new Pose2d(48, -12, Math.toRadians(90)), Math.toRadians(0))
+                    .splineToLinearHeading(new Pose2d(48, -12, Math.toRadians(270)), Math.toRadians(0))
                     .waitSeconds(5)
                     .build();
             waitForStart();

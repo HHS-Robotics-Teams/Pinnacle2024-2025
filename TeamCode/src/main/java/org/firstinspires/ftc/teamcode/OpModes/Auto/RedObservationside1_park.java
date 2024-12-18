@@ -33,21 +33,18 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+/* Red observation side auto scores preload, and moves to colored samples to
+observation zone for telop and parks, scoring 13 pts
+*/
 
-@Autonomous (name = "Observationside Auto 1 + 2", group = "idk")
-public class Observationside1_2 extends LinearOpMode {
-
-
+@Autonomous (name = "RedObservationside Auto 1 + park", group = "Comp Auto")
+public class RedObservationside1_park extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         RobotHardware.init(hardwareMap);
         applyPowers();
-
-
-
-
 
         while (opModeInInit()) {
             intakeWristServo.setPosition(WristLeft);
@@ -58,7 +55,7 @@ public class Observationside1_2 extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(11, -61, Math.toRadians(-90));
+        Pose2d startPose = new Pose2d(8.25, -63.5, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
@@ -69,14 +66,14 @@ public class Observationside1_2 extends LinearOpMode {
                     slideMotor.setTargetPosition(SlideHighChamber);
                     tiltMotor.setTargetPosition(TiltHighChamber);
                     })
-                .forward(18)
+                .forward(20)
                 // score preload
                 .addTemporalMarker(() -> {
                     slideMotor.setTargetPosition(SlideHighChamber);
                     intakeWristServo.setPosition(WristRight);
                 })
                 // move to 1st sample
-                .back(18)
+                .back(20)
                 .addTemporalMarker(() -> {
                     tiltMotor.setTargetPosition(TiltHomePosition);
                     intakeElbowServo.setPosition(ElbowSpecimenScoring);
@@ -84,64 +81,16 @@ public class Observationside1_2 extends LinearOpMode {
                     intakeWristServo.setPosition(WristLeft);
                 })
                 .strafeRight(26)
-                .forward(44)
+                .forward(50)
                 .strafeRight(11 )
-                .back(33)
-                .forward(33)
-                .strafeRight(11)
-                .back(33 )
-                .forward(4)
-                .turn(Math.toRadians(153))
-                .addTemporalMarker(() -> {
-                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
-                    intakeWristServo.setPosition(WristSpecimenWallPickup);
-                })
-                .waitSeconds(0.5)
-                .forward(5)
-                .addTemporalMarker(() -> {
-                    tiltMotor.setTargetPosition(656);
-                    slideMotor.setTargetPosition(280); //428
-                    intakeCRServo.setPower(1);
-                })
-                .waitSeconds(1)
-                .addTemporalMarker(() -> {
-                    tiltMotor.setTargetPosition(656);
-                    slideMotor.setTargetPosition(290); //428
-                    intakeCRServo.setPower(0);
-                })
-                .waitSeconds(1)
-                .addTemporalMarker(() -> {
-                    tiltMotor.setTargetPosition(656);
-                    slideMotor.setTargetPosition(SlideMinPosition);
-                })
-                .turn(Math.toRadians(-153))
-                .strafeLeft(48)
-                .addTemporalMarker(() -> {
-                    tiltMotor.setTargetPosition(656);
-                    slideMotor.setTargetPosition(SlideMinPosition);
-                })
-
-
-
-                /*.splineToLinearHeading(new Pose2d(48, -12, Math.toRadians(-90)), Math.toRadians(0))
-                .forward(52) //1st sample in observation zone
-                .back(52) //move to 2nd sample
-                .strafeLeft(10)
-                // move to 2nd sample to observation zone
-                .addTemporalMarker(()-> {
-                    tiltMotor.setTargetPosition(TiltPickupPosition);
-                    slideMotor.setTargetPosition(SlideMinPosition);
-                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
-                    intakeWristServo.setPosition(WristSpecimenWallPickup);
-                })
-                .forward(52)
-                // pick up 1st specimen
-*/
-
-
-
-
-
+                //moving 1st sample to obo zone
+                .back(44)
+                // move to 2nd sample
+                .forward(44)
+                .strafeRight(10.5)
+                // moving 2nd sample
+                .back(44)
+                // park
 
 
                 .build();
