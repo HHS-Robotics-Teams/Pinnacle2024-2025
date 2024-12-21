@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.OpModes.Auto;
+package org.firstinspires.ftc.teamcode.OpModes.Auto.OldAuto;
 
-import static org.firstinspires.ftc.teamcode.Constants.Fields.BVM;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowSpecimenScoring;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowStarting;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.IDEALBATTERYV;
+
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowCenter;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
+
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighBucket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
@@ -19,7 +19,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSpecimenWallPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.batteryVoltageSensor;
-import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeCRServo;
+
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
@@ -28,6 +28,7 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
@@ -41,6 +42,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
  then moves to yellow samples to score into high basket. it should be albe to score 2
  and park in assent zone 2, scoring 29 pts
  */
+@Disabled
 @Autonomous (name = "RedBasket side spec 1+2+Park", group = "Comp Auto")
 public class RedBasketsideSpec1_3_park extends LinearOpMode {
     @Override
@@ -50,7 +52,7 @@ public class RedBasketsideSpec1_3_park extends LinearOpMode {
 
         while (opModeInInit()) {
             intakeWristServo.setPosition(WristLeft);
-            intakeElbowServo.setPosition(ElbowSpecimenScoring);
+            intakeElbowServo.setPosition(ElbowRight);
             tiltMotor.setTargetPosition(TiltMinPosition);
             slideMotor.setTargetPosition(0);
         }
@@ -62,7 +64,7 @@ public class RedBasketsideSpec1_3_park extends LinearOpMode {
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
                 // move preload to high chamber
                 .addDisplacementMarker(() -> {
-                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                    intakeElbowServo.setPosition(ElbowRight);
                     intakeWristServo.setPosition(WristSpecimenWallPickup);
                     slideMotor.setTargetPosition(SlideHighChamber);
                     tiltMotor.setTargetPosition(TiltHighChamber);
@@ -77,7 +79,7 @@ public class RedBasketsideSpec1_3_park extends LinearOpMode {
                 .back(8)
                 .addDisplacementMarker(() -> {
                     tiltMotor.setTargetPosition(TiltHomePosition);
-                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                    intakeElbowServo.setPosition(ElbowRight);
                     slideMotor.setTargetPosition(SlideMinPosition);
                     intakeWristServo.setPosition(.58);
                 })
@@ -87,15 +89,15 @@ public class RedBasketsideSpec1_3_park extends LinearOpMode {
                 // arm moving for 1st sample pickup
                 .addDisplacementMarker(() -> {
                     tiltMotor.setTargetPosition(175);
-                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                    intakeElbowServo.setPosition(ElbowRight);
                     slideMotor.setTargetPosition(SlideMinPosition);
                     intakeWristServo.setPosition(WristHorizontalPickup);
-                    intakeCRServo.setPower(-1);
+                 //   intakeCRServo.setPower(-1);
                 })
                 .waitSeconds(1)
                 // picked up 1st sample
                 .addDisplacementMarker(()->{
-                    intakeCRServo.setPower(0);
+                 //   intakeCRServo.setPower(0);
                 })
                // move to bucket position
                 .lineToLinearHeading(new Pose2d(-49, -63.5, Math.toRadians(200)))
@@ -104,17 +106,17 @@ public class RedBasketsideSpec1_3_park extends LinearOpMode {
                     tiltMotor.setTargetPosition(TiltHighBucket);
                     intakeWristServo.setPosition(WristCenter);
                     slideMotor.setTargetPosition(SlideHighBucket);
-                    intakeElbowServo.setPosition(ElbowStarting);
+                    intakeElbowServo.setPosition(ElbowCenter);
                 })
                 // score 1st sample outtake sample
                 .addDisplacementMarker(()->{
-                    intakeCRServo.setPower(1);
+                   // intakeCRServo.setPower(1);
                 })
                 .waitSeconds(.25)
                 .addDisplacementMarker(()->{
-                    intakeCRServo.setPower(0);
+                   // intakeCRServo.setPower(0);
                     tiltMotor.setTargetPosition(TiltHomePosition);
-                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                    intakeElbowServo.setPosition(ElbowRight);
                     slideMotor.setTargetPosition(SlideMinPosition);
                     intakeWristServo.setPosition(WristRight);
                 })

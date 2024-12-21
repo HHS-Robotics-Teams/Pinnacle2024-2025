@@ -1,7 +1,17 @@
 package org.firstinspires.ftc.teamcode.OpModes.Testing;
 
+import static org.firstinspires.ftc.teamcode.Constants.Fields.AutoWasRan;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowCenter;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intake_claw_servo;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -19,8 +29,9 @@ public class IntakeElbowTesting extends OpMode {
         // ---------- Input Class ----------
         input = new Input();
 
-        // ---------- Map Hardware ----------
-        RobotHardware.init(hardwareMap);
+        if (!AutoWasRan) {
+            RobotHardware.init(hardwareMap);
+        }
 
         // ---------- Confirmation Printing ----------
         telemetry.addData("Status:", "✅ Robot is initialized.");
@@ -33,25 +44,35 @@ public class IntakeElbowTesting extends OpMode {
         input.pollGamepad(gamepad1);
 
         if (input.left_trigger.down() && !input.right_trigger.down()) {
-            intakeElbowServo.setPosition(0.12); // Go to specimen pickup
+            intakeElbowServo.setPosition(ElbowRight); // Go to specimen pickup
         }
         if (input.right_trigger.down() && !input.left_trigger.down()) {
-            intakeElbowServo.setPosition(1.0);
+            intakeElbowServo.setPosition(ElbowLeft);
         }
         if (input.left_trigger.down() && input.right_trigger.down()) {
-            intakeElbowServo.setPosition(0.4); // Go to center
+            intakeElbowServo.setPosition(ElbowCenter); // Go to center
         }
 
 
         if (input.left_bumper.down() && !input.right_bumper.down()) {
-            intakeWristServo.setPosition(0.0);
+            intakeWristServo.setPosition(WristLeft);
         }
         if (input.right_bumper.down() && !input.left_bumper.down()) {
-            intakeWristServo.setPosition(1.0);
+            intakeWristServo.setPosition(WristRight);
         }
         if (input.left_bumper.down() && input.right_bumper.down()) {
-            intakeWristServo.setPosition(0.5);
+            intakeWristServo.setPosition(WristCenter);
         }
-
+        if (input.y.down()) {
+            intake_claw_servo.setPosition(Claws_open);
+        }
+        if (input.a.down()) {
+            intake_claw_servo.setPosition(Claws_closed);
+        }
+        telemetry.addData("Auto ran ", AutoWasRan ? "True" : "False");
+        telemetry.addData("Claw position  ", intake_claw_servo.getPosition());
+        telemetry.addData("Wrist position", intakeWristServo.getPosition());
+        telemetry.addData("Elbow", intakeElbowServo.getPosition());
+        telemetry.update();
     }
 }

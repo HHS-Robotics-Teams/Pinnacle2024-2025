@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.OpModes.Auto;
+package org.firstinspires.ftc.teamcode.OpModes.Auto.OldAuto;
 
-import static org.firstinspires.ftc.teamcode.Constants.Fields.BVM;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowSpecimenScoring;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
+
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
@@ -11,7 +11,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSpecimenWallPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
-import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeCRServo;
+
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
@@ -43,7 +43,7 @@ public class RedObservationside1_2 extends LinearOpMode {
 
             while (opModeInInit()) {
                 intakeWristServo.setPosition(WristLeft);
-                intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                intakeElbowServo.setPosition(ElbowRight);
                 tiltMotor.setTargetPosition(TiltMinPosition);
                 slideMotor.setTargetPosition(0);
             }
@@ -56,7 +56,7 @@ public class RedObservationside1_2 extends LinearOpMode {
             TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
                     // move preload to high chamber
                     .addTemporalMarker(() -> {
-                        intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                        intakeElbowServo.setPosition(ElbowRight);
                         intakeWristServo.setPosition(WristSpecimenWallPickup);
                         slideMotor.setTargetPosition(SlideHighChamber);
                         tiltMotor.setTargetPosition(TiltHighChamber);
@@ -71,7 +71,7 @@ public class RedObservationside1_2 extends LinearOpMode {
                     .back(20)
                     .addTemporalMarker(() -> {
                         tiltMotor.setTargetPosition(TiltHomePosition);
-                        intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                        intakeElbowServo.setPosition(ElbowRight);
                         slideMotor.setTargetPosition(SlideMinPosition);
                         intakeWristServo.setPosition(WristLeft);
                     })
@@ -85,7 +85,7 @@ public class RedObservationside1_2 extends LinearOpMode {
                     .forward(4)
                     .turn(Math.toRadians(153))
                     .addTemporalMarker(() -> {
-                        intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                        intakeElbowServo.setPosition(ElbowRight);
                         intakeWristServo.setPosition(WristSpecimenWallPickup);
                     })
                     .waitSeconds(0.5)
@@ -93,13 +93,13 @@ public class RedObservationside1_2 extends LinearOpMode {
                     .addTemporalMarker(() -> {
                         tiltMotor.setTargetPosition(656);
                         slideMotor.setTargetPosition(280); //428
-                        intakeCRServo.setPower(1);
+                      //  intakeCRServo.setPower(1);
                     })
                     .waitSeconds(1)
                     .addTemporalMarker(() -> {
                         tiltMotor.setTargetPosition(656);
                         slideMotor.setTargetPosition(290); //428
-                        intakeCRServo.setPower(0);
+                      //  intakeCRServo.setPower(0);
                     })
                     .waitSeconds(1)
                     .addTemporalMarker(() -> {
@@ -114,7 +114,7 @@ public class RedObservationside1_2 extends LinearOpMode {
                     })
                     .forward(18)
                     .addTemporalMarker(() -> {
-                        intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                        intakeElbowServo.setPosition(ElbowRight);
                         intakeWristServo.setPosition(WristSpecimenWallPickup);
                         slideMotor.setTargetPosition(SlideHighChamber);
                         tiltMotor.setTargetPosition(TiltHighChamber);
@@ -128,7 +128,7 @@ public class RedObservationside1_2 extends LinearOpMode {
                     .back(20)
                     .addTemporalMarker(() -> {
                         tiltMotor.setTargetPosition(TiltHomePosition);
-                        intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                        intakeElbowServo.setPosition(ElbowRight);
                         slideMotor.setTargetPosition(SlideMinPosition);
                         intakeWristServo.setPosition(WristLeft);
                     })
@@ -146,7 +146,7 @@ public class RedObservationside1_2 extends LinearOpMode {
             telemetry.addData("slide pos", slideMotor.getCurrentPosition());
             telemetry.addData("tilt ticks", tiltMotor.getTargetPosition());
             telemetry.addData("tilt pos", tiltMotor.getCurrentPosition());
-            telemetry.addData("BVM",BVM);
+
             telemetry.update();
         }
 

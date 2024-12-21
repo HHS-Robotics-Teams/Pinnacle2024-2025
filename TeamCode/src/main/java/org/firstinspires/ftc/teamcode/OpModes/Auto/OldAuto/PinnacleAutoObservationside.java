@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.OpModes.Auto;
+package org.firstinspires.ftc.teamcode.OpModes.Auto.OldAuto;
 
-import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowSpecimenScoring;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowStarting;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
@@ -12,7 +11,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSpecimenWallPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
-import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeCRServo;
+
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
@@ -21,13 +20,14 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-
+@Disabled
 @Autonomous(name = "Pinnacle Observationside Auto", group = "idk")
 public class PinnacleAutoObservationside extends LinearOpMode {
 
@@ -41,7 +41,7 @@ public class PinnacleAutoObservationside extends LinearOpMode {
 
         while (opModeInInit()) {
             intakeWristServo.setPosition(WristLeft);
-            intakeElbowServo.setPosition(ElbowSpecimenScoring);
+            intakeElbowServo.setPosition(ElbowRight);
             tiltMotor.setTargetPosition(TiltMinPosition);
             slideMotor.setTargetPosition(0);
         }
@@ -54,7 +54,7 @@ public class PinnacleAutoObservationside extends LinearOpMode {
 
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
                 .addDisplacementMarker(() -> {
-                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                    intakeElbowServo.setPosition(ElbowRight);
                 })
                 .addDisplacementMarker(() -> {
                     intakeWristServo.setPosition(WristSpecimenWallPickup);
@@ -80,7 +80,7 @@ public class PinnacleAutoObservationside extends LinearOpMode {
                     tiltMotor.setTargetPosition(350);
                 })
                 .addDisplacementMarker(() -> {
-                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                    intakeElbowServo.setPosition(ElbowRight);
                 })
                 .addDisplacementMarker(() -> {
                     intakeWristServo.setPosition(WristSpecimenWallPickup);
@@ -91,7 +91,7 @@ public class PinnacleAutoObservationside extends LinearOpMode {
                     tiltMotor.setTargetPosition(TiltMinPosition);
                 })
                 .addDisplacementMarker(() -> {
-                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                    intakeElbowServo.setPosition(ElbowRight);
                 })
                 .addDisplacementMarker(() -> {
                     slideMotor.setTargetPosition(SlideMinPosition);

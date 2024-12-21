@@ -19,7 +19,7 @@ public class RobotHardware {
     // ---------- Intake + Arm Motors ----------
     public static DcMotor tiltMotor;
     public static DcMotor slideMotor;
-    public static CRServo intakeCRServo;
+    public static Servo  intake_claw_servo;
 
     public static CRServo leftClaw;
     public static CRServo rightClaw;
@@ -40,7 +40,7 @@ public class RobotHardware {
         // ---------- Arm and Intake ----------
         slideMotor = hardwareMap.get(DcMotor.class, "slide_motor");
         tiltMotor = hardwareMap.get(DcMotor.class, "tilt_motor");
-        intakeCRServo = hardwareMap.get(CRServo.class, "wheel_servo");
+        intake_claw_servo = hardwareMap.get(Servo.class, "intake_claw_servo");
         intakeWristServo = hardwareMap.get(Servo.class, "wrist_servo");
         intakeElbowServo = hardwareMap.get(Servo.class, "elbow_servo");
 
@@ -79,7 +79,7 @@ public class RobotHardware {
         // ---------- Stop Arm From Slamming Backwards ----------
         tiltMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         tiltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        intake_claw_servo.setDirection(Servo.Direction.REVERSE);
 
     }
 

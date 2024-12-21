@@ -1,17 +1,10 @@
 package org.firstinspires.ftc.teamcode.OpModes.Testing;
 
-import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowSpecimenScoring;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
+
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.backLeftMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.backRightMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.frontLeftMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.frontRightMotor;
-import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
-import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
-import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
-import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;

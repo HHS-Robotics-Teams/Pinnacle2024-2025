@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.OpModes.Auto;
+package org.firstinspires.ftc.teamcode.OpModes.Auto.OldAuto;
 
 import static org.firstinspires.ftc.teamcode.Constants.Fields.BVM;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowSpecimenScoring;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
@@ -11,7 +11,6 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSpecimenWallPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
-import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeCRServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
@@ -19,6 +18,7 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 /* Blue observation side auto scores preload, and moves to colored samples to
 observation zone for telop and parks, scoring 13 pts
 */
-
+@Disabled
 
     @Autonomous(name = "BlueObservationside Auto 1 + Park", group = "Comp Auto")
     public class BlueObservationside1_park  extends LinearOpMode {
@@ -41,7 +41,7 @@ observation zone for telop and parks, scoring 13 pts
 
             while (opModeInInit()) {
                 intakeWristServo.setPosition(WristLeft);
-                intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                intakeElbowServo.setPosition(ElbowRight);
                 tiltMotor.setTargetPosition(TiltMinPosition);
                 slideMotor.setTargetPosition(0);
             }
@@ -54,7 +54,7 @@ observation zone for telop and parks, scoring 13 pts
             TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
                     // move preload to high chamber
                     .addTemporalMarker(() -> {
-                        intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                        intakeElbowServo.setPosition(ElbowRight);
                         intakeWristServo.setPosition(WristSpecimenWallPickup);
                         slideMotor.setTargetPosition(SlideHighChamber);
                         tiltMotor.setTargetPosition(TiltHighChamber);
@@ -69,7 +69,7 @@ observation zone for telop and parks, scoring 13 pts
                     .back(20.5)
                     .addTemporalMarker(() -> {
                         tiltMotor.setTargetPosition(TiltHomePosition);
-                        intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                        intakeElbowServo.setPosition(ElbowRight);
                         slideMotor.setTargetPosition(SlideMinPosition);
                         intakeWristServo.setPosition(WristLeft);
                     })

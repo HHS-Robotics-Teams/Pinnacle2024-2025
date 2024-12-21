@@ -1,39 +1,38 @@
 package org.firstinspires.ftc.teamcode.OpModes.Telop;
 
 // Look at all these import statements :3
-import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowSpecimenScoring;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowStarting;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakeCurrentPower;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakePower;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakeRotateThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakeWristPositionReached;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighBucket;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideLowBucket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideLowChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMaxPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlidePower;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucket;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucketBackwards;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltLowBucket;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltLowChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMaxPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltPickupPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltPower;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltSlowSlowPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltUpThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.WristHorizontalPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSpecimenWallPickup;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingFloorPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHighBasket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHome;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingLowBasket;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingLowChamber;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingSubPickup;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingWallPickup;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.buttonPressInitiate;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.climbPositionReached;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentRetractionStep;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.specimenMode;
@@ -41,9 +40,9 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.backLeftMot
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.backRightMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.frontLeftMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.frontRightMotor;
-import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeCRServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intake_claw_servo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.leftClaw;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.rightClaw;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
@@ -65,7 +64,6 @@ public class PinnacleTeleOp extends OpMode {
     public void init() {
 
 
-
         // ---------- Input Class ----------
         input = new Input();
 
@@ -78,16 +76,16 @@ public class PinnacleTeleOp extends OpMode {
 
     }
 
-    @Override
+ /*   @Override
     public void start() {
 
         // ---------- Sets Starting Positions ----------
         tiltMotor.setTargetPosition(TiltMinPosition);
         slideMotor.setTargetPosition(SlideMinPosition);
         intakeWristServo.setPosition(WristLeft);
-        intakeElbowServo.setPosition(ElbowSpecimenScoring);
+        intakeElbowServo.setPosition(ElbowRight);
 
-    }
+    }*/
 
     @Override
     public void loop() {
@@ -103,10 +101,16 @@ public class PinnacleTeleOp extends OpMode {
 
         // ---------- Slowdown While Arm Up ----------
         if (tiltMotor.getTargetPosition() >= TiltUpThreshold) {
-            rotate = rotate / 2;
-            strafe = strafe / 2;
+            rotate = rotate / 1.5;
+            strafe = strafe / 1.5;
+            drive = drive / 2.5;
+        }
+        if (tiltMotor.getCurrentPosition() >= TiltSlowSlowPosition){
+            rotate = rotate / 2.5;
+            strafe = strafe / 2.5;
             drive = drive / 3;
         }
+
 
         // ---------- Wheel Calculations ----------
         double frontLeftPower = drive + strafe + rotate;
@@ -120,28 +124,34 @@ public class PinnacleTeleOp extends OpMode {
         backLeftMotor.setPower(backLeftPower);
         backRightMotor.setPower(backRightPower);
 
+        if (tiltMotor.getCurrentPosition() > 1500){
+            tiltMotor.setPower(.5);
+        }
+
         // ---------- Set Arm and Intake Power ----------
         tiltMotor.setPower(TiltPower);
         slideMotor.setPower(SlidePower);
 
         // ---------- Arm Flags ----------
-        if (tiltMotor.getCurrentPosition() <= IntakeRotateThreshold) {
+    /*    if (tiltMotor.getCurrentPosition() <= IntakeRotateThreshold && buttonPressInitiate ) {
             IntakeWristPositionReached = false;
             intakeWristServo.setPosition(WristCenter);
-        }
+            intakeElbowServo.setPosition(ElbowLeft);
+        }*/
 
         /* ============================== Robot Controls ============================== */
 
         // ---------- Home ----------
         if (gamepad1.left_stick_button) {
             armRetractingHome = true;
+            buttonPressInitiate = true;
         }
 
         if (armRetractingHome) {
             switch (currentRetractionStep) {
                 case (1):
                     slideMotor.setTargetPosition(SlideMinPosition);
-                    if(Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
+                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 25) {
                         currentRetractionStep++;
                     }
                     break;
@@ -150,8 +160,8 @@ public class PinnacleTeleOp extends OpMode {
                     tiltMotor.setTargetPosition(TiltHomePosition);
                     slideMotor.setTargetPosition(SlideMinPosition);
                     intakeWristServo.setPosition(WristCenter);
-                    intakeElbowServo.setPosition(ElbowStarting);
-                    currentRetractionStep = 1; armRetractingHome = false;
+                    intakeElbowServo.setPosition(ElbowLeft);
+                    armRetractingHome = false;
                     break;
             }
         }
@@ -160,13 +170,83 @@ public class PinnacleTeleOp extends OpMode {
         if (gamepad1.right_stick_button) {
             tiltMotor.setTargetPosition(TiltPickupPosition);
             slideMotor.setTargetPosition(SlideMinPosition);
-            intakeWristServo.setPosition(WristSpecimenWallPickup);
-            intakeElbowServo.setPosition(ElbowSpecimenScoring); specimenMode = true;
+            intakeWristServo.setPosition(WristLeft);
+            intakeElbowServo.setPosition(ElbowRight);
+            specimenMode = true;
+            buttonPressInitiate = true;
+        }
+        if (armRetractingWallPickup){
+            switch (currentRetractionStep){
+                case (1):
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 25) {
+                        currentRetractionStep ++;
+                    }
+                    break;
+                case (2):
+                    tiltMotor.setTargetPosition(TiltPickupPosition);
+                    slideMotor.setTargetPosition(1000);
+                    intakeWristServo.setPosition(WristRight); // check position
+                    intakeElbowServo.setPosition(ElbowLeft);
+                    armRetractingSubPickup = false;
+                    break;
+            }
+        }
+
+        // ---------- Sample Submersible Pickup ----------
+        if (input.a.down()) {
+            armRetractingSubPickup = true;
+            buttonPressInitiate = true;
+            IntakeWristPositionReached = false;
+        }
+        if (armRetractingSubPickup) {
+            switch (currentRetractionStep) {
+                case (1):
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
+                        currentRetractionStep ++;
+                    }
+                    break;
+
+                case (2):
+                    tiltMotor.setTargetPosition(418);
+                    slideMotor.setTargetPosition(SlideLowChamber);
+                    intakeWristServo.setPosition(WristCenter);
+                    intakeElbowServo.setPosition(ElbowLeft);
+                    armRetractingSubPickup = false;
+                    break;
+            }
+        }
+            // ------------ Sample Floor Pickup ---------------
+            if (input.b.down()) {
+                armRetractingFloorPickup = true;
+                buttonPressInitiate = true;
+                IntakeWristPositionReached = false;
+            }
+
+            if (armRetractingFloorPickup) {
+            switch (currentRetractionStep) {
+                case (1):
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 25) {
+                        currentRetractionStep++;
+                    }
+                    break;
+
+                case (2):
+                    slideMotor.setTargetPosition(1000);
+                    tiltMotor.setTargetPosition(580);
+                    intakeWristServo.setPosition(WristCenter);
+                    intakeElbowServo.setPosition(ElbowLeft);
+                    armRetractingFloorPickup = false;
+                    break;
+            }
         }
 
         // ---------- Manual Arm Tilt ----------
         if (input.dpad_up.held() && (tiltMotor.getCurrentPosition() <= TiltMaxPosition)) {
             tiltMotor.setTargetPosition(tiltMotor.getTargetPosition() + 20); // Arm up
+            buttonPressInitiate = true;
         }
 
         if (input.dpad_down.held() && (tiltMotor.getCurrentPosition() >= TiltMinPosition)) {
@@ -176,6 +256,7 @@ public class PinnacleTeleOp extends OpMode {
         // ---------- Manual Extension ----------
         if (input.left_bumper.held() && (slideMotor.getCurrentPosition() <= SlideMaxPosition)) {
             slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 80); // Slide out
+
         }
 
         if (input.left_trigger.held() && (slideMotor.getCurrentPosition() >= SlideMinPosition)) {
@@ -185,61 +266,134 @@ public class PinnacleTeleOp extends OpMode {
         // ---------- Intake Wrist Servo ----------
         if (input.dpad_left.down() && IntakeWristPositionReached) {
             intakeWristServo.setPosition(WristCenter);
+
         }
 
         if (input.dpad_right.down() && IntakeWristPositionReached) {
             intakeWristServo.setPosition(WristRight);
+
         }
 
-        // ---------- Intake Wheel Servo ----------
+        // ---------- Intake Claws  ----------
         if (input.right_trigger.held()) { //
-            IntakeCurrentPower = IntakePower;
-            intakeCRServo.setDirection(DcMotorSimple.Direction.REVERSE);
-        } else if (input.right_bumper.held()) {
-            IntakeCurrentPower = IntakePower;
-            intakeCRServo.setDirection(DcMotorSimple.Direction.FORWARD);
-        } else {
-            IntakeCurrentPower = 0;
+           intake_claw_servo.setPosition(Claws_closed);
+
         }
-        intakeCRServo.setPower(IntakeCurrentPower);
+        if (input.right_bumper.held()) {
+            intake_claw_servo.setPosition(Claws_open);
 
-        /* ============================== Scoring ============================== */
-
-        // ------------ High Basket -------------
-        if (input.y.down()) {
-            armRetractingHighBasket = true;
-            IntakeWristPositionReached = false;
         }
 
-        if (armRetractingHighBasket) {
-            switch (currentRetractionStep) {
-                case (1):
-                    slideMotor.setTargetPosition(SlideMinPosition);
-                    if(Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
-                        currentRetractionStep++;
-                    }
-                    break;
+            /* ============================== Scoring ============================== */
 
-                case (2):
-                    tiltMotor.setTargetPosition(TiltHighBucket);
-                    intakeWristServo.setPosition(WristCenter);
-                    slideMotor.setTargetPosition(SlideHighBucket);
-                    intakeElbowServo.setPosition(ElbowStarting);
-                    currentRetractionStep = 1;
-                    armRetractingHighBasket = false;
-                    break;
+            // ------------ High Basket -------------
+            if (input.y.down()) {
+                armRetractingHighBasket = true;
+                buttonPressInitiate = true;
+                IntakeWristPositionReached = false;
             }
-        }
 
-        // ------------ Low Basket ---------------
-        if (input.b.down()) {
-            intakeWristServo.setPosition(WristHorizontalPickup);
-            intakeElbowServo.setPosition(ElbowSpecimenScoring);
-            armRetractingLowBasket = true;
-            IntakeWristPositionReached = false;
-        }
+            if (armRetractingHighBasket) {
+                switch (currentRetractionStep) {
+                    case (1):
+                        slideMotor.setTargetPosition(SlideMinPosition);
+                        if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
+                            currentRetractionStep++;
+                        }
+                        break;
 
-     /*   if (armRetractingLowBasket) {
+                    case (2):
+                        tiltMotor.setTargetPosition(TiltHighBucket);
+                        intakeWristServo.setPosition(WristCenter);
+                        slideMotor.setTargetPosition(SlideHighBucket);
+                        intakeElbowServo.setPosition(ElbowRight);
+                        currentRetractionStep = 1;
+                        armRetractingHighBasket = false;
+                        break;
+                }
+            }
+
+            // ------------ High Chamber --------------
+            if (input.x.down()) {
+                armRetractingHighChamber = true;
+                buttonPressInitiate = true;
+                IntakeWristPositionReached = true;
+
+                telemetry.speak("rodo control reached");
+            }
+
+            if (armRetractingHighChamber) {
+                switch (currentRetractionStep) {
+                    case (1):
+                        slideMotor.setTargetPosition(SlideMinPosition);
+                        if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
+                            currentRetractionStep++;
+                        }
+                        break;
+                    case (2):
+                        slideMotor.setTargetPosition(SlideMinPosition);
+                        tiltMotor.setTargetPosition(TiltHighChamber);
+                        intakeWristServo.setPosition(WristCenter);
+                        slideMotor.setTargetPosition(SlideLowChamber);
+                        intakeElbowServo.setPosition(ElbowRight);
+                        armRetractingHighChamber = false;
+                        break;
+                }
+            }
+
+            /* ============================== Climbing ============================== */
+
+            if (input.start.held()) {
+                tiltMotor.setTargetPosition(TiltLowBucket);
+                leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+                rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+                leftClaw.setPower(1);
+                rightClaw.setPower(1);
+
+                telemetry.speak("climb position reached");
+            } else if (input.back.held()) { // Claw controls made by Benny
+                leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+                rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+                leftClaw.setPower(1); // Debugged by Damien
+                rightClaw.setPower(1);
+            } else {
+                leftClaw.setPower(0);
+                rightClaw.setPower(0);
+            }
+
+            /* ============================== Telemetry For Debugging ============================== */
+
+            // ---------- Wheels and Driving ----------
+            telemetry.addData("Front Left Power: ", frontLeftPower);
+            telemetry.addData("Front Right Power: ", frontRightPower);
+            telemetry.addData("Back Left Power: ", backLeftPower);
+            telemetry.addData("Back Right Power: ", backRightPower);
+            telemetry.addData("Drive Power: ", drive);
+            telemetry.addData("Strafe Power: ", strafe);
+            telemetry.addData("Rotate Power: ", rotate);
+
+            // ---------- Arm and Intake ----------
+            telemetry.addData("Slide Motor Power: ", slideMotor.getPower());
+            telemetry.addData("Tilt Motor Power: ", tiltMotor.getPower());
+            telemetry.addData("Current Tilt Position: ", tiltMotor.getCurrentPosition());
+            telemetry.addData("Current Slide Position ", slideMotor.getCurrentPosition());
+            //telemetry.addData("Intake Spin Power: ", intakeCRServo.getDirection());
+
+            // ---------- Flags -----------
+            telemetry.addData("Climb control status", climbPositionReached ? "True" : "False");
+            telemetry.addData("Wrist control status", IntakeWristPositionReached ? "True" : "False");
+
+            // ---------- Update ----------
+            telemetry.update();
+
+
+             /*    // ------------ Low Basket ---------------
+            if (input.b.down()) {
+                armRetractingLowBasket = true;
+                IntakeWristPositionReached = false;
+            }
+
+            if (armRetractingLowBasket) {
             switch (currentRetractionStep) {
                 case (1):
                     slideMotor.setTargetPosition(SlideMinPosition);
@@ -257,108 +411,36 @@ public class PinnacleTeleOp extends OpMode {
                     armRetractingLowBasket = false;
                     break;
             }
-        }
-*/
-        // ------------ High Chamber --------------
-        if (input.x.down()) {
-            armRetractingHighChamber = true;
-            IntakeWristPositionReached = true;
+        }*/
+        /*       // ------------- Low Chamber ----------------
+            if (input.a.down()) {
+                armRetractingLowChamber = true;
+                IntakeWristPositionReached = true;
 
-            telemetry.speak("rodo control reached");
-        }
-
-        if (armRetractingHighChamber) {
-            switch (currentRetractionStep) {
-                case(1):
-                    slideMotor.setTargetPosition(SlideMinPosition);
-                    if(Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50){
-                        currentRetractionStep++;
-                    }
-                    break;
-                case(2):
-                    slideMotor.setTargetPosition(SlideMinPosition);
-                    tiltMotor.setTargetPosition(TiltLowChamber);
-                    intakeWristServo.setPosition(WristCenter);
-                    slideMotor.setTargetPosition(SlideLowChamber);
-                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
-                    armRetractingHighChamber = false;
-                    break;
+                telemetry.speak("rodo control reached");
             }
-        }
 
-        // ------------- Low Chamber ----------------
-        if (input.a.down()) {
-            armRetractingLowChamber = true;
-            IntakeWristPositionReached = true;
+            if (armRetractingLowChamber) {
+                switch (currentRetractionStep) {
+                    case (1):
+                        slideMotor.setTargetPosition(SlideMinPosition);
+                        if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
+                            currentRetractionStep++;
+                        }
+                        break;
 
-            telemetry.speak("rodo control reached");
-        }
+                    case (2):
+                        slideMotor.setTargetPosition(SlideMinPosition);
+                        tiltMotor.setTargetPosition(TiltLowBucket);
+                        intakeWristServo.setPosition(WristCenter);
+                        slideMotor.setTargetPosition(SlideLowChamber);
+                        intakeElbowServo.setPosition(ElbowSpecimenScoring);
+                        armRetractingLowChamber = false;
+                        break;
+                }
+           }*/
 
-        if (armRetractingLowChamber) {
-            switch (currentRetractionStep) {
-                case (1):
-                    slideMotor.setTargetPosition(SlideMinPosition);
-                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
-                        currentRetractionStep++;
-                    }
-                    break;
 
-                case (2):
-                    slideMotor.setTargetPosition(SlideMinPosition);
-                    tiltMotor.setTargetPosition(TiltLowBucket);
-                    intakeWristServo.setPosition(WristCenter);
-                    slideMotor.setTargetPosition(SlideLowChamber);
-                    intakeElbowServo.setPosition(ElbowSpecimenScoring);
-                    armRetractingLowChamber = false;
-                    break;
-            }
-        }
-
-        /* ============================== Climbing ============================== */
-
-        if (input.start.held()) {
-            tiltMotor.setTargetPosition(TiltLowBucket);
-            leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
-            rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
-            leftClaw.setPower(1);
-            rightClaw.setPower(1);
-
-            telemetry.speak("climb position reached");
-        } else if (input.back.held()) { // Claw controls made by Benny
-            leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
-            rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
-            leftClaw.setPower(1); // Debugged by Damien
-            rightClaw.setPower(1);
-        } else {
-            leftClaw.setPower(0);
-            rightClaw.setPower(0);
-        }
-
-        /* ============================== Telemetry For Debugging ============================== */
-
-        // ---------- Wheels and Driving ----------
-        telemetry.addData("Front Left Power: ", frontLeftPower);
-        telemetry.addData("Front Right Power: ", frontRightPower);
-        telemetry.addData("Back Left Power: ", backLeftPower);
-        telemetry.addData("Back Right Power: ", backRightPower);
-        telemetry.addData("Drive Power: ", drive);
-        telemetry.addData("Strafe Power: ", strafe);
-        telemetry.addData("Rotate Power: ", rotate);
-
-        // ---------- Arm and Intake ----------
-        telemetry.addData("Slide Motor Power: ", slideMotor.getPower());
-        telemetry.addData("Tilt Motor Power: ", tiltMotor.getPower());
-        telemetry.addData("Current Tilt Position: ", tiltMotor.getCurrentPosition());
-        telemetry.addData("Current Slide Position ", slideMotor.getCurrentPosition());
-        telemetry.addData("Intake Spin Power: ", intakeCRServo.getDirection());
-
-        // ---------- Flags -----------
-        telemetry.addData("Climb control status", climbPositionReached ? "True" : "False");
-        telemetry.addData("Wrist control status", IntakeWristPositionReached ? "True" : "False");
-
-        // ---------- Update ----------
-        telemetry.update();
 
     }
-
 }

@@ -4,10 +4,8 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.batteryVolt
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 
@@ -18,6 +16,7 @@ public class PosefinderSimple extends OpMode {
     @Override
     public void init() {
         RobotHardware.init(hardwareMap);
+
 
     }
 

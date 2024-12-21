@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.OpModes.Auto;
 
 import static org.firstinspires.ftc.teamcode.Constants.Fields.BVM;
@@ -73,3 +74,4 @@ public class SplineTesting extends LinearOpMode {
         }
     }
 }
+*/
