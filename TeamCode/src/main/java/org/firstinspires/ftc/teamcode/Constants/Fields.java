@@ -79,7 +79,7 @@ public class Fields {
     public static double Claws_closed = 0;
 
     // Flags
-    public static Boolean AutoWasRan = false;
+    public static Boolean AutoNotRan = true;
 
     public static Boolean IntakeWristPositionReached = false;
     public static Boolean climbPositionReached = false;
@@ -93,21 +93,15 @@ public class Fields {
     public static Boolean sampleMode = false;
     public static Boolean specimenMode = false;
     public static Boolean buttonPressInitiate = false;
+    public static Boolean clawsOpen = false;
+    public static Boolean clawsClosed = false;
 
     // Timers
-    public static ElapsedTime Extend_Timer = new ElapsedTime();
-    public static ElapsedTime Tilt_Timer = new ElapsedTime();
 
     // State Machine Runners
+    public static int highBasketScore;
     public static int currentRetractionStep = 1;
-    public enum TelopState {
-        SlIDE_IN,
-        PICKUP,
-        EXTEND,
-        SCORE,
 
-
-    }
 
     public static void applyPowers() {
 

@@ -39,7 +39,7 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.leftClaw;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.rightClaw;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
-import static org.firstinspires.ftc.teamcode.OpModes.Auto.OldAuto.PinnacleAutoObservationside.START_POSE;
+
 import static org.firstinspires.ftc.teamcode.excutil.keyframer.Keyframer.component;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -101,7 +101,7 @@ public class PinnacleKeyframerTeleOp extends OpMode {
         intakeWristServo.setPosition(WristLeft);
         intakeElbowServo.setPosition(ElbowRight);
 
-        driveClass.setPoseEstimate(START_POSE);
+    //    driveClass.setPoseEstimate(START_POSE);
 
     }
 

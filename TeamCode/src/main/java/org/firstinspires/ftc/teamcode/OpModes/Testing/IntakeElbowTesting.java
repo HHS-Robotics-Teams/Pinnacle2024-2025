@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes.Testing;
 
-import static org.firstinspires.ftc.teamcode.Constants.Fields.AutoWasRan;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.AutoNotRan;
+
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowCenter;
@@ -12,10 +13,14 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intake_claw_servo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.Constants.HardwareSettings;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 
@@ -29,8 +34,16 @@ public class IntakeElbowTesting extends OpMode {
         // ---------- Input Class ----------
         input = new Input();
 
-        if (!AutoWasRan) {
+        if (AutoNotRan) {
             RobotHardware.init(hardwareMap);
+            HardwareSettings.init(hardwareMap);
+            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        }
+        else {
+            RobotHardware.init(hardwareMap);
+            HardwareSettings.init(hardwareMap);
         }
 
         // ---------- Confirmation Printing ----------
@@ -69,10 +82,14 @@ public class IntakeElbowTesting extends OpMode {
         if (input.a.down()) {
             intake_claw_servo.setPosition(Claws_closed);
         }
-        telemetry.addData("Auto ran ", AutoWasRan ? "True" : "False");
+        telemetry.addData("Auto not ran ", AutoNotRan ? "True" : "False");
         telemetry.addData("Claw position  ", intake_claw_servo.getPosition());
         telemetry.addData("Wrist position", intakeWristServo.getPosition());
         telemetry.addData("Elbow", intakeElbowServo.getPosition());
+        telemetry.addData("tilt motor", tiltMotor.getMode());
+        telemetry.addData("tilt ticks", tiltMotor.getCurrentPosition());
+        telemetry.addData("slide motor", slideMotor.getMode());
+        telemetry.addData("slide ticks ", slideMotor.getCurrentPosition());
         telemetry.update();
     }
 }

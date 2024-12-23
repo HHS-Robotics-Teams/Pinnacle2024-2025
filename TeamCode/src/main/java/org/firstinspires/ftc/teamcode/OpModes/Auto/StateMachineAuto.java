@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes.Auto;
 
-import static org.firstinspires.ftc.teamcode.Constants.Fields.AutoWasRan;
+
+import static org.firstinspires.ftc.teamcode.Constants.Fields.AutoNotRan;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
@@ -141,7 +142,7 @@ public class StateMachineAuto extends OpMode {
     }
 
     public void loop(){
-        AutoWasRan = true;
+        AutoNotRan = false;
         drive.update();
         telemetry.addData("state", autoState);
         telemetry.addData("timer", testTimer.seconds());

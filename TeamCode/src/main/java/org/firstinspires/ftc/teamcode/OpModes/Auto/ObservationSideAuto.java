@@ -1,7 +1,8 @@
 
 package org.firstinspires.ftc.teamcode.OpModes.Auto;
 
-import static org.firstinspires.ftc.teamcode.Constants.Fields.AutoWasRan;
+
+import static org.firstinspires.ftc.teamcode.Constants.Fields.AutoNotRan;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
@@ -79,8 +80,6 @@ public class ObservationSideAuto extends OpMode {
     @Override
     public void init() {
         RobotHardware.init(hardwareMap);
-
-        HardwareSettings.init(hardwareMap);
 
         applyPowers();
 
@@ -207,7 +206,7 @@ public class ObservationSideAuto extends OpMode {
 
             case FINISH:
                 slideMotor.setTargetPosition(0);
-                AutoWasRan = true;
+                AutoNotRan = false;
                 drive.update();
                 break;
 
