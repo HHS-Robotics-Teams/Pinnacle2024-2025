@@ -18,23 +18,23 @@ public class Fields {
 
 
     // tilt motor positions
-    public static int ArmTicks = 100;
+    public  int ArmTicks = 100;
 
     public static int TiltStartPosition = 0;
 
     public static int TiltMinPosition = 75;
     public static int IntakeRotateThreshold = 250; //100
-    public static int TiltPickupPosition = 650;
+    public static int TiltPickupPosition = 485;
     public static int TiltLowChamber = 500;
     public static int TiltHomePosition = 650;
-    public static int TiltUpThreshold = 1000;
+    public static int TiltUpThreshold = 1360;
 
-    public static int TiltHighChamber = 1341;
+    public static int TiltHighChamber = 1100;
     public static int TiltLowBucket = 1388;
     public static int TiltHighBucket = 1535;
     public static int TiltMaxPosition = 1700;
     public static int TiltSlowSlowPosition = 2000;
-    public static int TiltHighBucketBackwards = 2300;
+    public static int TiltHighBucketBackwards = 2225;
 
 
     // slide motor positions

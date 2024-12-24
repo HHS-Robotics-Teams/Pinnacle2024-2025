@@ -76,24 +76,10 @@ public class StateMachineTelopTest extends OpMode {
         // ---------- Input Class ----------
         input = new Input();
 
-        // ---------- Map Hardware ----------
-        if (AutoNotRan) {
+
             RobotHardware.init(hardwareMap);
             HardwareSettings.init(hardwareMap);
-            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            intakeWristServo.setPosition(WristLeft);
-            intakeElbowServo.setPosition(ElbowRight);
-            tiltMotor.setTargetPosition(TiltMinPosition);
-            slideMotor.setTargetPosition(0);
-            intake_claw_servo.setPosition(Claws_closed);
-
-        }
-        else {
-            RobotHardware.init(hardwareMap);
-            HardwareSettings.init(hardwareMap);
-        }
 
         applyPowers();
 
@@ -208,7 +194,7 @@ public class StateMachineTelopTest extends OpMode {
                         }
                         break;
                     case (2):
-                        tiltMotor.setTargetPosition(TiltHighBucketBackwards);
+                        tiltMotor.setTargetPosition(2000);
                         Extend_timer.reset();
                         currentRetractionStep++;
                         break;

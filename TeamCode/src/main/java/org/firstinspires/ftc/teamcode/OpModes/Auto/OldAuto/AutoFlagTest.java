@@ -33,9 +33,7 @@ public class AutoFlagTest extends OpMode {
     @Override
     public void init () {
         RobotHardware.init(hardwareMap);
-        HardwareSettings.init(hardwareMap);
-        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
         intakeWristServo.setPosition(WristLeft);
         intakeElbowServo.setPosition(ElbowRight);

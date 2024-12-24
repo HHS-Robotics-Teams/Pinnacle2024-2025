@@ -31,7 +31,7 @@ public class HardwareSettings {
         //    tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             tiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             tiltMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //    slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -40,4 +40,5 @@ public class HardwareSettings {
             tiltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             intake_claw_servo.setDirection(Servo.Direction.REVERSE);
         }
+
 }

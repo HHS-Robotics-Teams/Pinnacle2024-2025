@@ -36,7 +36,6 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHome;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingSubPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingWallPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.buttonPressInitiate;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.clawsClosed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.clawsOpen;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.climbPositionReached;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentRetractionStep;
@@ -58,6 +57,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.Constants.Fields;
 import org.firstinspires.ftc.teamcode.Constants.HardwareSettings;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.excutil.Input;
@@ -73,18 +73,20 @@ public class PinnacleTeleOp extends OpMode {
 
         // ---------- Input Class ----------
         input = new Input();
-
-        // ---------- Map Hardware ----------
-        if (AutoNotRan) {
-            RobotHardware.init(hardwareMap);
-            HardwareSettings.init(hardwareMap);
-            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-        else {
-            RobotHardware.init(hardwareMap);
-            HardwareSettings.init(hardwareMap);
-        }
+        RobotHardware.init(hardwareMap);
+        //HardwareSettings.init(hardwareMap);
+        intake_claw_servo.setPosition(Claws_closed);
+//        // ---------- Map Hardware ----------
+//        if (AutoNotRan) {
+//            RobotHardware.init(hardwareMap);
+//            HardwareSettings.init(hardwareMap);
+//            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        }
+//        else {
+//            RobotHardware.init(hardwareMap);
+//            HardwareSettings.init(hardwareMap);
+//        }
         applyPowers();
         // ---------- Confirmation Printing ----------
         telemetry.addData("Status:", "✅ Robot is initialized.");
@@ -289,7 +291,7 @@ public class PinnacleTeleOp extends OpMode {
                     slideMotor.setTargetPosition(1000);
                     intakeWristServo.setPosition(WristRight); // check position
                     intakeElbowServo.setPosition(ElbowLeft);
-                    intake_claw_servo.setPosition(Claws_open);
+                    //intake_claw_servo.setPosition(Claws_open);
                     currentRetractionStep = 1;
                     armRetractingWallPickup = false;
 
@@ -336,18 +338,16 @@ public class PinnacleTeleOp extends OpMode {
                 case (1):
                     slideMotor.setTargetPosition(SlideMinPosition);
                     if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
-
-
                         currentRetractionStep++;
                     }
                     break;
 
                 case (2):
-                    tiltMotor.setTargetPosition(580);
+                    tiltMotor.setTargetPosition(650);
                     slideMotor.setTargetPosition(1000);
                     intakeWristServo.setPosition(WristCenter);
                     intakeElbowServo.setPosition(ElbowLeft);
-                    intake_claw_servo.setPosition(Claws_open);
+                   // intake_claw_servo.setPosition(Claws_open);
                     currentRetractionStep = 1;
                     armRetractingFloorPickup = false;
 
