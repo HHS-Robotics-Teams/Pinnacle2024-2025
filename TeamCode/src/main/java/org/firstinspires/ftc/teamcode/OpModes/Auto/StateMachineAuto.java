@@ -169,9 +169,9 @@ public class StateMachineAuto extends OpMode {
                 .splineToLinearHeading(new Pose2d(13, 41, Math.toRadians(18)), Math.toRadians(-47))
                 .build();
         turnBacktoScore = drive.trajectorySequenceBuilder(new Pose2d(13,41, Math.toRadians(18)))
-                .turn(Math.toRadians(-70))
+                .turn(Math.toRadians(-68))
                 .build();
-        turntoCollectLast = drive.trajectorySequenceBuilder(new Pose2d(13, 41, Math.toRadians(-48)))
+        turntoCollectLast = drive.trajectorySequenceBuilder(new Pose2d(13, 41, Math.toRadians(-46)))
                 .turn(Math.toRadians(92))
                 .build();
         turntoScoreLast = drive.trajectorySequenceBuilder(new Pose2d(13,41, Math.toRadians(42)))
@@ -340,7 +340,7 @@ public class StateMachineAuto extends OpMode {
                     }
                 break;
             case LOWER_SLIDE_RESET:
-                if (Math.abs(tiltMotor.getCurrentPosition() - 650) < 5 && extendToSecondSampleTimer.seconds() > 2.5) {
+                if (Math.abs(tiltMotor.getCurrentPosition() - 650) < 5 && extendToSecondSampleTimer.seconds() > 2.0) {
                     slideMotor.setTargetPosition(1055);
                     if ((Math.abs(slideMotor.getCurrentPosition() - 1055) < SlideTickThreshold)) {
                         // increase for more cycles, will NOT WORK
