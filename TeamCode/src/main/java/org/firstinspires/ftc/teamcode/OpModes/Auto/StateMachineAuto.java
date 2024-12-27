@@ -37,8 +37,9 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 @Autonomous (name = "StateMachineRedBasket side spec 1+2+Park", group = "Comp Auto")
 public class StateMachineAuto extends OpMode {
 
+    // power value is assigned to a variable which is referenced and changed
     public int ArmTicks = 100;
-
+    public int TiltTickThreshold = 10;
     public int TiltStartPosition = 0;
 
     public int TiltMinPosition = 75;
@@ -53,10 +54,11 @@ public class StateMachineAuto extends OpMode {
     public  int TiltHighBucket = 1535;
     public int TiltMaxPosition = 1700;
     public int TiltSlowSlowPosition = 2000;
-    public int TiltHighBucketBackwards = 2250;
+    public int TiltHighBucketBackwards = 2220;
 
 
     // slide motor positions
+    public int SlideTickThreshold = 15;
     public int SlideTicks = 80;
     public int SlideStartPosition = 0;
 
@@ -65,9 +67,9 @@ public class StateMachineAuto extends OpMode {
     public int SlideLowChamber = 250;
 
     public int SlideHighChamber = 450;
-    public int SlideHighBucket = 1455;
-    public int SlideMaxPosition = 1455;
-    public int SlideHighBucketBacwards = 1455;
+//    public int SlideHighBucket = 1455;
+//    public int SlideMaxPosition = 1455;
+    public int SlideHighBucketBacwards = 1445;
     double PoseXWhenCollect = 0;
     double PoseYWhenCollect = 0;
     double HeadingWhenCollect = 0;
@@ -167,9 +169,9 @@ public class StateMachineAuto extends OpMode {
                 .splineToLinearHeading(new Pose2d(13, 41, Math.toRadians(18)), Math.toRadians(-47))
                 .build();
         turnBacktoScore = drive.trajectorySequenceBuilder(new Pose2d(13,41, Math.toRadians(18)))
-                .turn(Math.toRadians(-72))
+                .turn(Math.toRadians(-70))
                 .build();
-        turntoCollectLast = drive.trajectorySequenceBuilder(new Pose2d(13, 41, Math.toRadians(-50)))
+        turntoCollectLast = drive.trajectorySequenceBuilder(new Pose2d(13, 41, Math.toRadians(-48)))
                 .turn(Math.toRadians(92))
                 .build();
         turntoScoreLast = drive.trajectorySequenceBuilder(new Pose2d(13,41, Math.toRadians(42)))
@@ -207,6 +209,7 @@ public class StateMachineAuto extends OpMode {
 
         switch(autoState) {
             case PRELOAD:
+                tiltMotor.setTargetPosition(TiltHighChamber + 400);
                 intakeElbowServo.setPosition(ElbowRight);
                 intakeWristServo.setPosition(WristRight);
                 testTimer.reset();
@@ -215,7 +218,6 @@ public class StateMachineAuto extends OpMode {
 
             case DRIVE:
                 slideMotor.setTargetPosition(SlideHighChamber + 30);
-                tiltMotor.setTargetPosition(TiltHighChamber + 400);
                 if (testTimer.seconds() >= 1.75) {
                     dunkTimer.reset();
                     autoState = AutoState.DUNK;
@@ -254,7 +256,7 @@ public class StateMachineAuto extends OpMode {
                         && Math.abs(tiltMotor.getCurrentPosition() - 590) <= 5 && LowerTileTimer.seconds() >= 2.5) {
                     slideMotor.setTargetPosition(985);
                     grabTimer.reset();
-                    if ((Math.abs(slideMotor.getCurrentPosition() - 985) < 10)) {
+                    if ((Math.abs(slideMotor.getCurrentPosition() - 985) < SlideTickThreshold)) {
                         // increase for more cycles, will NOT WORK
                         grabTimer.reset();
                         tiltMotor.setPower(0);
@@ -293,9 +295,9 @@ public class StateMachineAuto extends OpMode {
                 break;
             case EXTENDTOSCORE:
                 if (tiltTimer.seconds() > 1.4) {
-                    if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwards) <= 15) {
-                        slideMotor.setTargetPosition(1455);
-                        if (Math.abs(slideMotor.getCurrentPosition() - 1455) < 20) {
+                    if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwards) <= TiltTickThreshold) {
+                        slideMotor.setTargetPosition(SlideHighBucketBacwards);
+                        if (Math.abs(slideMotor.getCurrentPosition() - SlideHighBucketBacwards) < SlideTickThreshold) {
                             intakeElbowServo.setPosition(ElbowRight);
                             intakeWristServo.setPosition(WristSampleBucketScore);
                             depositTimer.reset();
@@ -321,15 +323,16 @@ public class StateMachineAuto extends OpMode {
                 break;
             case EXTEND_TO_SECOND_SAMPLE:
                 if (extendToSecondSampleTimer.seconds() > 0.5) {
-                    intakeElbowServo.setPosition(ElbowLeft);
+                    //intakeElbowServo.setPosition(ElbowLeft);
                     intakeWristServo.setPosition(WristCenter);
                     drive.update();
                     if ((Math.abs(drive.getPoseEstimate().getX() - 13) <= 2) && (Math.abs(drive.getPoseEstimate().getY() - 41) <= 2) &&
                             (extendToSecondSampleTimer.seconds() > 0.7)) {
                         slideMotor.setTargetPosition(0);
-                        if (slideMotor.getCurrentPosition() <= 20){
+                        if (slideMotor.getCurrentPosition() <= SlideTickThreshold){
                             tiltMotor.setTargetPosition(650);
                             drive.followTrajectorySequenceAsync(turnAgain);
+                            intakeElbowServo.setPosition(ElbowLeft);
                             autoState = AutoState.LOWER_SLIDE_RESET;
                             break;
                         }
@@ -338,8 +341,8 @@ public class StateMachineAuto extends OpMode {
                 break;
             case LOWER_SLIDE_RESET:
                 if (Math.abs(tiltMotor.getCurrentPosition() - 650) < 5 && extendToSecondSampleTimer.seconds() > 2.5) {
-                    slideMotor.setTargetPosition(1040);
-                    if ((Math.abs(slideMotor.getCurrentPosition() - 1040) < 10)) {
+                    slideMotor.setTargetPosition(1055);
+                    if ((Math.abs(slideMotor.getCurrentPosition() - 1055) < SlideTickThreshold)) {
                         // increase for more cycles, will NOT WORK
                         tiltMotor.setPower(0);
                         PoseXWhenCollect = drive.getPoseEstimate().getX();
@@ -366,14 +369,14 @@ public class StateMachineAuto extends OpMode {
                 break;
             case RESET_FOR_PATH_UPDATE:
                 slideMotor.setTargetPosition(0);
-                if ((slideMotor.getCurrentPosition() < 20) && grabTimer.seconds() >= 2) {
+                if ((slideMotor.getCurrentPosition() < SlideTickThreshold) && grabTimer.seconds() >= 2) {
                     tiltMotor.setTargetPosition(TiltHighBucketBackwards);
                     if (tiltMotor.getCurrentPosition() > 2300){
                         slideMotor.setPower(0);
                     }
 
-                    if (Math.abs(tiltMotor.getCurrentPosition() - 2250) <= 10) {
-                        slideMotor.setTargetPosition(1455);
+                    if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwards) <= TiltTickThreshold) {
+                        slideMotor.setTargetPosition(SlideHighBucketBacwards);
                         autoState = AutoState.EXTENTOSCORE_TWO;
                         break;
                     }
@@ -381,7 +384,7 @@ public class StateMachineAuto extends OpMode {
                 break;
             case EXTENTOSCORE_TWO:
                 slideMotor.setPower(1);
-                if (Math.abs(slideMotor.getCurrentPosition() - 1455) < 5) {
+                if (Math.abs(slideMotor.getCurrentPosition() - SlideHighBucketBacwards) < SlideTickThreshold) {
                     intakeElbowServo.setPosition(ElbowRight);
                     intakeWristServo.setPosition(WristSampleBucketScore);
                     depositTimer.reset();
@@ -393,7 +396,7 @@ public class StateMachineAuto extends OpMode {
                 if (depositTimer.seconds() >= 0.5) {
                     intake_claw_servo.setPosition(Claws_open);
                     if (depositTimer.seconds() >= 1){
-                        intakeElbowServo.setPosition(ElbowLeft);
+                        //intakeElbowServo.setPosition(ElbowLeft);
                         intakeWristServo.setPosition(WristCenter);
                         if (depositTimer.seconds() >= 1.5) {
                             slideMotor.setTargetPosition(0);
@@ -407,15 +410,16 @@ public class StateMachineAuto extends OpMode {
             case TURN_TO_SCORE_LAST:
                 if (slideMotor.getCurrentPosition() < 300){
                     tiltMotor.setTargetPosition(1000);
+                    intakeElbowServo.setPosition(ElbowLeft);
                 }
-                if (slideMotor.getCurrentPosition() <= 10) {
+                if (slideMotor.getCurrentPosition() <= SlideTickThreshold) {
                     drive.followTrajectorySequenceAsync(turntoCollectLast);
                     autoState = AutoState.RESET_TILT_FOR_LAST_CYCLE;
                     break;
                 }
                 break;
             case RESET_TILT_FOR_LAST_CYCLE:
-                if (slideMotor.getCurrentPosition() <= 10) {
+                if (slideMotor.getCurrentPosition() <= SlideTickThreshold) {
                     tiltMotor.setTargetPosition(675);
                     tiltTimer.reset();
                     autoState = AutoState.EXTEND_TO_THIRD_SAMPLE;
@@ -424,7 +428,7 @@ public class StateMachineAuto extends OpMode {
                 break;
             case EXTEND_TO_THIRD_SAMPLE:
                 if ((Math.abs(tiltMotor.getCurrentPosition() - 675) <= 5) && (tiltTimer.seconds() >= 2)){
-                    slideMotor.setTargetPosition(1440);
+                    slideMotor.setTargetPosition(1450);
                     //elbow right nd wrist cneter
                     intakeElbowServo.setPosition(ElbowLeft);
                     intakeWristServo.setPosition(WristCenter);
@@ -433,7 +437,7 @@ public class StateMachineAuto extends OpMode {
                 }
                 break;
             case GRAB_LAST_SAMPLE:
-                if (Math.abs(slideMotor.getCurrentPosition() - 1440) < 10) {
+                if (Math.abs(slideMotor.getCurrentPosition() - 1450) < SlideTickThreshold) {
                     tiltMotor.setPower(0);
                     PoseXWhenCollect = drive.getPoseEstimate().getX();
                     PoseYWhenCollect = drive.getPoseEstimate().getY();
@@ -452,8 +456,8 @@ public class StateMachineAuto extends OpMode {
                         tiltMotor.setPower(1);
                         slideMotor.setTargetPosition(0);
                         drive.followTrajectorySequenceAsync(turntoScoreLast);
-                        if (slideMotor.getCurrentPosition() <= 20) {
-                            tiltMotor.setTargetPosition(2250);
+                        if (slideMotor.getCurrentPosition() <= SlideTickThreshold) {
+                            tiltMotor.setTargetPosition(TiltHighBucketBackwards);
                             autoState = AutoState.EXTEND_TO_SCORE_LAST_SAMPLE;
                             break;
                         }
@@ -461,9 +465,9 @@ public class StateMachineAuto extends OpMode {
                 }
                 break;
             case EXTEND_TO_SCORE_LAST_SAMPLE:
-                if (Math.abs(tiltMotor.getCurrentPosition() - 2250) <= 10){
-                    slideMotor.setTargetPosition(1455);
-                    if (slideMotor.getCurrentPosition() > 1400){
+                if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwards) <= TiltTickThreshold){
+                    slideMotor.setTargetPosition(SlideHighBucketBacwards);
+                    if (Math.abs(slideMotor.getCurrentPosition() - SlideHighBucketBacwards) < SlideTickThreshold){
                         intakeElbowServo.setPosition(ElbowRight);
                         intakeWristServo.setPosition(WristSampleBucketScore);
                         grabTimer.reset();
@@ -476,10 +480,11 @@ public class StateMachineAuto extends OpMode {
                 if (grabTimer.seconds() >= 0.5){
                     intake_claw_servo.setPosition(Claws_open);
                     if (grabTimer.seconds() >= 1){
-                        intakeElbowServo.setPosition(ElbowLeft);
+                        //intakeElbowServo.setPosition(ElbowLeft);
                         intakeWristServo.setPosition(WristCenter);
                         slideMotor.setTargetPosition(0);
                         if (slideMotor.getCurrentPosition() <= 200){
+                            intakeElbowServo.setPosition(ElbowLeft);
                             //tiltMotor.setTargetPosition(1200);
                             //drive.followTrajectorySequenceAsync(park);
                             autoState = AutoState.FINISH;
@@ -488,15 +493,15 @@ public class StateMachineAuto extends OpMode {
                     }
                 }
                 break;
-            case DRIVE_TO_PARK:
-                if (tiltMotor.getCurrentPosition() > 1150){
-                    intakeElbowServo.setPosition(ElbowRight);
-                    intakeWristServo.setPosition(WristLeft);
-                    slideMotor.setTargetPosition(1350);
-                    autoState = AutoState.FINISH;
-                    break;
-                }
-                break;
+//            case DRIVE_TO_PARK:
+//                if (tiltMotor.getCurrentPosition() > 1150){
+//                    intakeElbowServo.setPosition(ElbowRight);
+//                    intakeWristServo.setPosition(WristLeft);
+//                    slideMotor.setTargetPosition(1350);
+//                    autoState = AutoState.FINISH;
+//                    break;
+//                }
+//                break;
             case FINISH:
 
                 drive.update();
