@@ -56,6 +56,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Constants.Fields;
 import org.firstinspires.ftc.teamcode.Constants.HardwareSettings;
@@ -73,21 +74,10 @@ public class PinnacleTeleOp extends OpMode {
 
         // ---------- Input Class ----------
         input = new Input();
+
         RobotHardware.init(hardwareMap);
-        //HardwareSettings.init(hardwareMap);
-        intake_claw_servo.setPosition(Claws_closed);
-//        // ---------- Map Hardware ----------
-//        if (AutoNotRan) {
-//            RobotHardware.init(hardwareMap);
-//            HardwareSettings.init(hardwareMap);
-//            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        }
-//        else {
-//            RobotHardware.init(hardwareMap);
-//            HardwareSettings.init(hardwareMap);
-//        }
-        applyPowers();
+
+
         // ---------- Confirmation Printing ----------
         telemetry.addData("Status:", "✅ Robot is initialized.");
         telemetry.update();

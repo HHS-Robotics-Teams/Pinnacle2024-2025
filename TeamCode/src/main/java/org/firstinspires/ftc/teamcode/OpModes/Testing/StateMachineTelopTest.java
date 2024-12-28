@@ -9,7 +9,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakeWristPositionReached;
 
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighBucket;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighBucketBacwards;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighBucketBackwards;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideLowChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMaxPosition;
@@ -18,6 +18,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.SlidePower;
 
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucketBackwards;
+
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltLowBucket;
@@ -30,6 +31,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltUpThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSampleBucketScore;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingFloorPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHighBasket;
@@ -69,13 +71,13 @@ public class StateMachineTelopTest extends OpMode {
 
     public Input input;
     ElapsedTime Extend_timer = new ElapsedTime();
+    ElapsedTime Claw_timer = new ElapsedTime();
 
     @Override
     public void init() {
 
         // ---------- Input Class ----------
         input = new Input();
-
 
             RobotHardware.init(hardwareMap);
             HardwareSettings.init(hardwareMap);
@@ -99,7 +101,7 @@ public class StateMachineTelopTest extends OpMode {
         /* ============================== Driving and Wheels ============================== */
 
         // ---------- Maps Wheels to Joysticks ----------
-        double rotate = gamepad1.right_stick_x; // Right stick: left and right
+        double rotate = (gamepad1.right_stick_x * 0.8); // Right stick: left and right
         double strafe = -gamepad1.left_stick_x;   // Left stick: left and right
         double drive = -gamepad1.left_stick_y;   //  Left stick: up and down
 
@@ -172,6 +174,7 @@ public class StateMachineTelopTest extends OpMode {
         }
         if (input.right_bumper.held()) {
             intake_claw_servo.setPosition(Claws_open);
+            intakeWristServo.setPosition(WristCenter);
 
 
         }
@@ -188,30 +191,34 @@ public class StateMachineTelopTest extends OpMode {
             if (armRetractingHighBasket) {
                 switch (currentRetractionStep) {
                     case (1):
+                        intakeWristServo.setPosition(WristCenter);
                         slideMotor.setTargetPosition(SlideMinPosition);
                         if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
                             currentRetractionStep++;
                         }
                         break;
                     case (2):
-                        tiltMotor.setTargetPosition(2000);
+                        tiltMotor.setTargetPosition(TiltHighBucketBackwards);
                         Extend_timer.reset();
                         currentRetractionStep++;
                         break;
 
                     case (3):
                         if (Extend_timer.seconds() > 1) {
-                            slideMotor.setTargetPosition(SlideHighBucketBacwards);
+                            slideMotor.setTargetPosition(SlideHighBucketBackwards);
+                            Claw_timer.reset();
                             currentRetractionStep++;
                         }
                         break;
 
                     case (4):
-                        intakeWristServo.setPosition(WristCenter);
-                        intakeElbowServo.setPosition(ElbowRight);
-                        currentRetractionStep = 1;
-                        armRetractingHighBasket = false;
-                        break;
+                        if (Claw_timer.seconds() > .5) {
+                            intakeWristServo.setPosition(WristSampleBucketScore);
+                            intakeElbowServo.setPosition(ElbowRight);
+                            currentRetractionStep = 1;
+                            armRetractingHighBasket = false;
+                            break;
+                        }
                 }
             }
 

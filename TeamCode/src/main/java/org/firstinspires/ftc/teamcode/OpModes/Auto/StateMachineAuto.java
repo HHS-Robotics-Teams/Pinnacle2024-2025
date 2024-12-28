@@ -340,7 +340,7 @@ public class StateMachineAuto extends OpMode {
                     }
                 break;
             case LOWER_SLIDE_RESET:
-                if (Math.abs(tiltMotor.getCurrentPosition() - 650) < 5 && extendToSecondSampleTimer.seconds() > 2.0) {
+                if (Math.abs(tiltMotor.getCurrentPosition() - 650) < 5 && extendToSecondSampleTimer.seconds() > 2.5) {
                     slideMotor.setTargetPosition(1055);
                     if ((Math.abs(slideMotor.getCurrentPosition() - 1055) < SlideTickThreshold)) {
                         // increase for more cycles, will NOT WORK

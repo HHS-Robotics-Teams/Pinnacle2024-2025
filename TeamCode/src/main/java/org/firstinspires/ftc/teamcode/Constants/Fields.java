@@ -48,7 +48,7 @@ public class Fields {
     public static int SlideHighChamber = 450;
     public static int SlideHighBucket = 1455;
     public static int SlideMaxPosition = 1455;
-    public static int SlideHighBucketBacwards = 1455;
+    public static int SlideHighBucketBackwards = 1455;
 
 
 
@@ -104,6 +104,8 @@ public class Fields {
 
 
     public static void applyPowers() {
+        tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition());
+        slideMotor.setTargetPosition(slideMotor.getCurrentPosition());
 
         tiltMotor.setPower(1);
         slideMotor.setPower(1);
