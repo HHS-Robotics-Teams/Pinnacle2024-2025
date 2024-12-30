@@ -76,6 +76,10 @@ public class PinnacleTeleOp extends OpMode {
         input = new Input();
 
         RobotHardware.init(hardwareMap);
+        tiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        applyPowers();
 
 
         // ---------- Confirmation Printing ----------

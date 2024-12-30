@@ -68,10 +68,10 @@ public class RobotHardware {
         slideMotor.setTargetPosition(0);
 
         // ---------- Enable Encoder Based Movement ----------
-        tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         tiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         tiltMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -80,8 +80,17 @@ public class RobotHardware {
         tiltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intake_claw_servo.setDirection(Servo.Direction.REVERSE);
 
-    }
 
+
+    }
+    public static void resetEncoders(){
+        tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        tiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        tiltMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
 
 
 
