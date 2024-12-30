@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes.Auto;
 
-import static org.firstinspires.ftc.teamcode.Constants.Fields.AutoNotRan;
+
 
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
@@ -25,7 +25,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 
-import org.firstinspires.ftc.teamcode.Constants.HardwareSettings;
+
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 
 @Config
@@ -38,7 +38,7 @@ public class AutoFlagTest extends OpMode {
 
         resetEncoders();
         applyPowers();
-        
+
 
 
         intakeWristServo.setPosition(WristLeft);
@@ -51,12 +51,12 @@ public class AutoFlagTest extends OpMode {
 
     @Override
     public void loop() {
-         AutoNotRan = false;
+
         telemetry.addData("tilt motor", tiltMotor.getMode());
         telemetry.addData("tilt ticks", tiltMotor.getCurrentPosition());
         telemetry.addData("slide motor", slideMotor.getMode());
         telemetry.addData("slide ticks ", slideMotor.getCurrentPosition());
-        telemetry.addData("Auto Not ran ", AutoNotRan ? "True" : "False");
+
         telemetry.update();
 
 

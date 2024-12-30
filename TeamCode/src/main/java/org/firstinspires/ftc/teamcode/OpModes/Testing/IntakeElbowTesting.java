@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes.Testing;
 
-import static org.firstinspires.ftc.teamcode.Constants.Fields.AutoNotRan;
+
 
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Constants.HardwareSettings;
+
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 
@@ -34,17 +34,12 @@ public class IntakeElbowTesting extends OpMode {
         // ---------- Input Class ----------
         input = new Input();
 
-        if (AutoNotRan) {
-            RobotHardware.init(hardwareMap);
-            HardwareSettings.init(hardwareMap);
-            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        }
-        else {
-            RobotHardware.init(hardwareMap);
-            HardwareSettings.init(hardwareMap);
-        }
+        RobotHardware.init(hardwareMap);
+        tiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //applyPowers();
 
         // ---------- Confirmation Printing ----------
         telemetry.addData("Status:", "✅ Robot is initialized.");
@@ -82,7 +77,6 @@ public class IntakeElbowTesting extends OpMode {
         if (input.a.down()) {
             intake_claw_servo.setPosition(Claws_closed);
         }
-        telemetry.addData("Auto not ran ", AutoNotRan ? "True" : "False");
         telemetry.addData("Claw position  ", intake_claw_servo.getPosition());
         telemetry.addData("Wrist position", intakeWristServo.getPosition());
         telemetry.addData("Elbow", intakeElbowServo.getPosition());

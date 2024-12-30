@@ -1,35 +1,26 @@
 package org.firstinspires.ftc.teamcode.OpModes.Testing;
 
 
-import static org.firstinspires.ftc.teamcode.Constants.Fields.AutoNotRan;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakeWristPositionReached;
-
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighBucket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighBucketBackwards;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideLowChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMaxPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlidePower;
-
-import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucketBackwards;
-
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltLowBucket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMaxPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltPickupPosition;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltPower;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltSlowSlowPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltUpThreshold;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltWallPickupPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSampleBucketScore;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
@@ -37,12 +28,10 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingFloor
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHighBasket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHome;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingSubPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingWallPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.buttonPressInitiate;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.climbPositionReached;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentRetractionStep;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.highBasketScore;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.specimenMode;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.backLeftMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.backRightMotor;
@@ -62,7 +51,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Constants.HardwareSettings;
+
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 
@@ -79,8 +68,8 @@ public class StateMachineTelopTest extends OpMode {
         // ---------- Input Class ----------
         input = new Input();
 
-            RobotHardware.init(hardwareMap);
-            HardwareSettings.init(hardwareMap);
+        RobotHardware.init(hardwareMap);
+
 
 
         applyPowers();
@@ -300,7 +289,7 @@ public class StateMachineTelopTest extends OpMode {
                     }
                     break;
                 case (2):
-                    tiltMotor.setTargetPosition(TiltPickupPosition);
+                    tiltMotor.setTargetPosition(TiltWallPickupPosition);
                     slideMotor.setTargetPosition(1000);
                     intakeWristServo.setPosition(WristRight); // check position
                     intakeElbowServo.setPosition(ElbowLeft);

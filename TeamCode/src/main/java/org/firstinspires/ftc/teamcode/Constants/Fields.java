@@ -27,6 +27,7 @@ public class Fields {
     public static int TiltPickupPosition = 485;
     public static int TiltLowChamber = 500;
     public static int TiltHomePosition = 650;
+    public static int TiltWallPickupPosition = 700;
     public static int TiltUpThreshold = 1360;
 
     public static int TiltHighChamber = 1100;
@@ -79,8 +80,6 @@ public class Fields {
     public static double Claws_closed = 0;
 
     // Flags
-    public static Boolean AutoNotRan = true;
-
     public static Boolean IntakeWristPositionReached = false;
     public static Boolean climbPositionReached = false;
     public static Boolean armRetractingHighBasket = false;
@@ -99,14 +98,10 @@ public class Fields {
     // Timers
 
     // State Machine Runners
-    public static int highBasketScore;
     public static int currentRetractionStep = 1;
 
 
     public static void applyPowers() {
-        tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition());
-        slideMotor.setTargetPosition(slideMotor.getCurrentPosition());
-
         tiltMotor.setPower(1);
         slideMotor.setPower(1);
     }

@@ -64,8 +64,8 @@ public class RobotHardware {
         tiltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         // ---------- Error Evasion ----------
-        tiltMotor.setTargetPosition(0);
-        slideMotor.setTargetPosition(0);
+        //tiltMotor.setTargetPosition(0);
+        //slideMotor.setTargetPosition(0);
 
         // ---------- Enable Encoder Based Movement ----------
         //tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

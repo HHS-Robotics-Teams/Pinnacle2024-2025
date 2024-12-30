@@ -1,42 +1,32 @@
 package org.firstinspires.ftc.teamcode.OpModes.Telop;
 
 // Look at all these import statements :3
-import static org.firstinspires.ftc.teamcode.Constants.Fields.AutoNotRan;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
-
 import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakeWristPositionReached;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighBucket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideLowChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMaxPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlidePower;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucket;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucketBackwards;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltLowBucket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMaxPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltPickupPosition;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltPower;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltSlowSlowPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltUpThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingFloorPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHighBasket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHome;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingSubPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingWallPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.buttonPressInitiate;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.clawsOpen;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.climbPositionReached;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentRetractionStep;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.specimenMode;
@@ -56,10 +46,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.Constants.Fields;
-import org.firstinspires.ftc.teamcode.Constants.HardwareSettings;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 
@@ -76,17 +63,21 @@ public class PinnacleTeleOp extends OpMode {
         input = new Input();
 
         RobotHardware.init(hardwareMap);
-        tiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         applyPowers();
 
 
         // ---------- Confirmation Printing ----------
+        telemetry.addData("slide ticks", slideMotor.getCurrentPosition());
+        telemetry.addData("slide mode", slideMotor.getMode());
+        telemetry.addData("tilt ticks", tiltMotor.getCurrentPosition());
+        telemetry.addData("tilt mode", tiltMotor.getMode());
+        telemetry.addData("tilt power", tiltMotor.getPower());
         telemetry.addData("Status:", "✅ Robot is initialized.");
         telemetry.update();
 
     }
+
 
     @Override
     public void loop() {
@@ -129,9 +120,9 @@ public class PinnacleTeleOp extends OpMode {
             tiltMotor.setPower(.5);
         }
 
-        // ---------- Set Arm and Intake Power ----------
-        tiltMotor.setPower(TiltPower);
-        slideMotor.setPower(SlidePower);
+//        // ---------- Set Arm and Intake Power ----------
+//        tiltMotor.setPower(TiltPower);
+//        slideMotor.setPower(SlidePower);
 
 
         // ---------- Manual Arm Tilt ----------
@@ -321,6 +312,7 @@ public class PinnacleTeleOp extends OpMode {
 //                    break;
 //            }
 //        }
+//
         // ------------ Sample Floor Pickup ---------------
         if (input.b.down()) {
             armRetractingFloorPickup = true;
