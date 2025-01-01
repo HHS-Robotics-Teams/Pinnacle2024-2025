@@ -49,7 +49,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.excutil.Input;
-
+@Deprecated
 @TeleOp(name = "Pinnacle TeleOp", group = "competition")
 public class PinnacleTeleOp extends OpMode {
 

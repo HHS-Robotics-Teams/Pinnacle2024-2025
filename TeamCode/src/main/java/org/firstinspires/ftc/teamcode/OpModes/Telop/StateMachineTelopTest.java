@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.Testing;
+package org.firstinspires.ftc.teamcode.OpModes.Telop;
 
 
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
@@ -10,13 +10,13 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighBucketBac
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMaxPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.SlidePower;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucketBackwards;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltLowBucket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMaxPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltPickupPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltSlowSlowPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltUpThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltWallPickupPosition;
@@ -31,8 +31,11 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHome;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingWallPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.buttonPressInitiate;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.climbPositionReached;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.currentClimbStep;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentRetractionStep;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.specimenMode;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ActivelyClimbing;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.PreppingClimbers;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.backLeftMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.backRightMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.frontLeftMotor;
@@ -45,25 +48,23 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.rightClaw;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 
-import java.security.DomainCombiner;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 
-@TeleOp (name = "State Machine Testing", group = "Testing")
+@TeleOp (name = "State Machine Telop", group = "Competition")
 public class StateMachineTelopTest extends OpMode {
 
     public Input input;
     ElapsedTime Extend_timer = new ElapsedTime();
     ElapsedTime Claw_timer = new ElapsedTime();
-    ElapsedTime ClimberTimer = new ElapsedTime();
+    ElapsedTime Climber_Timer = new ElapsedTime();
 
     @Override
     public void init() {
@@ -85,7 +86,6 @@ public class StateMachineTelopTest extends OpMode {
 
     @Override
     public void loop() {
-
 
         input.pollGamepad(gamepad1); // Pass gamepad input through custom class
 
@@ -122,7 +122,7 @@ public class StateMachineTelopTest extends OpMode {
 
         // ---------- Arm Power Modulation ----------
         if (tiltMotor.getCurrentPosition() > 1500){
-            tiltMotor.setPower(.5); // So it doesn't fling itself onto the floor 
+            tiltMotor.setPower(.5); // So it doesn't fling itself onto the floor
         }                           // when moving the arm back.
 
 
@@ -139,7 +139,6 @@ public class StateMachineTelopTest extends OpMode {
         // ---------- Manual Extension ----------
         if (input.left_bumper.held() && (slideMotor.getCurrentPosition() <= SlideMaxPosition)) {
             slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 80); // Slide out
-
         }
 
         if (input.left_trigger.held() && (slideMotor.getCurrentPosition() >= SlideMinPosition)) {
@@ -149,24 +148,19 @@ public class StateMachineTelopTest extends OpMode {
         // ---------- Intake Wrist Servo ----------
         if (input.dpad_left.down() && IntakeWristPositionReached) {
             intakeWristServo.setPosition(WristCenter);
-
         }
 
         if (input.dpad_right.down() && IntakeWristPositionReached) {
             intakeWristServo.setPosition(WristRight);
-
         }
 
         // ---------- Intake Claws  ----------
         if (input.right_trigger.held()) { //
            intake_claw_servo.setPosition(Claws_closed);
-
         }
         if (input.right_bumper.held()) {
             intake_claw_servo.setPosition(Claws_open);
             intakeWristServo.setPosition(WristCenter);
-
-
         }
 
         /* ============================== Scoring ============================== */
@@ -187,14 +181,12 @@ public class StateMachineTelopTest extends OpMode {
                     if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
                         currentRetractionStep++;
                     } // Checks to ensure it is actually at the correct place, then goes to the next step.
-
                     break;
 
                 case (2): // Step 2: Move the arm up and back in the position it needs to be for backwards high bucket.
                     tiltMotor.setTargetPosition(TiltHighBucketBackwards);
                     Extend_timer.reset();
                     currentRetractionStep++;
-
                     break;
 
                 case (3): // Step 3: Wait 1 second so tilt can move and inertia can finish, then slide out to high bucket height.
@@ -203,7 +195,6 @@ public class StateMachineTelopTest extends OpMode {
                         Claw_timer.reset();
                         currentRetractionStep++;
                     }
-
                     break;
 
                 case (4): // Step 4: Wait a half second then move the elbow and wrist servos to the right positions.
@@ -212,7 +203,6 @@ public class StateMachineTelopTest extends OpMode {
                         intakeElbowServo.setPosition(ElbowRight);
                         currentRetractionStep = 1; // These two assignment statements reset the state for
                         armRetractingHighBasket = false; // next time the button is pressed.
-
                         break;
                     }
             }
@@ -228,13 +218,11 @@ public class StateMachineTelopTest extends OpMode {
 
         if (armRetractingHighChamber) {
             switch (currentRetractionStep) {
-
                 case (1):
                     slideMotor.setTargetPosition(SlideMinPosition);
                     if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
                         currentRetractionStep++;
                     }
-
                     break;
 
                 case (2):
@@ -244,7 +232,6 @@ public class StateMachineTelopTest extends OpMode {
                     intakeElbowServo.setPosition(ElbowLeft);
                     currentRetractionStep = 1;
                     armRetractingHighChamber = false;
-
                     break;
             }
         }
@@ -258,15 +245,11 @@ public class StateMachineTelopTest extends OpMode {
 
         if (armRetractingHome) {
             switch (currentRetractionStep) {
-
                 case (1):
                     slideMotor.setTargetPosition(SlideMinPosition);
                     if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
-
-
                         currentRetractionStep++;
                     }
-
                     break;
 
                 case (2):
@@ -276,7 +259,6 @@ public class StateMachineTelopTest extends OpMode {
                     intakeElbowServo.setPosition(ElbowLeft);
                     currentRetractionStep = 1;
                     armRetractingHome = false;
-
                     break;
             }
         }
@@ -295,10 +277,8 @@ public class StateMachineTelopTest extends OpMode {
                 case (1):
                     slideMotor.setTargetPosition(SlideMinPosition);
                     if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
-
                         currentRetractionStep ++;
                     }
-
                     break;
 
                 case (2):
@@ -309,7 +289,6 @@ public class StateMachineTelopTest extends OpMode {
                     intake_claw_servo.setPosition(Claws_open);
                     currentRetractionStep = 1;
                     armRetractingWallPickup = false;
-
                     break;
             }
         }
@@ -353,15 +332,11 @@ public class StateMachineTelopTest extends OpMode {
 
         if (armRetractingFloorPickup) {
             switch (currentRetractionStep) {
-
                 case (1):
                     slideMotor.setTargetPosition(SlideMinPosition);
                     if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
-
-
                         currentRetractionStep++;
                     }
-
                     break;
 
                 case (2):
@@ -372,57 +347,106 @@ public class StateMachineTelopTest extends OpMode {
                     intake_claw_servo.setPosition(Claws_open);
                     currentRetractionStep = 1;
                     armRetractingFloorPickup = false;
-
                     break;
             }
         }
 
         /* ============================== Climbing ============================== */
-
-        public static boolean ActivelyClimbing = false;
-        public static boolean PreppingClimbers = false;
-
         if (input.start.down()) {
-            tiltMotor.setTargetPosition(TiltLowBucket);
             leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
             rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
             PreppingClimbers = true;
             ActivelyClimbing = false;
         }
 
-        if (PreppingClimbers) {
-            ClimberTimer.reset(); // During prepping, the claws go up vertically. The timer
-            if (ClimberTimer < 5.0) { // may need to be adjusted. Make sure to init the robot
-                leftClaw.setPower(1); // while the claws are all the way down / in a 
-                rightClaw.setPower(1); // consistent spot.
+        if (PreppingClimbers)
+            switch (currentClimbStep) {
+                case (1):
+                    tiltMotor.setTargetPosition(TiltLowBucket);
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    if ((tiltMotor.getCurrentPosition() > 1300) && (slideMotor.getCurrentPosition() <= 5 )) {
+                        leftClaw.setPower(1); // while the claws are all the way down / in a 
+                        rightClaw.setPower(1); // consistent spot.
+                        Climber_Timer.reset();
+                        currentClimbStep++;
+                    }
+                    break;
+                case (2):
+                    if (Climber_Timer.seconds() > 1){ //needs to be adjusted to match the robot spool time
+                        leftClaw.setPower(0);
+                        rightClaw.setPower(0);
+                        PreppingClimbers = false;
+                        currentClimbStep = 1;
+                    }
+                    break;
             }
-            else {
-                leftClaw.setPower(0);
-                rightClaw.setPower(0);
-                PreppingClimbers = false;
-            }
-        }
-
         if (input.back.down()) {
-            tiltMotor.setTargetPosition(TiltLowBucket);
             leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
             rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+            Climber_Timer.reset();
             ActivelyClimbing = true;
             PreppingClimbers = false;
-        }
+            }
 
-        if (ActivelyClimbing) {
-            ClimberTimer.reset(); // During active climbing, claws are pulled to the robot,
-            if (ClimberTimer < 10.0) { // making it climb. Additionally, arm goes down onto
-                leftClaw.setPower(1); // the low bar for further support.
-                rightClaw.setPower(1);
+        if (ActivelyClimbing)
+            switch (currentClimbStep) {
+                case (1):
+                    leftClaw.setPower(1); // while the claws are all the way down / in a
+                    rightClaw.setPower(1); // consistent spot.
+                    Climber_Timer.reset();
+                    currentClimbStep ++;
+                    break;
+                case (2):
+                    if (Climber_Timer.seconds() > .5){ /* we can change this to the drivers liking this is the the amount of time
+                    between the claws retracting and stopping encase we miss on the climb.
+                        */
+                        leftClaw.setPower(0);
+                        rightClaw.setPower(0);
+
+                    }
             }
-            else {
-                leftClaw.setPower(0);
-                rightClaw.setPower(0);
-                ActivelyClimbing = false;
-            }
-        }
+//        if (input.start.down()) {
+//            tiltMotor.setTargetPosition(TiltLowBucket);
+//            leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+//            rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+//            PreppingClimbers = true;
+//            ActivelyClimbing = false;
+//        }
+//
+//        if (PreppingClimbers) {
+//            Climber_Timer.reset(); // During prepping, the claws go up vertically. The timer
+//            if (Climber_Timer < 5.0) { // may need to be adjusted. Make sure to init the robot
+//                leftClaw.setPower(1); // while the claws are all the way down / in a
+//                rightClaw.setPower(1); // consistent spot.
+//            }
+//            else {
+//                leftClaw.setPower(0);
+//                rightClaw.setPower(0);
+//                PreppingClimbers = false;
+//            }
+//        }
+//
+//        if (input.back.down()) {
+//            tiltMotor.setTargetPosition(TiltLowBucket);
+//            leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+//            rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+//            ActivelyClimbing = true;
+//            PreppingClimbers = false;
+//        }
+//
+//        if (ActivelyClimbing) {
+//            Climber_Timer.reset(); // During active climbing, claws are pulled to the robot,
+//            if (Climber_Timer < 10.0) { // making it climb. Additionally, arm goes down onto
+//                leftClaw.setPower(1); // the low bar for further support.
+//                rightClaw.setPower(1);
+//            }
+//            else {
+//                leftClaw.setPower(0);
+//                rightClaw.setPower(0);
+//                ActivelyClimbing = false;
+//            }
+//        }
+//
 
 /*      if (input.start.held()) {
             tiltMotor.setTargetPosition(TiltMinPosition);

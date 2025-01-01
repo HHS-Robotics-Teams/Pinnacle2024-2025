@@ -94,11 +94,14 @@ public class Fields {
     public static Boolean buttonPressInitiate = false;
     public static Boolean clawsOpen = false;
     public static Boolean clawsClosed = false;
+    public static boolean ActivelyClimbing = false;
+    public static boolean PreppingClimbers = false;
 
     // Timers
 
     // State Machine Runners
     public static int currentRetractionStep = 1;
+    public static int currentClimbStep = 1;
 
 
     public static void applyPowers() {
