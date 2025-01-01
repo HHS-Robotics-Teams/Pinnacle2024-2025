@@ -45,6 +45,8 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.rightClaw;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 
+import java.security.DomainCombiner;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -61,6 +63,7 @@ public class StateMachineTelopTest extends OpMode {
     public Input input;
     ElapsedTime Extend_timer = new ElapsedTime();
     ElapsedTime Claw_timer = new ElapsedTime();
+    ElapsedTime ClimberTimer = new ElapsedTime();
 
     @Override
     public void init() {
@@ -68,10 +71,10 @@ public class StateMachineTelopTest extends OpMode {
         // ---------- Input Class ----------
         input = new Input();
 
+        // ---------- Initialize Hardware ----------
         RobotHardware.init(hardwareMap);
 
-
-
+        // ---------- Add Power ---------
         applyPowers();
 
         // ---------- Confirmation Printing ----------
@@ -79,7 +82,6 @@ public class StateMachineTelopTest extends OpMode {
         telemetry.update();
 
     }
-
 
     @Override
     public void loop() {
@@ -106,7 +108,6 @@ public class StateMachineTelopTest extends OpMode {
             drive = drive / 3;
         }
 
-
         // ---------- Wheel Calculations ----------
         double frontLeftPower = drive + strafe + rotate;
         double frontRightPower = drive - strafe - rotate;
@@ -119,10 +120,10 @@ public class StateMachineTelopTest extends OpMode {
         backLeftMotor.setPower(backLeftPower);
         backRightMotor.setPower(backRightPower);
 
-
+        // ---------- Arm Power Modulation ----------
         if (tiltMotor.getCurrentPosition() > 1500){
-            tiltMotor.setPower(.5);
-        }
+            tiltMotor.setPower(.5); // So it doesn't fling itself onto the floor 
+        }                           // when moving the arm back.
 
 
         // ---------- Manual Arm Tilt ----------
@@ -168,79 +169,85 @@ public class StateMachineTelopTest extends OpMode {
 
         }
 
-            /* ============================== Scoring ============================== */
+        /* ============================== Scoring ============================== */
 
-            // ------------ High Basket -------------
-            if (input.y.down()) {
-                armRetractingHighBasket = true;
-                buttonPressInitiate = true;
-                IntakeWristPositionReached = false;
-            }
+        // ------------ High Basket -------------
+        if (input.y.down()) {
+            armRetractingHighBasket = true;
+            buttonPressInitiate = true;
+            IntakeWristPositionReached = false;
+        }
 
-            if (armRetractingHighBasket) {
-                switch (currentRetractionStep) {
-                    case (1):
-                        intakeWristServo.setPosition(WristCenter);
-                        slideMotor.setTargetPosition(SlideMinPosition);
-                        if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
-                            currentRetractionStep++;
-                        }
-                        break;
-                    case (2):
-                        tiltMotor.setTargetPosition(TiltHighBucketBackwards);
-                        Extend_timer.reset();
+        if (armRetractingHighBasket) {
+            switch (currentRetractionStep) {
+
+                case (1): // Step 1: Move the wrist back to center then retract the arm slide to min position.
+                    intakeWristServo.setPosition(WristCenter);
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
                         currentRetractionStep++;
-                        break;
+                    } // Checks to ensure it is actually at the correct place, then goes to the next step.
 
-                    case (3):
-                        if (Extend_timer.seconds() > 1) {
-                            slideMotor.setTargetPosition(SlideHighBucketBackwards);
-                            Claw_timer.reset();
-                            currentRetractionStep++;
-                        }
-                        break;
+                    break;
 
-                    case (4):
-                        if (Claw_timer.seconds() > .5) {
-                            intakeWristServo.setPosition(WristSampleBucketScore);
-                            intakeElbowServo.setPosition(ElbowRight);
-                            currentRetractionStep = 1;
-                            armRetractingHighBasket = false;
-                            break;
-                        }
-                }
+                case (2): // Step 2: Move the arm up and back in the position it needs to be for backwards high bucket.
+                    tiltMotor.setTargetPosition(TiltHighBucketBackwards);
+                    Extend_timer.reset();
+                    currentRetractionStep++;
+
+                    break;
+
+                case (3): // Step 3: Wait 1 second so tilt can move and inertia can finish, then slide out to high bucket height.
+                    if (Extend_timer.seconds() > 1) {
+                        slideMotor.setTargetPosition(SlideHighBucketBackwards);
+                        Claw_timer.reset();
+                        currentRetractionStep++;
+                    }
+
+                    break;
+
+                case (4): // Step 4: Wait a half second then move the elbow and wrist servos to the right positions.
+                    if (Claw_timer.seconds() > .5) {
+                        intakeWristServo.setPosition(WristSampleBucketScore);
+                        intakeElbowServo.setPosition(ElbowRight);
+                        currentRetractionStep = 1; // These two assignment statements reset the state for
+                        armRetractingHighBasket = false; // next time the button is pressed.
+
+                        break;
+                    }
             }
+        }
 
-            // ------------ High Chamber --------------
-            if (input.x.down()) {
-                armRetractingHighChamber = true;
-                buttonPressInitiate = true;
-                IntakeWristPositionReached = true;
+        // ------------ High Chamber --------------
+        if (input.x.down()) {
+            armRetractingHighChamber = true;
+            buttonPressInitiate = true;
+            IntakeWristPositionReached = true;
+            telemetry.speak("rodo control reached");
+        }
 
-                telemetry.speak("rodo control reached");
+        if (armRetractingHighChamber) {
+            switch (currentRetractionStep) {
+
+                case (1):
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
+                        currentRetractionStep++;
+                    }
+
+                    break;
+
+                case (2):
+                    tiltMotor.setTargetPosition(TiltHighChamber);
+                    slideMotor.setTargetPosition(SlideHighChamber);
+                    intakeWristServo.setPosition(WristRight); // check position
+                    intakeElbowServo.setPosition(ElbowLeft);
+                    currentRetractionStep = 1;
+                    armRetractingHighChamber = false;
+
+                    break;
             }
-
-            if (armRetractingHighChamber) {
-                switch (currentRetractionStep) {
-                    case (1):
-                        slideMotor.setTargetPosition(SlideMinPosition);
-                        if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
-
-
-                            currentRetractionStep++;
-                        }
-                        break;
-                    case (2):
-                        tiltMotor.setTargetPosition(TiltHighChamber);
-                        slideMotor.setTargetPosition(SlideHighChamber);
-                        intakeWristServo.setPosition(WristRight); // check position
-                        intakeElbowServo.setPosition(ElbowLeft);
-                        currentRetractionStep = 1;
-                        armRetractingHighChamber = false;
-
-                        break;
-                }
-            }
+        }
         /* ============================== Robot Controls ============================== */
 
         // ---------- Home ----------
@@ -251,6 +258,7 @@ public class StateMachineTelopTest extends OpMode {
 
         if (armRetractingHome) {
             switch (currentRetractionStep) {
+
                 case (1):
                     slideMotor.setTargetPosition(SlideMinPosition);
                     if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
@@ -258,6 +266,7 @@ public class StateMachineTelopTest extends OpMode {
 
                         currentRetractionStep++;
                     }
+
                     break;
 
                 case (2):
@@ -279,15 +288,19 @@ public class StateMachineTelopTest extends OpMode {
             buttonPressInitiate = true;
             armRetractingWallPickup = true;
         }
+
         if (armRetractingWallPickup){
             switch (currentRetractionStep){
+
                 case (1):
                     slideMotor.setTargetPosition(SlideMinPosition);
                     if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
 
                         currentRetractionStep ++;
                     }
+
                     break;
+
                 case (2):
                     tiltMotor.setTargetPosition(TiltWallPickupPosition);
                     slideMotor.setTargetPosition(1000);
@@ -301,42 +314,46 @@ public class StateMachineTelopTest extends OpMode {
             }
         }
 
-//        // ---------- Sample Submersible Pickup ----------
-//        if (input.a.down()) {
-//            armRetractingSubPickup = true;
-//            buttonPressInitiate = true;
-//            IntakeWristPositionReached = false;
-//        }
-//        if (armRetractingSubPickup) {
-//            switch (currentRetractionStep) {
-//                case (1):
-//                    slideMotor.setTargetPosition(SlideMinPosition);
-//                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
-//
-//                        currentRetractionStep++;
-//                    }
-//                    break;
-//
-//                case (2):
-//                    tiltMotor.setTargetPosition(418);
-//                    slideMotor.setTargetPosition(SlideLowChamber);
-//                    intakeWristServo.setPosition(WristCenter);
-//                    intakeElbowServo.setPosition(ElbowLeft);
-//                    intake_claw_servo.setPosition(Claws_open);
-//                    currentRetractionStep = 1;
-//                    armRetractingSubPickup = false;
-//
-//                    break;
-//            }
-//        }
+/*       // ---------- Sample Submersible Pickup ----------
+        if (input.a.down()) {
+            armRetractingSubPickup = true;
+            buttonPressInitiate = true;
+            IntakeWristPositionReached = false;
+        }
+        if (armRetractingSubPickup) {
+            switch (currentRetractionStep) {
+                case (1):
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                        if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
+                            currentRetractionStep++;
+                        }
+
+                    break;
+
+                case (2):
+                    tiltMotor.setTargetPosition(418);
+                    slideMotor.setTargetPosition(SlideLowChamber);
+                    intakeWristServo.setPosition(WristCenter);
+                    intakeElbowServo.setPosition(ElbowLeft);
+                    intake_claw_servo.setPosition(Claws_open);
+                    currentRetractionStep = 1;
+                    armRetractingSubPickup = false;
+
+                    break;
+            }
+        }
+*/
+
         // ------------ Sample Floor Pickup ---------------
         if (input.b.down()) {
             armRetractingFloorPickup = true;
             buttonPressInitiate = true;
             IntakeWristPositionReached = false;
         }
+
         if (armRetractingFloorPickup) {
             switch (currentRetractionStep) {
+
                 case (1):
                     slideMotor.setTargetPosition(SlideMinPosition);
                     if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
@@ -344,6 +361,7 @@ public class StateMachineTelopTest extends OpMode {
 
                         currentRetractionStep++;
                     }
+
                     break;
 
                 case (2):
@@ -361,8 +379,53 @@ public class StateMachineTelopTest extends OpMode {
 
         /* ============================== Climbing ============================== */
 
-        if (input.start.held()) {
+        public static boolean ActivelyClimbing = false;
+        public static boolean PreppingClimbers = false;
+
+        if (input.start.down()) {
             tiltMotor.setTargetPosition(TiltLowBucket);
+            leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+            PreppingClimbers = true;
+            ActivelyClimbing = false;
+        }
+
+        if (PreppingClimbers) {
+            ClimberTimer.reset(); // During prepping, the claws go up vertically. The timer
+            if (ClimberTimer < 5.0) { // may need to be adjusted. Make sure to init the robot
+                leftClaw.setPower(1); // while the claws are all the way down / in a 
+                rightClaw.setPower(1); // consistent spot.
+            }
+            else {
+                leftClaw.setPower(0);
+                rightClaw.setPower(0);
+                PreppingClimbers = false;
+            }
+        }
+
+        if (input.back.down()) {
+            tiltMotor.setTargetPosition(TiltLowBucket);
+            leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+            ActivelyClimbing = true;
+            PreppingClimbers = false;
+        }
+
+        if (ActivelyClimbing) {
+            ClimberTimer.reset(); // During active climbing, claws are pulled to the robot,
+            if (ClimberTimer < 10.0) { // making it climb. Additionally, arm goes down onto
+                leftClaw.setPower(1); // the low bar for further support.
+                rightClaw.setPower(1);
+            }
+            else {
+                leftClaw.setPower(0);
+                rightClaw.setPower(0);
+                ActivelyClimbing = false;
+            }
+        }
+
+/*      if (input.start.held()) {
+            tiltMotor.setTargetPosition(TiltMinPosition);
             leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
             rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
             leftClaw.setPower(1);
@@ -377,7 +440,7 @@ public class StateMachineTelopTest extends OpMode {
         } else {
             leftClaw.setPower(0);
             rightClaw.setPower(0);
-        }
+        } */
 
         /* ============================== Telemetry For Debugging ============================== */
 
