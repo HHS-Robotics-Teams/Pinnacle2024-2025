@@ -42,6 +42,7 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.rightClaw;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -49,7 +50,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.excutil.Input;
-@Deprecated
+@Disabled
 @TeleOp(name = "Pinnacle TeleOp", group = "competition")
 public class PinnacleTeleOp extends OpMode {
 

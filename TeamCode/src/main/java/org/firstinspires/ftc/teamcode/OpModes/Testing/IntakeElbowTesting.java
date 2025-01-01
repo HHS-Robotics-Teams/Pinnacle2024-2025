@@ -71,12 +71,14 @@ public class IntakeElbowTesting extends OpMode {
         if (input.left_bumper.down() && input.right_bumper.down()) {
             intakeWristServo.setPosition(WristCenter);
         }
+
         if (input.y.down()) {
             intake_claw_servo.setPosition(Claws_open);
         }
         if (input.a.down()) {
             intake_claw_servo.setPosition(Claws_closed);
         }
+
         telemetry.addData("Claw position  ", intake_claw_servo.getPosition());
         telemetry.addData("Wrist position", intakeWristServo.getPosition());
         telemetry.addData("Elbow", intakeElbowServo.getPosition());

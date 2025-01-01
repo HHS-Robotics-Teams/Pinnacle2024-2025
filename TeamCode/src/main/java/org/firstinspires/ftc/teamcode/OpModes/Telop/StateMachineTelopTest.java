@@ -365,7 +365,7 @@ public class StateMachineTelopTest extends OpMode {
                     tiltMotor.setTargetPosition(TiltLowBucket);
                     slideMotor.setTargetPosition(SlideMinPosition);
                     if ((tiltMotor.getCurrentPosition() > 1300) && (slideMotor.getCurrentPosition() <= 5 )) {
-                        leftClaw.setPower(1); // while the claws are all the way down / in a 
+                        leftClaw.setPower(1); // while the claws are all the way down / in a
                         rightClaw.setPower(1); // consistent spot.
                         Climber_Timer.reset();
                         currentClimbStep++;

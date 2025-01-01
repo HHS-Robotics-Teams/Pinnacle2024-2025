@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 
 
-@TeleOp (name = "Pose Finder Simple")
+@TeleOp (name = "Pose Finder Simple", group = "testing")
 public class PosefinderSimple extends OpMode {
 
     @Override

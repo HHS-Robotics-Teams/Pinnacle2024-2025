@@ -7,19 +7,9 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMaxPosition;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideStartPosition;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltPickupPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.clawsClosed;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.clawsOpen;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intake_claw_servo;
@@ -40,8 +30,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Config
-@Autonomous (name = "Observation Side ", group = "Comp Auto")
-public class ObservationSideAuto extends OpMode {
+@Autonomous (name = "Observation Side 1+3", group = "Comp Auto")
+public class StateMachineAutoObservationSide extends OpMode {
     public int ArmTicks = 100;
     public int TiltTickThreshold = 10;
     public int TiltStartPosition = 0;
@@ -121,7 +111,7 @@ public class ObservationSideAuto extends OpMode {
         FINISH
     }
 
-    ObservationSideAuto.AutoState autoState = ObservationSideAuto.AutoState.PRELOAD;
+    StateMachineAutoObservationSide.AutoState autoState = StateMachineAutoObservationSide.AutoState.PRELOAD;
     boolean beginLoweringArm = false;
     int cyclesDone = 0;
 
