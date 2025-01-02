@@ -3,8 +3,12 @@ package org.firstinspires.ftc.teamcode.Constants;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.batteryVoltageSensor;
 
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
+
+import static java.lang.Thread.sleep;
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -40,6 +44,7 @@ public class Fields {
 
     // slide motor positions
     public static int SlideTicks = 80;
+    public static int SlideTickThreshold = 15;
     public static int SlideStartPosition = 0;
 
     public static int SlideMinPosition = 5;
@@ -108,6 +113,20 @@ public class Fields {
         tiltMotor.setPower(1);
         slideMotor.setPower(1);
     }
+
+    // ----- For use in BadStateMachineTeleOp.java ------
+    public static boolean SampleMode = true;
+    public static boolean SpecimenMode = false;
+    public static boolean CurrentlyScoring = false;
+    public static boolean SampleDropped = false;
+
+    public static void ResetArm(){
+        tiltMotor.setTargetPosition(TiltHomePosition);
+        slideMotor.setTargetPosition(SlideMinPosition);
+        intakeWristServo.setPosition(WristCenter);
+        intakeElbowServo.setPosition(ElbowSpecimenScoring);
+    }
+    // --------------------------------------------------
 
 
     // Battery Voltage Multiplier
