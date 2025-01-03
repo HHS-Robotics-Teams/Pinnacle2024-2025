@@ -114,19 +114,35 @@ public class Fields {
         slideMotor.setPower(1);
     }
 
-    // ----- For use in BadStateMachineTeleOp.java ------
-    public static boolean SampleMode = true;
-    public static boolean SpecimenMode = false;
-    public static boolean CurrentlyScoring = false;
-    public static boolean SampleDropped = false;
 
-    public static void ResetArm(){
+    // ----- For use in BadStateMachineTeleOp.java ------
+    public static String CurrentScoringMode = "🧱 Sample Scoring";
+    public static boolean SampleMode = true; // Code will default to Sample Scoring.
+    public static boolean SpecimenMode = false;
+    public static boolean CurrentlyScoring = false; // I know some of these already exist with
+    public static boolean SampleDropped = false;    // different names, I just don't care :3
+    public static boolean CurrentlyQuickGrabbing = false;
+    public static boolean KhangCheeredOn = false;
+    public static int TiltTickIncrement = 20;
+    public static int SlideTickIncrement = 100;
+    public static int ElementsScored = 0;
+
+    // I got tired of writing setPower() multiple times 
+    // so I made a function to cut down on line count.
+    public static void SetClawPowers(double PowerDouble) {
+        leftClaw.setPower(PowerDouble);
+        rightClaw.setPower(PowerDouble);                 }
+
+    // Instead of writing these lines multiple times in the
+    // last steps of state machines, just call this function
+    // as it doesn't have to be accurate, just has to be done.
+    public static void ResetArm()                           {
         tiltMotor.setTargetPosition(TiltHomePosition);
         slideMotor.setTargetPosition(SlideMinPosition);
         intakeWristServo.setPosition(WristCenter);
-        intakeElbowServo.setPosition(ElbowSpecimenScoring);
-    }
+        intakeElbowServo.setPosition(ElbowSpecimenScoring); }
     // --------------------------------------------------
+
 
 
     // Battery Voltage Multiplier
