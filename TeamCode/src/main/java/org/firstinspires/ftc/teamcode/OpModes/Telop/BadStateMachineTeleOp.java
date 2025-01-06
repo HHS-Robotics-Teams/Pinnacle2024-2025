@@ -12,11 +12,11 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.SampleMode;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighBucketBackwards;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SpecimenMode;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucketBackwards;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltSlowSlowPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltUpThreshold;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideTickThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSampleBucketScore;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
@@ -26,16 +26,23 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltTickIncrement;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideTickIncrement;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElementsScored;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.KhangCheeredOn;
-
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.backLeftMotor;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.backRightMotor;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.frontLeftMotor;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.frontRightMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intake_claw_servo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.leftClaw;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.rightClaw;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.CurrentlyQuickGrabbing;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
@@ -43,39 +50,39 @@ import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 
 /* =================================== CONTROLS ===================================
- * 
+ *
  * Start: Unbound, Liam said to avoid using Start.
  * Back: Change the scoring mode between Sample and Specimen. This will change robot's behavior when pressing Y.
- * 
+ *
  * Y: Score whatever element is held. (Will differ depending on which scoring mode you are in. Current mode is displayed in Telemetry.)
  * B: Unbound
  * A: Unbound
  * X: Quick Grab (Not guaranteed to actually grab the sample.)
- * 
+ *
  * LB: Pull Climbing Claws Down
  * LT: Lift Climbing Claws Up
- * 
+ *
  * RB: Close Intake Claw
  * RT: Open Intake Claw
- * 
+ *
  * ----- D-Pad -----
  * Up: Tilt Arm Up
  * Down: Tilt Arm Down
  * Left: Slide Retract (Slide In)
  * Right: Slide Extend (Slide Out)
- * 
+ *
  * ----- Left Stick -----
  * Up: Drive Forward
  * Down: Drive Backward
  * Left: Strafe Left
  * Right: Strafe Right
- * 
+ *
  * ----- Right Stick -----
  * Up: Unbound (Redundant)
  * Down: Unbound (Redundant)
  * Left: Turn Left
  * Right: Turn Right
- * 
+ *
  */
 
 @TeleOp(name = "Bad State Machine TeleOp", group = "Competition")
@@ -83,7 +90,7 @@ public class BadStateMachineTeleOp extends OpMode {
 
     // Liam said to stick to one enum but it feels better, to me atleast, to separate my concerns
     // into different sections. That way if something goes wrong in specimen scoring, we don't waste
-    // time looking in sample scoring. I don't know, it makes sense to me. If issues arise, the 
+    // time looking in sample scoring. I don't know, it makes sense to me. If issues arise, the
     // code can always be changed!
 
     public enum SampleScoringState {
@@ -171,8 +178,8 @@ public class BadStateMachineTeleOp extends OpMode {
             telemetry.speak("Activating slow mode.");
             rotate = rotate / 1.5;
             strafe = strafe / 1.5;
-            drive = drive / 2.5;                              } 
-        // Cuts speed when arm is too high to 
+            drive = drive / 2.5;                              }
+        // Cuts speed when arm is too high to
         // prevent inertia from overpowering the arm.
         if (tiltMotor.getCurrentPosition() >= TiltSlowSlowPosition) {
             telemetry.speak("Activating snail mode.");
@@ -221,14 +228,14 @@ public class BadStateMachineTeleOp extends OpMode {
                     if (QuickGrabPickupTimer.seconds() > 0.667)         {
                         tiltMotor.setTargetPosition(TiltHomePosition);
                         CurrentQuickGrabStep = QuickGrab.RetractArm;    }
-                    break;    
+                    break;
 
                 case RetractArm:
-                    if (Math.abs(tiltMotor.getCurrentPosition - TiltHomePosition) >= 50) {
+                    if (Math.abs(tiltMotor.getCurrentPosition() - TiltHomePosition) >= 50) {
                         slideMotor.setTargetPosition(SlideMinPosition);
                         CurrentQuickGrabStep = QuickGrab.LowerArm;
                         CurrentlyQuickGrabbing = false; /* Resets the Quick Grab. */     }
-                    break;    
+                    break;
             }
         }
 
@@ -256,9 +263,9 @@ public class BadStateMachineTeleOp extends OpMode {
                 ResetArm(); // If pressed again it will reset itself.
                 telemetry.speak("Nevermind, I am now resetting my arm.");
                 if (SampleMode) {
-                    CurrentScoringState = ScoringState.ArmUpToBasket;
+                    CurrentSampleScoringState = SampleScoringState.ArmUpToBasket;
                 } else { // Ex: You realized you weren't lined up properly, before it was too late.
-                    CurrentScoringState = ScoringState.DunkOnRung;
+                    CurrentSpecimenScoringState = SpecimenScoringState.DunkOnRung;
                 }
                 CurrentlyScoring = false;
             }
@@ -319,11 +326,11 @@ public class BadStateMachineTeleOp extends OpMode {
                             CurrentSampleScoringState = SampleScoringState.ArmUpToBasket;
                             CurrentlyScoring = false;                                            }
                         break;
-                        
+
                 }
 
             }
-        
+
             if (SpecimenMode) { // Only does this switch if robot is in Specimen Mode.
 
                 switch (CurrentSpecimenScoringState) { // Case names should explain enough.
@@ -335,7 +342,7 @@ public class BadStateMachineTeleOp extends OpMode {
                         break;
 
                     case DriveFromRung:
-                        if (Math.abs(tiltMotor.getCurrentPosition - (TiltHighChamber - 50)) >= 20) {
+                        if (Math.abs(tiltMotor.getCurrentPosition() - (TiltHighChamber - 50)) >= 20) {
                             if (SpecimenDriveTimer.seconds() < 0.5) { // Drive backwards for half a second.
                                 frontLeftMotor.setPower(-1);
                                 frontRightMotor.setPower(-1);
@@ -364,19 +371,19 @@ public class BadStateMachineTeleOp extends OpMode {
 
 
         // ---------- Tilt Motor ----------
-        if (input.dpad_up) /* Up */                                                                     {
-            tiltMotor.setTargetPosition(Math.abs(tiltMotor.getCurrentPosition + TiltTickIncrement));    }
-        
-        if (input.dpad_down) /* Down */                                                                 {
-            tiltMotor.setTargetPosition(Math.abs(tiltMotor.getCurrentPosition - TiltTickIncrement));    }
+        if (input.dpad_up.held()) /* Up */                                                                     {
+            tiltMotor.setTargetPosition(Math.abs(tiltMotor.getCurrentPosition() + TiltTickIncrement));    }
+
+        if (input.dpad_down.held()) /* Down */                                                                 {
+            tiltMotor.setTargetPosition(Math.abs(tiltMotor.getCurrentPosition() - TiltTickIncrement));    }
 
 
         // ---------- Slide Motor ----------
-        if (input.dpad_right) /* Extend */                                                              {
-            slideMotor.setTargetPosition(Math.abs(slideMotor.getCurrentPosition + SlideTickIncrement)); }
-        
-        if (input.dpad_left) /* Retract */                                                              {
-            slideMotor.setTargetPosition(Math.abs(slideMotor.getCurrentPosition - SlideTickIncrement)); }
+        if (input.dpad_right.held()) /* Extend */                                                              {
+            slideMotor.setTargetPosition(Math.abs(slideMotor.getCurrentPosition() + SlideTickIncrement)); }
+
+        if (input.dpad_left.held()) /* Retract */                                                              {
+            slideMotor.setTargetPosition(Math.abs(slideMotor.getCurrentPosition() - SlideTickIncrement)); }
 
         // ---------- Intake Claw ----------
         if (input.right_bumper.down()) /* Closed */         {
@@ -409,13 +416,14 @@ public class BadStateMachineTeleOp extends OpMode {
         telemetry.addData("Curently QuickGrabbing? (T/F)", CurrentlyQuickGrabbing);
 
         // ---------- Current Scoring Step ----------
-        telemetry.addData("Current Step:", CurrentScoringState);
+        telemetry.addData("Current Step:", CurrentSampleScoringState);
+        telemetry.addData("Current Step:", CurrentSpecimenScoringState);
 
         // ---------- Updating ----------
         telemetry.update();
 
         // ---------- Extras ----------
-        if (ElementsScored = 3 && !KhangCheeredOn) {
+        if (ElementsScored == 3 && !KhangCheeredOn) {
             telemetry.speak("You can do it Khang!");
             KhangCheeredOn = true;
         }
