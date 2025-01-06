@@ -118,7 +118,7 @@ public class PinnacleTeleOp extends OpMode {
         backRightMotor.setPower(backRightPower);
 
         if (tiltMotor.getCurrentPosition() > 1500){
-            tiltMotor.setPower(.5);
+            tiltMotor.setPower(.7);
         }
 
 //        // ---------- Set Arm and Intake Power ----------

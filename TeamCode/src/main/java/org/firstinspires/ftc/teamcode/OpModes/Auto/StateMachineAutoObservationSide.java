@@ -30,7 +30,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Config
-@Autonomous (name = "Observation Side 1+3", group = "Comp Auto")
+@Autonomous (name = "Observation Side 1+2", group = "Comp Auto")
 public class StateMachineAutoObservationSide extends OpMode {
     public int ArmTicks = 100;
     public int TiltTickThreshold = 10;
@@ -325,7 +325,7 @@ public class StateMachineAutoObservationSide extends OpMode {
                     if (grabAgainTimer.seconds() >= 0.8) {
                         tiltMotor.setPower(1);
                         slideMotor.setTargetPosition(300);
-                        tiltMotor.setTargetPosition(700);
+                        tiltMotor.setTargetPosition(640);
                         drive.followTrajectorySequenceAsync(goDepositSecond);
                         grabTimer.reset();
                     /*tiltMotor.setTargetPosition(TiltHighChamber + 400);
@@ -350,8 +350,8 @@ public class StateMachineAutoObservationSide extends OpMode {
             case GRAB_FIRST_SPECIMEN:
                 intakeWristServo.setPosition(WristRight);
                 intakeElbowServo.setPosition(ElbowLeft);
-                if (grabAgainTimer.seconds() >= 0.5 && Math.abs(tiltMotor.getCurrentPosition() - 700) <= 10){
-                    slideMotor.setTargetPosition(1120);
+                if (grabAgainTimer.seconds() >= 0.5 && Math.abs(tiltMotor.getCurrentPosition() - 640) <= 10){
+                    slideMotor.setTargetPosition(1130);
                     if (slideMotor.getCurrentPosition() >= 1110){
                         intake_claw_servo.setPosition(Claws_closed);
                         grabTimer.reset();
@@ -388,7 +388,7 @@ public class StateMachineAutoObservationSide extends OpMode {
                 break;
             case LET_GO_OF_SPECIMEN:
                 if (grabTimer.seconds() >= 0.5) {
-                    tiltMotor.setTargetPosition(700);
+                    tiltMotor.setTargetPosition(660);
                     intakeWristServo.setPosition(WristCenter);
                     autoState = AutoState.GRAB_SECOND_SPECIMEN;
                 }
@@ -397,7 +397,7 @@ public class StateMachineAutoObservationSide extends OpMode {
             case GRAB_SECOND_SPECIMEN:
                 if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2)
                         && (Math.abs(drive.getPoseEstimate().getY() + 39) <= 2)
-                            && Math.abs(tiltMotor.getCurrentPosition() - 700) <= 10){
+                            && Math.abs(tiltMotor.getCurrentPosition() - 660) <= 10){
                     intakeElbowServo.setPosition(ElbowLeft);
                     intakeWristServo.setPosition(WristRight);
                     slideMotor.setTargetPosition(1120);

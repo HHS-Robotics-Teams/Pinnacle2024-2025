@@ -105,7 +105,7 @@ public class StateMachineTelopTest extends OpMode {
         if (tiltMotor.getCurrentPosition() >= TiltSlowSlowPosition){
             rotate = rotate / 2.5;
             strafe = strafe / 2.5;
-            drive = drive / 3;
+            drive = drive / 2.5;
         }
 
         // ---------- Wheel Calculations ----------
@@ -121,9 +121,9 @@ public class StateMachineTelopTest extends OpMode {
         backRightMotor.setPower(backRightPower);
 
         // ---------- Arm Power Modulation ----------
-        if (tiltMotor.getCurrentPosition() > 1500){
-            tiltMotor.setPower(.5); // So it doesn't fling itself onto the floor
-        }                           // when moving the arm back.
+//        if (tiltMotor.getCurrentPosition() > 1500){
+//            tiltMotor.setPower(.5); // So it doesn't fling itself onto the floor
+//        }                           // when moving the arm back.
 
 
         // ---------- Manual Arm Tilt ----------
@@ -372,7 +372,7 @@ public class StateMachineTelopTest extends OpMode {
                     }
                     break;
                 case (2):
-                    if (Climber_Timer.seconds() > 1){ //needs to be adjusted to match the robot spool time
+                    if (Climber_Timer.seconds() > 3){ //needs to be adjusted to match the robot spool time
                         leftClaw.setPower(0);
                         rightClaw.setPower(0);
                         PreppingClimbers = false;
@@ -402,6 +402,9 @@ public class StateMachineTelopTest extends OpMode {
                         */
                         leftClaw.setPower(0);
                         rightClaw.setPower(0);
+                        ActivelyClimbing = false;
+                        currentClimbStep = 1;
+                    break;
 
                     }
             }
