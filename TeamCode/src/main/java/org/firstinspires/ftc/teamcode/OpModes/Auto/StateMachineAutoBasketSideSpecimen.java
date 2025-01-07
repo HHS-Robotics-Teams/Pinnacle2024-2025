@@ -51,7 +51,7 @@ public class StateMachineAutoBasketSideSpecimen extends OpMode {
     public  int TiltHighBucket = 1535;
     public int TiltMaxPosition = 1700;
     public int TiltSlowSlowPosition = 2000;
-    public static int TiltHighBucketBackwards = 2330;
+    public static int TiltHighBucketBackwards = 2280;
 
 
     // slide motor positions
@@ -285,7 +285,8 @@ public class StateMachineAutoBasketSideSpecimen extends OpMode {
 
             case TILTTOSCORE:
                 if (slideMotor.getCurrentPosition() <= 10){
-                    tiltMotor.setTargetPosition(TiltHighBucketBackwards);
+                    tiltMotor.setTargetPosition(TiltHighBucketBackwards + 3);
+                    intakeElbowServo.setPosition(ElbowRight);
                     tiltTimer.reset();
                     autoState = AutoState.EXTENDTOSCORE;
                     break;
@@ -296,7 +297,7 @@ public class StateMachineAutoBasketSideSpecimen extends OpMode {
                     if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwards) <= TiltTickThreshold) {
                         slideMotor.setTargetPosition(SlideHighBucketBacwards);
                         if (Math.abs(slideMotor.getCurrentPosition() - SlideHighBucketBacwards) < SlideTickThreshold) {
-                            intakeElbowServo.setPosition(ElbowRight);
+                            //intakeElbowServo.setPosition(ElbowRight);
                             intakeWristServo.setPosition(WristSampleBucketScore);
                             depositTimer.reset();
                             autoState = AutoState.RESET_AND_CYCLE_TWO;
@@ -339,8 +340,8 @@ public class StateMachineAutoBasketSideSpecimen extends OpMode {
                 break;
             case LOWER_SLIDE_RESET:
                 if (Math.abs(tiltMotor.getCurrentPosition() - 655) < 25 && extendToSecondSampleTimer.seconds() > 2.5) {
-                    slideMotor.setTargetPosition(1120);
-                    if ((Math.abs(slideMotor.getCurrentPosition() - 1120) < SlideTickThreshold)) {
+                    slideMotor.setTargetPosition(1105);
+                    if ((Math.abs(slideMotor.getCurrentPosition() - 1105) < SlideTickThreshold)) {
                         // increase for more cycles, will NOT WORK
                         tiltMotor.setPower(0);
                         PoseXWhenCollect = drive.getPoseEstimate().getX();
@@ -368,13 +369,14 @@ public class StateMachineAutoBasketSideSpecimen extends OpMode {
             case RESET_FOR_PATH_UPDATE:
                 slideMotor.setTargetPosition(0);
                 if ((slideMotor.getCurrentPosition() < SlideTickThreshold) && grabTimer.seconds() >= 2) {
-                    tiltMotor.setTargetPosition(TiltHighBucketBackwards - 30);
+                    tiltMotor.setTargetPosition(TiltHighBucketBackwards - 28);
 /*                    if (tiltMotor.getCurrentPosition() > 2300){
                         slideMotor.setPower(0);
                     }*/
 
-                    if (Math.abs(tiltMotor.getCurrentPosition() - (TiltHighBucketBackwards - 30)) - 5  <= TiltTickThreshold) {
+                    if (Math.abs(tiltMotor.getCurrentPosition() - (TiltHighBucketBackwards - 28)) - 5  <= TiltTickThreshold) {
                         slideMotor.setTargetPosition(SlideHighBucketBacwards);
+                        intakeElbowServo.setPosition(ElbowRight);
                         autoState = AutoState.EXTENTOSCORE_TWO;
                         break;
                     }
@@ -383,7 +385,7 @@ public class StateMachineAutoBasketSideSpecimen extends OpMode {
             case EXTENTOSCORE_TWO:
                 slideMotor.setPower(1);
                 if (Math.abs(slideMotor.getCurrentPosition() - SlideHighBucketBacwards) < SlideTickThreshold) {
-                    intakeElbowServo.setPosition(ElbowRight);
+                    //intakeElbowServo.setPosition(ElbowRight);
                     intakeWristServo.setPosition(WristSampleBucketScore);
                     depositTimer.reset();
                     autoState = AutoState.RESET_AND_CYCLE_THREE;
@@ -426,7 +428,7 @@ public class StateMachineAutoBasketSideSpecimen extends OpMode {
                 break;
             case EXTEND_TO_THIRD_SAMPLE:
                 if ((Math.abs(tiltMotor.getCurrentPosition() - 705) <= 5) && (tiltTimer.seconds() >= 2)){
-                    slideMotor.setTargetPosition(1475);
+                    slideMotor.setTargetPosition(1440);
                     //elbow right nd wrist cneter
                     intakeElbowServo.setPosition(ElbowLeft);
                     intakeWristServo.setPosition(WristCenter);
@@ -435,7 +437,7 @@ public class StateMachineAutoBasketSideSpecimen extends OpMode {
                 }
                 break;
             case GRAB_LAST_SAMPLE:
-                if (Math.abs(slideMotor.getCurrentPosition() - 1475) < SlideTickThreshold) {
+                if (Math.abs(slideMotor.getCurrentPosition() - 1440) < SlideTickThreshold) {
                     tiltMotor.setPower(0);
                     PoseXWhenCollect = drive.getPoseEstimate().getX();
                     PoseYWhenCollect = drive.getPoseEstimate().getY();
@@ -456,6 +458,7 @@ public class StateMachineAutoBasketSideSpecimen extends OpMode {
                         drive.followTrajectorySequenceAsync(turntoScoreLast);
                         if (slideMotor.getCurrentPosition() <= SlideTickThreshold) {
                             tiltMotor.setTargetPosition(TiltHighBucketBackwards - 40);
+                            intakeElbowServo.setPosition(ElbowRight);
                             autoState = AutoState.EXTEND_TO_SCORE_LAST_SAMPLE;
                             break;
                         }
@@ -466,7 +469,7 @@ public class StateMachineAutoBasketSideSpecimen extends OpMode {
                 if (Math.abs(tiltMotor.getCurrentPosition() - (TiltHighBucketBackwards - 40)) <= TiltTickThreshold){
                     slideMotor.setTargetPosition(SlideHighBucketBacwards );
                     if (Math.abs(slideMotor.getCurrentPosition() - SlideHighBucketBacwards) < SlideTickThreshold){
-                        intakeElbowServo.setPosition(ElbowRight);
+                        //intakeElbowServo.setPosition(ElbowRight);
                         intakeWristServo.setPosition(WristSampleBucketScore);
                         grabTimer.reset();
                         autoState = AutoState.DEPOSIT_LAST_SAMPLE;

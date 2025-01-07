@@ -5,6 +5,8 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.batteryVolt
 
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.leftClaw;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.rightClaw;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 
@@ -127,7 +129,7 @@ public class Fields {
     public static int SlideTickIncrement = 100;
     public static int ElementsScored = 0;
 
-    // I got tired of writing setPower() multiple times 
+    // I got tired of writing setPower() multiple times
     // so I made a function to cut down on line count.
     public static void SetClawPowers(double PowerDouble) {
         leftClaw.setPower(PowerDouble);

@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.CurrentlyScoring;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowCenter;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ResetArm;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SampleDropped;
@@ -18,6 +19,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltSlowSlowPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltUpThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSampleBucketScore;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SetClawPowers;
@@ -153,6 +155,7 @@ public class BadStateMachineTeleOp extends OpMode {
 
     @Override
     public void loop() {
+        input.pollGamepad(gamepad1);
 
 /* =================================== Driving =================================== */
 
@@ -207,6 +210,8 @@ public class BadStateMachineTeleOp extends OpMode {
             switch (CurrentQuickGrabStep) {
 
                 case ExtendArm:
+                    intakeElbowServo.setPosition(ElbowLeft);
+                    intakeWristServo.setPosition(WristCenter);
                     slideMotor.setTargetPosition(600);
                     intake_claw_servo.setPosition(Claws_open);
                     CurrentQuickGrabStep = QuickGrab.LowerArm;
@@ -219,13 +224,13 @@ public class BadStateMachineTeleOp extends OpMode {
                     break;
 
                 case GrabSample:
-                    if (QuickGrabPickupTimer.seconds() > 0.3)           {
+                    if (QuickGrabPickupTimer.seconds() > 5)           {
                         intake_claw_servo.setPosition(Claws_closed);
                         CurrentQuickGrabStep = QuickGrab.RaiseArm;      }
                     break;
 
                 case RaiseArm:
-                    if (QuickGrabPickupTimer.seconds() > 0.667)         {
+                    if (QuickGrabPickupTimer.seconds() > 5)         {
                         tiltMotor.setTargetPosition(TiltHomePosition);
                         CurrentQuickGrabStep = QuickGrab.RetractArm;    }
                     break;

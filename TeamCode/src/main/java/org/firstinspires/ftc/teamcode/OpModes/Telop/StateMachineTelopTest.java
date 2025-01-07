@@ -160,7 +160,9 @@ public class StateMachineTelopTest extends OpMode {
         }
         if (input.right_bumper.held()) {
             intake_claw_servo.setPosition(Claws_open);
-            intakeWristServo.setPosition(WristCenter);
+            if (armRetractingHighBasket) {
+                intakeWristServo.setPosition(WristCenter);
+            }
         }
 
         /* ============================== Scoring ============================== */
