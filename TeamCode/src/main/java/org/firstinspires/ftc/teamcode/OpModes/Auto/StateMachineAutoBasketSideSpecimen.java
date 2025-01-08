@@ -51,7 +51,7 @@ public class StateMachineAutoBasketSideSpecimen extends OpMode {
     public  int TiltHighBucket = 1535;
     public int TiltMaxPosition = 1700;
     public int TiltSlowSlowPosition = 2000;
-    public static int TiltHighBucketBackwards = 2280;
+    public static int TiltHighBucketBackwards = 2285;
 
 
     // slide motor positions

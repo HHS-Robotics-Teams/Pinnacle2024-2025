@@ -325,7 +325,7 @@ public class StateMachineAutoObservationSide extends OpMode {
                     if (grabAgainTimer.seconds() >= 0.8) {
                         tiltMotor.setPower(1);
                         slideMotor.setTargetPosition(300);
-                        tiltMotor.setTargetPosition(640);
+                        tiltMotor.setTargetPosition(650);
                         drive.followTrajectorySequenceAsync(goDepositSecond);
                         grabTimer.reset();
                     /*tiltMotor.setTargetPosition(TiltHighChamber + 400);
@@ -350,9 +350,9 @@ public class StateMachineAutoObservationSide extends OpMode {
             case GRAB_FIRST_SPECIMEN:
                 intakeWristServo.setPosition(WristRight);
                 intakeElbowServo.setPosition(ElbowLeft);
-                if (grabAgainTimer.seconds() >= 0.5 && Math.abs(tiltMotor.getCurrentPosition() - 640) <= 10){
+                if (grabAgainTimer.seconds() >= 0.5 && Math.abs(tiltMotor.getCurrentPosition() - 650) <= 10){
                     slideMotor.setTargetPosition(1130);
-                    if (slideMotor.getCurrentPosition() >= 1110){
+                    if (slideMotor.getCurrentPosition() >= 1130){
                         intake_claw_servo.setPosition(Claws_closed);
                         grabTimer.reset();
                         autoState = AutoState.LIFT_FIRST_SPECIMEN;
@@ -362,7 +362,7 @@ public class StateMachineAutoObservationSide extends OpMode {
             case LIFT_FIRST_SPECIMEN:
                 if (grabTimer.seconds() >= 0.5){
                     tiltMotor.setTargetPosition(800);
-                    if (tiltMotor.getCurrentPosition() >= 780){
+                    if (tiltMotor.getCurrentPosition() >= 790){
                         intakeWristServo.setPosition(0.2);
                         slideMotor.setTargetPosition(0);
                         drive.followTrajectorySequenceAsync(scoreFirstSpecimen);
@@ -400,8 +400,8 @@ public class StateMachineAutoObservationSide extends OpMode {
                             && Math.abs(tiltMotor.getCurrentPosition() - 660) <= 10){
                     intakeElbowServo.setPosition(ElbowLeft);
                     intakeWristServo.setPosition(WristRight);
-                    slideMotor.setTargetPosition(1120);
-                    if (slideMotor.getCurrentPosition() >= 1110){
+                    slideMotor.setTargetPosition(1130);
+                    if (slideMotor.getCurrentPosition() >= 1120){
                         intake_claw_servo.setPosition(Claws_closed);
                         tiltMotor.setTargetPosition(800);
                         grabTimer.reset();
@@ -422,7 +422,7 @@ public class StateMachineAutoObservationSide extends OpMode {
                 if ((Math.abs(drive.getPoseEstimate().getX() - 18) <= 2)
                         && (Math.abs(drive.getPoseEstimate().getY() - 3) <= 2)) {
                     tiltMotor.setTargetPosition(3300);
-                    if (tiltMotor.getCurrentPosition() >= 3250) {
+                    if (tiltMotor.getCurrentPosition() >= 3240) {
                         intake_claw_servo.setPosition(Claws_open);
                         grabTimer.reset();
                         autoState = AutoState.FINISH;
