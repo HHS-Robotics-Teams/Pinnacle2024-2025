@@ -19,7 +19,6 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltSlowSlowPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltUpThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSampleBucketScore;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SetClawPowers;
@@ -210,33 +209,35 @@ public class BadStateMachineTeleOp extends OpMode {
             switch (CurrentQuickGrabStep) {
 
                 case ExtendArm:
+                    intake_claw_servo.setPosition(Claws_open);
                     intakeElbowServo.setPosition(ElbowLeft);
                     intakeWristServo.setPosition(WristCenter);
                     slideMotor.setTargetPosition(600);
-                    intake_claw_servo.setPosition(Claws_open);
                     CurrentQuickGrabStep = QuickGrab.LowerArm;
                     break;
 
                 case LowerArm:
-                    tiltMotor.setTargetPosition(25);
-                    CurrentQuickGrabStep = QuickGrab.GrabSample;
-                    QuickGrabPickupTimer.reset();
+                    if (Math.abs(tiltMotor.getCurrentPosition() - 600) <= 30) {
+                        tiltMotor.setTargetPosition(25);
+                        CurrentQuickGrabStep = QuickGrab.GrabSample;
+                        QuickGrabPickupTimer.reset();
+                    }
                     break;
 
                 case GrabSample:
-                    if (QuickGrabPickupTimer.seconds() > 5)           {
+                    if (QuickGrabPickupTimer.seconds() > 3)           {
                         intake_claw_servo.setPosition(Claws_closed);
                         CurrentQuickGrabStep = QuickGrab.RaiseArm;      }
                     break;
 
                 case RaiseArm:
-                    if (QuickGrabPickupTimer.seconds() > 5)         {
+                    if (QuickGrabPickupTimer.seconds() > 4)         {
                         tiltMotor.setTargetPosition(TiltHomePosition);
                         CurrentQuickGrabStep = QuickGrab.RetractArm;    }
                     break;
 
                 case RetractArm:
-                    if (Math.abs(tiltMotor.getCurrentPosition() - TiltHomePosition) >= 50) {
+                    if (Math.abs(tiltMotor.getCurrentPosition() - TiltHomePosition) <= 50) {
                         slideMotor.setTargetPosition(SlideMinPosition);
                         CurrentQuickGrabStep = QuickGrab.LowerArm;
                         CurrentlyQuickGrabbing = false; /* Resets the Quick Grab. */     }
@@ -288,13 +289,13 @@ public class BadStateMachineTeleOp extends OpMode {
                         break;
 
                     case ArmExtendToBasket:
-                        if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwards) >= 25) {
+                        if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwards) <= 25) {
                             slideMotor.setTargetPosition(SlideHighBucketBackwards);
                             CurrentSampleScoringState = SampleScoringState.ClawTurnToBasket;          }
                         break;
 
                     case ClawTurnToBasket:
-                        if (Math.abs(slideMotor.getCurrentPosition() - SlideHighBucketBackwards) >= 40) {
+                        if (Math.abs(slideMotor.getCurrentPosition() - SlideHighBucketBackwards) <= 40) {
                             intakeElbowServo.setPosition(ElbowRight); // I think these are the right positions,
                             intakeWristServo.setPosition(WristSampleBucketScore); // might need to change them.
                             SampleDropTimer.reset();
@@ -320,13 +321,13 @@ public class BadStateMachineTeleOp extends OpMode {
                         break;
 
                     case ArmRetractFromBasket:
-                        if (SampleDropTimer.seconds() > 1.0)                                {
+                        if (SampleDropTimer.seconds() > 5)                                {
                             slideMotor.setTargetPosition(SlideMinPosition);
                             CurrentSampleScoringState = SampleScoringState.ArmLowerToHome;  }
                         break;
 
                     case ArmLowerToHome:
-                        if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) >= 300) {
+                        if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) <= 300) {
                             ResetArm();
                             CurrentSampleScoringState = SampleScoringState.ArmUpToBasket;
                             CurrentlyScoring = false;                                            }
@@ -347,7 +348,7 @@ public class BadStateMachineTeleOp extends OpMode {
                         break;
 
                     case DriveFromRung:
-                        if (Math.abs(tiltMotor.getCurrentPosition() - (TiltHighChamber - 50)) >= 20) {
+                        if (Math.abs(tiltMotor.getCurrentPosition() - (TiltHighChamber - 50)) <= 20) {
                             if (SpecimenDriveTimer.seconds() < 0.5) { // Drive backwards for half a second.
                                 frontLeftMotor.setPower(-1);
                                 frontRightMotor.setPower(-1);
