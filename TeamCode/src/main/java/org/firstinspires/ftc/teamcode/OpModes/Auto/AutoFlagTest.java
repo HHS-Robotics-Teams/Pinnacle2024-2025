@@ -43,7 +43,7 @@ public class AutoFlagTest extends OpMode {
 
         intakeWristServo.setPosition(WristLeft);
         intakeElbowServo.setPosition(ElbowRight);
-        tiltMotor.setTargetPosition(TiltMinPosition);
+        tiltMotor.setTargetPosition(38);
         slideMotor.setTargetPosition(0);
         intake_claw_servo.setPosition(Claws_closed);
     }

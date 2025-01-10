@@ -38,7 +38,7 @@ public class StateMachineAutoBasketSideSpecimen extends OpMode {
     public int TiltTickThreshold = 10;
     public int TiltStartPosition = 0;
 
-    public int TiltMinPosition = 75;
+    public int TiltMinPosition = 38;
     public int IntakeRotateThreshold = 250; //100
     public int TiltPickupPosition = 485;
     public int TiltLowChamber = 500;
@@ -327,7 +327,7 @@ public class StateMachineAutoBasketSideSpecimen extends OpMode {
                     if ((Math.abs(drive.getPoseEstimate().getX() - 13) <= 2) && (Math.abs(drive.getPoseEstimate().getY() - 41) <= 2) &&
                             (extendToSecondSampleTimer.seconds() > 0.7)) {
                         slideMotor.setTargetPosition(0);
-                        if (slideMotor.getCurrentPosition() <= SlideTickThreshold){
+                        if (slideMotor.getCurrentPosition() <= SlideTickThreshold) {
                             tiltMotor.setTargetPosition(655);
                             drive.followTrajectorySequenceAsync(turnAgain);
                             intakeElbowServo.setPosition(ElbowLeft);

@@ -36,7 +36,7 @@ public class StateMachineAutoObservationSide extends OpMode {
     public int TiltTickThreshold = 10;
     public int TiltStartPosition = 0;
 
-    public int TiltMinPosition = 75;
+    public int TiltMinPosition = 38;
     public int IntakeRotateThreshold = 250; //100
     public int TiltPickupPosition = 485;
     public int TiltLowChamber = 500;
