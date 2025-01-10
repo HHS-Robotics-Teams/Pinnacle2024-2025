@@ -11,6 +11,8 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMaxPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlidePower;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideWallPickup;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltFloorPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucketBackwards;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
@@ -66,6 +68,7 @@ public class StateMachineTelopTest extends OpMode {
     ElapsedTime Extend_timer = new ElapsedTime();
     ElapsedTime Claw_timer = new ElapsedTime();
     ElapsedTime Climber_Timer = new ElapsedTime();
+    ElapsedTime Game_Timer = new ElapsedTime();
 
     @Override
     public void init() {
@@ -88,6 +91,7 @@ public class StateMachineTelopTest extends OpMode {
     @Override
     public void loop() {
 
+
         input.pollGamepad(gamepad1); // Pass gamepad input through custom class
 
         /* ============================== Driving and Wheels ============================== */
@@ -101,7 +105,7 @@ public class StateMachineTelopTest extends OpMode {
         if (tiltMotor.getTargetPosition() >= TiltUpThreshold) {
             rotate = rotate / 1.5;
             strafe = strafe / 1.5;
-            drive = drive / 2.5;
+            drive = drive / 1.5;
         }
         if (tiltMotor.getCurrentPosition() >= TiltSlowSlowPosition) {
             rotate = rotate / 2.5;
@@ -174,6 +178,7 @@ public class StateMachineTelopTest extends OpMode {
             armRetractingHighBasket = true;
             buttonPressInitiate = true;
             IntakeWristPositionReached = false;
+            telemetry.speak("High Basket");
         }
 
         if (armRetractingHighBasket) {
@@ -219,7 +224,7 @@ public class StateMachineTelopTest extends OpMode {
             armRetractingHighChamber = true;
             buttonPressInitiate = true;
             IntakeWristPositionReached = true;
-            telemetry.speak("rodo control reached");
+            telemetry.speak("High Chamber Get ready to dunk");
         }
 
         if (armRetractingHighChamber) {
@@ -289,7 +294,7 @@ public class StateMachineTelopTest extends OpMode {
 
                 case (2):
                     tiltMotor.setTargetPosition(TiltWallPickupPosition);
-                    slideMotor.setTargetPosition(1000);
+                    slideMotor.setTargetPosition(SlideWallPickup);
                     intakeWristServo.setPosition(WristRight); // check position
                     intakeElbowServo.setPosition(ElbowLeft);
                     intake_claw_servo.setPosition(Claws_open);
@@ -346,8 +351,8 @@ public class StateMachineTelopTest extends OpMode {
                     break;
 
                 case (2):
-                    tiltMotor.setTargetPosition(580);
-                    slideMotor.setTargetPosition(1000);
+                    tiltMotor.setTargetPosition(TiltFloorPickup);
+                    slideMotor.setTargetPosition(SlideWallPickup);
                     intakeWristServo.setPosition(WristCenter);
                     intakeElbowServo.setPosition(ElbowLeft);
                     intake_claw_servo.setPosition(Claws_open);
@@ -358,112 +363,14 @@ public class StateMachineTelopTest extends OpMode {
         }
 
 //        /* ============================== Climbing ============================== */
-//        if (input.start.down()) {
-//            leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
-//            rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
-//            PreppingClimbers = true;
-//            ActivelyClimbing = false;
-//        }
-//
-//        if (PreppingClimbers)
-//            switch (currentClimbStep) {
-//                case (1):
-//                    tiltMotor.setTargetPosition(TiltLowBucket);
-//                    slideMotor.setTargetPosition(SlideMinPosition);
-//                    if ((tiltMotor.getCurrentPosition() > 1300) && (slideMotor.getCurrentPosition() <= 5 )) {
-//                        leftClaw.setPower(1); // while the claws are all the way down / in a
-//                        rightClaw.setPower(1); // consistent spot.
-//                        Climber_Timer.reset();
-//                        currentClimbStep++;
-//                    }
-//                    break;
-//                case (2):
-//                    if (Climber_Timer.seconds() > 3){ //needs to be adjusted to match the robot spool time
-//                        leftClaw.setPower(0);
-//                        rightClaw.setPower(0);
-//                        PreppingClimbers = false;
-//                        currentClimbStep = 1;
-//                    }
-//                    break;
-//            }
-//        if (input.back.down()) {
-//            leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
-//            rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
-//            Climber_Timer.reset();
-//            ActivelyClimbing = true;
-//            PreppingClimbers = false;
-//            }
-//
-//        if (ActivelyClimbing)
-//            switch (currentClimbStep) {
-//                case (1):
-//                    leftClaw.setPower(1); // while the claws are all the way down / in a
-//                    rightClaw.setPower(1); // consistent spot.
-//                    Climber_Timer.reset();
-//                    currentClimbStep ++;
-//                    break;
-//                case (2):
-//                    if (Climber_Timer.seconds() > .5){ /* we can change this to the drivers liking this is the the amount of time
-//                    between the claws retracting and stopping encase we miss on the climb.
-//                        */
-//                        leftClaw.setPower(0);
-//                        rightClaw.setPower(0);
-//                        ActivelyClimbing = false;
-//                        currentClimbStep = 1;
-//                    break;
-//
-//                    }
-//            }
-//        if (input.start.down()) {
-//            tiltMotor.setTargetPosition(TiltLowBucket);
-//            leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
-//            rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
-//            PreppingClimbers = true;
-//            ActivelyClimbing = false;
-//        }
-//
-//        if (PreppingClimbers) {
-//            Climber_Timer.reset(); // During prepping, the claws go up vertically. The timer
-//            if (Climber_Timer < 5.0) { // may need to be adjusted. Make sure to init the robot
-//                leftClaw.setPower(1); // while the claws are all the way down / in a
-//                rightClaw.setPower(1); // consistent spot.
-//            }
-//            else {
-//                leftClaw.setPower(0);
-//                rightClaw.setPower(0);
-//                PreppingClimbers = false;
-//            }
-//        }
-//
-//        if (input.back.down()) {
-//            tiltMotor.setTargetPosition(TiltLowBucket);
-//            leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
-//            rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
-//            ActivelyClimbing = true;
-//            PreppingClimbers = false;
-//        }
-//
-//        if (ActivelyClimbing) {
-//            Climber_Timer.reset(); // During active climbing, claws are pulled to the robot,
-//            if (Climber_Timer < 10.0) { // making it climb. Additionally, arm goes down onto
-//                leftClaw.setPower(1); // the low bar for further support.
-//                rightClaw.setPower(1);
-//            }
-//            else {
-//                leftClaw.setPower(0);
-//                rightClaw.setPower(0);
-//                ActivelyClimbing = false;
-//            }
-//        }
-//
 
         if (input.start.held()) {
-            tiltMotor.setTargetPosition(1379);
+            tiltMotor.setTargetPosition(1400);
             leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
             rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
             leftClaw.setPower(1);
             rightClaw.setPower(1);
-            telemetry.speak("climb position reached");
+            telemetry.speak("ENDGAME ENDGAME ENDGAME");
         }
 
         else if (input.back.held()) { // Claw controls made by Benny
@@ -480,30 +387,28 @@ public class StateMachineTelopTest extends OpMode {
             /* ============================== Telemetry For Debugging ============================== */
 
             // ---------- Wheels and Driving ----------
-            telemetry.addData("Front Left Power: ", frontLeftPower);
-            telemetry.addData("Front Right Power: ", frontRightPower);
-            telemetry.addData("Back Left Power: ", backLeftPower);
-            telemetry.addData("Back Right Power: ", backRightPower);
-            telemetry.addData("Drive Power: ", drive);
-            telemetry.addData("Strafe Power: ", strafe);
-            telemetry.addData("Rotate Power: ", rotate);
+//            telemetry.addData("Front Left Power: ", frontLeftPower);
+//            telemetry.addData("Front Right Power: ", frontRightPower);
+//            telemetry.addData("Back Left Power: ", backLeftPower);
+//            telemetry.addData("Back Right Power: ", backRightPower);
+//            telemetry.addData("Drive Power: ", drive);
+//            telemetry.addData("Strafe Power: ", strafe);
+//            telemetry.addData("Rotate Power: ", rotate);
 
             // ---------- Arm and Intake ----------
-            telemetry.addData("Slide Motor Power: ", slideMotor.getPower());
-            telemetry.addData("Tilt Motor Power: ", tiltMotor.getPower());
+//            telemetry.addData("Slide Motor Power: ", slideMotor.getPower());
+//            telemetry.addData("Tilt Motor Power: ", tiltMotor.getPower());
             telemetry.addData("Current Tilt Position: ", tiltMotor.getCurrentPosition());
             telemetry.addData("Current Slide Position ", slideMotor.getCurrentPosition());
-            //telemetry.addData("Intake Spin Power: ", intakeCRServo.getDirection());
 
             // ---------- Flags -----------
             telemetry.addData("Climb control status", climbPositionReached ? "True" : "False");
             telemetry.addData("Wrist control status", IntakeWristPositionReached ? "True" : "False");
+
             telemetry.addData("Current State", currentRetractionStep);
 
             // ---------- Update ----------
             telemetry.update();
-
-
         }
     }
 

@@ -26,7 +26,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-@Disabled
 @Config
 @Autonomous (name = "Basket side Sample 1+3", group = "Comp Auto")
 public class StateMachineAutoBasketSideSample extends OpMode {
@@ -113,7 +112,7 @@ public class StateMachineAutoBasketSideSample extends OpMode {
         FINISH
     }
 
-    StateMachineAutoBasketSideSample.AutoState autoState = AutoState.PRELOAD_SAMPLE;
+    StateMachineAutoBasketSideSample.AutoState autoState = StateMachineAutoBasketSideSample.AutoState.PRELOAD_SAMPLE;
     boolean beginLoweringArm = false;
     int cyclesDone = 0;
 
@@ -212,12 +211,13 @@ public class StateMachineAutoBasketSideSample extends OpMode {
 
             case SCORE_PRELOAD:
                     drive.followTrajectorySequenceAsync(goBasket);
-                if (testTimer.seconds() > 3) {
+                if (testTimer.seconds() > 2) {
                     tiltMotor.setTargetPosition(TiltHighBucketBackwards);
                     tiltTimer.reset();
                     autoState = AutoState.EXTEND_TO_SCORE_PRELOAD;
                     break;
                 }
+                break;
 
             case EXTEND_TO_SCORE_PRELOAD:
                 if (tiltTimer.seconds() > 1.4) {
@@ -232,6 +232,7 @@ public class StateMachineAutoBasketSideSample extends OpMode {
                         }
                     }
                 }
+                break;
             case GO_BACK:
                 if (depositTimer.seconds() > 0.5) {
                     intakeWristServo.setPosition(WristCenter);

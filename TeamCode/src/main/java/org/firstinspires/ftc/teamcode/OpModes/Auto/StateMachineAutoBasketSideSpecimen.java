@@ -28,7 +28,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-// Tuned Auto
 
 @Config
 @Autonomous (name = "Basket side Specimen 1+3", group = "Comp Auto")

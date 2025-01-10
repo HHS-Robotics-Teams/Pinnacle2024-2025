@@ -40,6 +40,7 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.CurrentlyQuickGrabbing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -85,6 +86,7 @@ import org.firstinspires.ftc.teamcode.excutil.Input;
  * Right: Turn Right
  *
  */
+@Disabled
 
 @TeleOp(name = "Bad State Machine TeleOp", group = "Competition")
 public class BadStateMachineTeleOp extends OpMode {

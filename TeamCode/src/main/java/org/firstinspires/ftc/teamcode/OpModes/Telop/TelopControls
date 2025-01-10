@@ -1,0 +1,22 @@
+Pinnacle Gamepad controls
+
+dpad_up = Arm up
+dpad_down = Arm down
+dpad_left = Wrist center
+dpad_right = Wrist right
+
+left_bumper = Slide out
+left_trigger = Slide in
+
+right_bumper = Claws open
+right_trigger = Claws closed
+
+y = Scoring high basket
+x = Scoring high chamber
+b = Sample floor pickup
+
+left_stick_button = Home position
+right_stick_button = Wall pickup
+
+start = Climb hooks out
+back =  Climb hooks in

@@ -32,6 +32,7 @@ public class Fields {
     public static int IntakeRotateThreshold = 250; //100
     public static int TiltPickupPosition = 485;
     public static int TiltLowChamber = 500;
+    public static int TiltFloorPickup = 580;
     public static int TiltHomePosition = 600;
     public static int TiltWallPickupPosition = 660;
     public static int TiltUpThreshold = 1360;
@@ -54,6 +55,7 @@ public class Fields {
     public static int SlideLowChamber = 250;
 
     public static int SlideHighChamber = 450;
+    public static int SlideWallPickup = 1000;
     public static int SlideHighBucket = 1455;
     public static int SlideMaxPosition = 1455;
     public static int SlideHighBucketBackwards = 1455;
@@ -101,9 +103,9 @@ public class Fields {
     public static Boolean buttonPressInitiate = false;
     public static Boolean clawsOpen = false;
     public static Boolean clawsClosed = false;
-    public static boolean ActivelyClimbing = false;
-    public static boolean PreppingClimbers = false;
-    public static boolean elbowRotate = false;
+    public static Boolean ActivelyClimbing = false;
+    public static Boolean PreppingClimbers = false;
+    public static Boolean elbowRotate = false;
 
     // Timers
 
