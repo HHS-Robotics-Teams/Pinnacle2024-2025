@@ -32,7 +32,7 @@ public class Fields {
     public static int IntakeRotateThreshold = 250; //100
     public static int TiltPickupPosition = 485;
     public static int TiltLowChamber = 500;
-    public static int TiltHomePosition = 650;
+    public static int TiltHomePosition = 600;
     public static int TiltWallPickupPosition = 660;
     public static int TiltUpThreshold = 1360;
 
@@ -103,6 +103,7 @@ public class Fields {
     public static Boolean clawsClosed = false;
     public static boolean ActivelyClimbing = false;
     public static boolean PreppingClimbers = false;
+    public static boolean elbowRotate = false;
 
     // Timers
 
