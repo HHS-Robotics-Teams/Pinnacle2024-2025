@@ -1,6 +1,42 @@
-package org.firstinspires.ftc.teamcode.OpModes.Testing;
+//package org.firstinspires.ftc.teamcode.OpModes.Testing;
+//
+//import static org.firstinspires.ftc.teamcode.Constants.Fields.ActivelyClimbing;
+//import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
+//import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucket;
+//import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.leftClaw;
+//import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.rightClaw;
+//import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
+//import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
+//
+//import com.qualcomm.robotcore.hardware.DcMotorSimple;
+//
+//public class ClimbingTesting {
+    // Working climb code
+//    {
+//    if (input.start.held()) {
+//        ActivelyClimbing = true;
+//        slideMotor.setTargetPosition(SlideMinPosition);
+//        tiltMotor.setTargetPosition(TiltHighBucket);
+//        leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+//        rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+//        leftClaw.setPower(1);
+//        rightClaw.setPower(1);
+//        telemetry.speak("ENDGAME ENDGAME ENDGAME");
+//    }
+//
+//
+//        else if (input.back.held()) { // Claw controls made by Benny
+//        leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+//        rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+//        leftClaw.setPower(1); // Debugged by Damien
+//        rightClaw.setPower(1);
+//    }
+//        else {
+//        leftClaw.setPower(0);
+//        rightClaw.setPower(0);
+//    }
+//  }
 
-public class ClimbingTesting {
     //        if (input.start.down()) {
 //            leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
 //            rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -98,5 +134,5 @@ public class ClimbingTesting {
 //                ActivelyClimbing = false;
 //            }
 //        }
-//
-}
+//}
+

@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.Constants;
 
 import com.qualcomm.hardware.bosch.BHI260IMU;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -29,6 +31,7 @@ public class RobotHardware {
 
 
     public static BHI260IMU imu;
+    public static RevColorSensorV3 colorSensor;
 
     public static void init(HardwareMap hardwareMap) {
         // ---------- Wheels ----------
@@ -53,6 +56,9 @@ public class RobotHardware {
 
         // ---------- IMU ----------
         imu = hardwareMap.get(BHI260IMU.class, "imu");
+
+        // --------- Color Sensor --------
+        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color_sensor");
 
 //        /* ============================== Hardware Settings Fixes ============================== */
         // ---------- Reverse Left Side For Proper Strafing ----------

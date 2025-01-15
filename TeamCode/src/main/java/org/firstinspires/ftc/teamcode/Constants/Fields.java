@@ -24,47 +24,47 @@ public class Fields {
 
 
     // tilt motor positions
-    public  int ArmTicks = 100;
+    public static int TiltTickThreshold = 10;
 
-    public static int TiltStartPosition = 0;
+    public static int TiltMinPosition = 34;
+    public static int IntakeRotateThreshold = 223; //100
+    public static int TiltPickupPosition = 433;
+    public static int TiltLowChamber = 446;
+    public static int TiltFloorPickup = 519;
+    public static int TiltHomePosition = 535;
+    public static int TiltWallPickupPosition = 540;
+    public static int TiltUpThreshold = 1210;
 
-    public static int TiltMinPosition = 75;
-    public static int IntakeRotateThreshold = 250; //100
-    public static int TiltPickupPosition = 485;
-    public static int TiltLowChamber = 500;
-    public static int TiltFloorPickup = 580;
-    public static int TiltHomePosition = 600;
-    public static int TiltWallPickupPosition = 660;
-    public static int TiltUpThreshold = 1360;
-
-    public static int TiltHighChamber = 1100;
-    public static int TiltLowBucket = 1388;
-    public static int TiltHighBucket = 1535;
-    public static int TiltMaxPosition = 1700;
-    public static int TiltSlowSlowPosition = 2000;
-    public static int TiltHighBucketBackwards = 2225;
+    public static int TiltHighChamber = 970;
+    public static int TiltLowBucket = 1235;
+    public static int TiltHighBucket = 1366;
+    public static int TiltMaxPosition = 1513;
+    public static int TiltSlowSlowPosition = 1780;
+    public static int TiltHighBucketBackwards = 1980;
+    // Tilt motor positions auto
+    public static int TiltHighBucketBackwardsAuto = 2038;
 
 
     // slide motor positions
-    public static int SlideTicks = 80;
-    public static int SlideTickThreshold = 15;
+
+    public static int SlideTicks = (int) (50 * .37760416666);
+    public static int SlideTickThreshold = (int) (13 * .37760416666);
     public static int SlideStartPosition = 0;
 
-    public static int SlideMinPosition = 5;
-    public static int SlideLowBucket = 50;
-    public static int SlideLowChamber = 250;
+    public static int SlideMinPosition = (int) (5 * .37760416666);
+    public static int SlideLowBucket = (int) (50 * .37760416666);
+    public static int SlideLowChamber = (int) (250 * .37760416666);
 
-    public static int SlideHighChamber = 450;
-    public static int SlideWallPickup = 1000;
-    public static int SlideHighBucket = 1455;
-    public static int SlideMaxPosition = 1455;
-    public static int SlideHighBucketBackwards = 1455;
-
-
-
+    public static int SlideHighChamber = (int) (450 * .37760416666);
+    public static int SlideWallPickup = (int) (1000 * .37760416666);
+    public static int SlideHighBucketBackwardsAuto = (int) (1440 * .37760416666);
+    public static int SlideHighBucket = (int) (1455 * .37760416666);
+    public static int SlideMaxPosition = (int) (1455 * .37760416666);
+    public static int SlideHighBucketBackwards = (int) (1381 * .37760416666);
 
 
     // Wrist Positions
+
     public static double WristRight = 0.0;
     public static double WristHorizontalPickup = .25;
 
@@ -73,8 +73,6 @@ public class Fields {
     public static double WristSampleBucketScore = .65;
 
     public static double WristLeft = 1.0;
-
-
 
 
     // Elbow positions
@@ -98,11 +96,10 @@ public class Fields {
     public static Boolean armRetractingHome = false;
     public static Boolean armRetractingWallPickup = false;
 
-    public static Boolean sampleMode = false;
+    public static Boolean sampleFloorPickUp = false;
     public static Boolean specimenMode = false;
     public static Boolean buttonPressInitiate = false;
-    public static Boolean clawsOpen = false;
-    public static Boolean clawsClosed = false;
+    public static Boolean clawsOpening = false;
     public static Boolean ActivelyClimbing = false;
     public static Boolean PreppingClimbers = false;
     public static Boolean elbowRotate = false;
@@ -110,6 +107,7 @@ public class Fields {
     // Timers
 
     // State Machine Runners
+    public static int currentClawStep = 1;
     public static int currentRetractionStep = 1;
     public static int currentClimbStep = 1;
 
@@ -136,32 +134,19 @@ public class Fields {
     // so I made a function to cut down on line count.
     public static void SetClawPowers(double PowerDouble) {
         leftClaw.setPower(PowerDouble);
-        rightClaw.setPower(PowerDouble);                 }
+        rightClaw.setPower(PowerDouble);
+    }
 
     // Instead of writing these lines multiple times in the
     // last steps of state machines, just call this function
     // as it doesn't have to be accurate, just has to be done.
-    public static void ResetArm()                           {
+    public static void ResetArm() {
         tiltMotor.setTargetPosition(TiltHomePosition);
         slideMotor.setTargetPosition(SlideMinPosition);
         intakeWristServo.setPosition(WristCenter);
-        intakeElbowServo.setPosition(ElbowSpecimenScoring); }
-    // --------------------------------------------------
-
-
-
-    // Battery Voltage Multiplier
-    /* BVM stands for battery voltage multiplier. It will be used to extend all distances and
-     * rotations for the robot. BVM = ideal battery voltage divided by current battery voltage.
-     * BVM = idealBatteryV/actualVoltage
-     */
-    public static final double IDEALBATTERYV = 14.0;
-    public static double BVM;
-
-    public static void applyBVM() {
-        double actualVoltage = batteryVoltageSensor.getVoltage();
-        BVM = IDEALBATTERYV / actualVoltage;
+        intakeElbowServo.setPosition(ElbowSpecimenScoring);
     }
+
 }
 
 

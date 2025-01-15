@@ -8,7 +8,6 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intake_claw_servo;
-import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.resetEncoders;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 
@@ -36,7 +35,7 @@ public class AutoFlagTest extends OpMode {
     public void init () {
         RobotHardware.init(hardwareMap);
 
-        resetEncoders();
+        RobotHardware.resetEncoders();
         applyPowers();
 
 
