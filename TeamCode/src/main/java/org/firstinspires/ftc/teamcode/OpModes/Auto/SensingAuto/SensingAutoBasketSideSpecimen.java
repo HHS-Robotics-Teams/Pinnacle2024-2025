@@ -165,6 +165,7 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
     public void loop(){
 
         drive.update();
+        telemetry.addData("Yellow", Yellow);
         telemetry.addData("state", autoState);
         telemetry.addData("timer", testTimer.seconds());
         telemetry.addData("CURRENT X", drive.getPoseEstimate().getX());
@@ -228,7 +229,7 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
             case EXTEND:
                 if ((Math.abs(drive.getPoseEstimate().getX() - 14) <= 2) && (Math.abs(drive.getPoseEstimate().getY() - 40) <= 2)
                         && Math.abs(tiltMotor.getCurrentPosition() - 538) <= 5 && LowerTileTimer.seconds() >= 2.5) {
-                    slideMotor.setTargetPosition(385);
+                    slideMotor.setTargetPosition(383);
                     grabTimer.reset();
                     if (Yellow) {
                         grabTimer.reset();

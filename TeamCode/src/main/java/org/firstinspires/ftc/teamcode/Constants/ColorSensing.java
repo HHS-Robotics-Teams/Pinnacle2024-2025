@@ -21,7 +21,7 @@ public class ColorSensing {
 
 
         // Method to determine the color based on RGB thresholds
-    public static final Boolean GetColor(int red, int green, int blue) {
+    public static Boolean GetColor(int red, int green, int blue) {
         if ((red < 60 && red > 35) && (green < 100 && green > 65) && (blue < 90 && blue > 50)) {
             return Floor;// The floor, duh
         } else if (red > blue) {
