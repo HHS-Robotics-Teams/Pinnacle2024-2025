@@ -24,7 +24,7 @@ public class Fields {
 
 
     // tilt motor positions
-    public static int TiltTickThreshold = 10;
+    public static int TiltTickThreshold = 20;
 
     public static int TiltMinPosition = 34;
     public static int IntakeRotateThreshold = 223; //100
@@ -42,13 +42,13 @@ public class Fields {
     public static int TiltSlowSlowPosition = 1780;
     public static int TiltHighBucketBackwards = 1980;
     // Tilt motor positions auto
-    public static int TiltHighBucketBackwardsAuto = 2038;
+    public static int TiltHighBucketBackwardsAuto = 1980;
 
 
     // slide motor positions
 
     public static int SlideTicks = (int) (50 * .37760416666);
-    public static int SlideTickThreshold = (int) (13 * .37760416666);
+    public static int SlideTickThreshold = 30 ;
     public static int SlideStartPosition = 0;
 
     public static int SlideMinPosition = (int) (5 * .37760416666);
@@ -57,10 +57,11 @@ public class Fields {
 
     public static int SlideHighChamber = (int) (450 * .37760416666);
     public static int SlideWallPickup = (int) (1000 * .37760416666);
-    public static int SlideHighBucketBackwardsAuto = (int) (1440 * .37760416666);
+    public static int SlideHighBucketBackwardsAuto = 515;
     public static int SlideHighBucket = (int) (1455 * .37760416666);
-    public static int SlideMaxPosition = (int) (1455 * .37760416666);
-    public static int SlideHighBucketBackwards = (int) (1381 * .37760416666);
+    public static int SlidePickupPosition = 300; //Robot actual max is 550, this is the 42in box backwards scoring
+    public static int SlideMaxPosition = 550;
+    public static int SlideHighBucketBackwards = 515;
 
 
     // Wrist Positions

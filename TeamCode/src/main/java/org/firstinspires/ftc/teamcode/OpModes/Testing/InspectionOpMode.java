@@ -6,14 +6,17 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakeWristPositionReached;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighBucketBackwards;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideTicks;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideWallPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltFloorPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucketBackwards;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucketBackwardsAuto;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSampleBucketScore;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingFloorPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHighBasket;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHome;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.buttonPressInitiate;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.climbPositionReached;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentRetractionStep;
@@ -111,6 +114,36 @@ public class InspectionOpMode extends OpMode {
                     }
             }
         }
+        // ---------- Home ----------
+        if (gamepad1.left_stick_button) {
+            armRetractingHome = true;
+            telemetry.speak("Homing ");
+        }
+
+        if (armRetractingHome) {
+            switch (currentRetractionStep) {
+                case (1):
+                    if (sampleFloorPickUp) {
+                        tiltMotor.setTargetPosition(200);
+                    }
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
+                        currentRetractionStep++;
+                    }
+                    break;
+
+                case (2):
+                    tiltMotor.setTargetPosition(TiltHomePosition);
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    intakeWristServo.setPosition(WristCenter);
+                    intakeElbowServo.setPosition(ElbowLeft);
+                    currentRetractionStep = 1;
+                    sampleFloorPickUp = false;
+                    armRetractingHome = false;
+                    break;
+            }
+        }
+
         // ------------ Sample Floor Pickup ---------------
         if (input.b.down()) {
             armRetractingFloorPickup = true;
@@ -129,7 +162,7 @@ public class InspectionOpMode extends OpMode {
 
                 case (2):
                     tiltMotor.setTargetPosition(TiltFloorPickup);
-                    slideMotor.setTargetPosition(1420);
+                    slideMotor.setTargetPosition(515);
                     intakeWristServo.setPosition(WristCenter);
                     intakeElbowServo.setPosition(ElbowLeft);
                     currentRetractionStep = 1;

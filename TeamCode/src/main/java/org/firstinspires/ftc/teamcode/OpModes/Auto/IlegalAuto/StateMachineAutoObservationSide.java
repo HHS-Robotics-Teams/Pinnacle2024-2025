@@ -1,5 +1,5 @@
 
-package org.firstinspires.ftc.teamcode.OpModes.Auto;
+package org.firstinspires.ftc.teamcode.OpModes.Auto.IlegalAuto;
 
 
 

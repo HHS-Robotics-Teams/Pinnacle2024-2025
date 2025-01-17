@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.OpModes.Testing;
 
-import static org.firstinspires.ftc.teamcode.Constants.ColorSensing.Blue;
-import static org.firstinspires.ftc.teamcode.Constants.ColorSensing.Floor;
-import static org.firstinspires.ftc.teamcode.Constants.ColorSensing.Red;
-import static org.firstinspires.ftc.teamcode.Constants.ColorSensing.Yellow;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakeWristPositionReached;
@@ -23,6 +19,7 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -34,10 +31,14 @@ import org.firstinspires.ftc.teamcode.Constants.Fields;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.OpModes.Auto.SensingAuto.SensingAutoBasketSideSpecimen;
 import org.firstinspires.ftc.teamcode.excutil.Input;
-
-@TeleOp(name = "Color Sensor for Yellow, Red, Blue", group = "Sensor")
+@Deprecated
+@Disabled
+@TeleOp(name = "Color Sensor for Yellow, Red, Blue", group = "Testing")
 public class ColorSensorDetectColors extends OpMode {
     public Input input;
+    public static int red ;
+    public static int green;
+    public static int blue ;
 
     public static String CurrentColor;
     public static RevColorSensorV3 colorSensor;
@@ -46,94 +47,21 @@ public class ColorSensorDetectColors extends OpMode {
 
     @Override
     public void init() {
-        input = new Input();
-        // Initialize the color sensor
-        RobotHardware.init(hardwareMap);
-        telemetry.speak("Ünknown");
+        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color_sensor");
+
         telemetry.addData("Status", "Initialized");
     }
 
     @Override
     public void loop() {
-        input.pollGamepad(gamepad1); // Pass gamepad input through custom class
-
-        if (input.b.down()) {
-            armRetractingFloorPickup = true;
-            IntakeWristPositionReached = false;
-            telemetry.speak("Auto Pickup First Sample");
-        }
-
-        if (armRetractingFloorPickup) {
-            switch (currentRetractionStep) {
-                case (1):
-                    slideMotor.setTargetPosition(SlideMinPosition);
-                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
-                        currentRetractionStep++;
-                    }
-                    break;
-
-                case (2):
-                    tiltMotor.setTargetPosition(TiltFloorPickup);
-                    slideMotor.setTargetPosition(SlideWallPickup);
-                    intakeWristServo.setPosition(WristCenter);
-                    intakeElbowServo.setPosition(ElbowLeft);
-                    intake_claw_servo.setPosition(Claws_open);
-                    armRetractingFloorPickup = false;
-                    sampleFloorPickUp = true;
-                    currentRetractionStep = 1;
-                    break;
-            }
-        }
-        if (input.a.down()) {
-            armRetractingSubPickup = true;
-            IntakeWristPositionReached = false;
-            telemetry.speak(" Grab Second Sample");
-        }
-
-        if (armRetractingSubPickup) {
-            switch (currentRetractionStep) {
-                case (1):
-                    slideMotor.setTargetPosition(SlideMinPosition);
-                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
-                        currentRetractionStep++;
-                    }
-                    break;
-
-                case (2):
-                    intakeElbowServo.setPosition(ElbowLeft);
-                    intakeWristServo.setPosition(WristCenter);
-                    intake_claw_servo.setPosition(Claws_open);
-                    tiltMotor.setTargetPosition(538);
-                    LowerTileTimer.reset();
-                    armRetractingFloorPickup = false;
-                    sampleFloorPickUp = true;
-                    currentRetractionStep ++;
-                    break;
-                case (3):
-                    if (Math.abs(tiltMotor.getCurrentPosition() - 538) <= 5 && LowerTileTimer.seconds() >= 2.5) {
-                        slideMotor.setTargetPosition(385);
-                        grabTimer.reset();
-                        if (Yellow) {
-                            telemetry.addData("Yellow", Yellow);
-                            grabTimer.reset();
-                            tiltMotor.setPower(0);
-                            currentRetractionStep = 1;
-                            break;
-
-                        }
-                    }
-            }
-        }
 
         // Read RGB values
-        int red = colorSensor.red();
-        int green = colorSensor.green();
-        int blue = colorSensor.blue();
+        red = colorSensor.red();
+        green = colorSensor.green();
+        blue = colorSensor.blue();
 
         // Determine the detected color
         String detectedColor = GetColor(red, green, blue);
-
-        String CurrentColor = detectedColor;
 
         // Display values on telemetry
         telemetry.addData("Light Detected", (OpticalDistanceSensor) colorSensor);
@@ -145,7 +73,7 @@ public class ColorSensorDetectColors extends OpMode {
     }
 
     // Method to determine the color based on RGB thresholds
-    public static final String GetColor(int red, int green, int blue) {
+    public static String GetColor(int red, int green, int blue) {
         if ((red < 60 && red > 35) && (green < 100 && green > 65) && (blue < 90 && blue > 50)) {
             return "Floor";// The floor, duh
         } else if (red > blue) {
@@ -154,7 +82,7 @@ public class ColorSensorDetectColors extends OpMode {
             } else {
                 return "Red";
             }
-        } else if (blue > red) {
+        } else if (blue > (red + 10)) {
             return "Blue"; // High blue, low red and green
         } else {
             return "Ünknown";

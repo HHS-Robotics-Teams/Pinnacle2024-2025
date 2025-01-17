@@ -183,7 +183,7 @@ public class StateMachineTelopTest extends OpMode {
                     break;
                 case (2):
                     if (elbowRotate && Deposit_Timer.seconds() > .35){
-                        telemetry.speak("Another 8 points Good job Khang");
+                        telemetry.speak("Another score Good job Khang");
                         intakeWristServo.setPosition(WristRight);
                         elbowRotate = false;
                         clawsOpening = false;
@@ -283,7 +283,7 @@ public class StateMachineTelopTest extends OpMode {
             switch (currentRetractionStep) {
                 case (1):
                     if (sampleFloorPickUp) {
-                        tiltMotor.setTargetPosition(200);
+                        tiltMotor.setTargetPosition(TiltHomePosition);
                     }
                     slideMotor.setTargetPosition(SlideMinPosition);
                     if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
@@ -297,6 +297,7 @@ public class StateMachineTelopTest extends OpMode {
                     intakeWristServo.setPosition(WristCenter);
                     intakeElbowServo.setPosition(ElbowLeft);
                     currentRetractionStep = 1;
+                    sampleFloorPickUp = false;
                     armRetractingHome = false;
                     break;
             }
