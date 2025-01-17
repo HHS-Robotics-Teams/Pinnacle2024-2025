@@ -91,6 +91,7 @@ public class Fields {
     public static double Claws_closed = 0;
 
     // Flags
+    public static Boolean isIncrementing = true;
     public static Boolean IntakeWristPositionReached = false;
     public static Boolean climbPositionReached = false;
     public static Boolean armRetractingHighBasket = false;
@@ -107,6 +108,7 @@ public class Fields {
     public static Boolean ActivelyClimbing = false;
     public static Boolean PreppingClimbers = false;
     public static Boolean elbowRotate = false;
+
 
     // Timers
 
