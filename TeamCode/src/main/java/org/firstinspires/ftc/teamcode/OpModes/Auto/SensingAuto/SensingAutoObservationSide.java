@@ -6,16 +6,21 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideGrabSecond;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideGrabSecondTarget;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideGrabStart;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideGrabTarget;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideTickThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltTickThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.isIncrementing;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.isIncrementingTWO;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.colorSensor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
@@ -127,9 +132,9 @@ public class SensingAutoObservationSide extends OpMode {
                 .splineToConstantHeading(new Vector2d(24, 4), Math.toRadians(0))
                 .build();
         goBack = drive.trajectorySequenceBuilder(new Pose2d(24, 4, Math.toRadians(0)))
-                .back(8)
+                .back(10)
                 .build();
-        goPickUpFirst = drive.trajectorySequenceBuilder(new Pose2d(16, 4, Math.toRadians(0)))
+        goPickUpFirst = drive.trajectorySequenceBuilder(new Pose2d(14, 4, Math.toRadians(0)))
                 .splineToConstantHeading(new Vector2d(20,-39), Math.toRadians(0))
                 .build();
         goObsevationZone = drive.trajectorySequenceBuilder(new Pose2d(20,-39, Math.toRadians(0)))
@@ -186,6 +191,7 @@ public class SensingAutoObservationSide extends OpMode {
         drive.update();
         telemetry.addData("Detected Color", DetectedColor.getColor());
         telemetry.addData("state", autoState);
+        telemetry.addData("Tilt power", tiltMotor.getPower());
         telemetry.addData("timer", testTimer.seconds());
         telemetry.addData("CURRENT X", drive.getPoseEstimate().getX());
         telemetry.addData("CURRENT Y", drive.getPoseEstimate().getY());
@@ -224,6 +230,7 @@ public class SensingAutoObservationSide extends OpMode {
             case GO_BACK:
                 if (goBackTimer.seconds() > 0.5) {
                     tiltMotor.setTargetPosition(525);
+                    slideMotor.setTargetPosition(0);
                     drive.followTrajectorySequenceAsync(goPickUpFirst);
                     autoState = AutoState.PICK_UP_FIRST_SAMPLE;
                     break;
@@ -232,22 +239,22 @@ public class SensingAutoObservationSide extends OpMode {
             case PICK_UP_FIRST_SAMPLE:
                 intakeElbowServo.setPosition(ElbowLeft);
                 intakeWristServo.setPosition(WristCenter);
-                tiltMotor.setTargetPosition(525);
+                tiltMotor.setTargetPosition(400);
                 LowerTileTimer.reset();
                 autoState = AutoState.EXTEND;
                 break;
 
             case EXTEND:
                 if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2) && (Math.abs(drive.getPoseEstimate().getY() - (-39)) <= 2)
-                        && Math.abs(tiltMotor.getCurrentPosition() - 525) <= 5 && LowerTileTimer.seconds() >= 2.5) {
-                    slideMotor.setTargetPosition(375);
+                        && Math.abs(tiltMotor.getCurrentPosition() - 400) <= 5 && LowerTileTimer.seconds() >= 2.5) {
+                    slideMotor.setTargetPosition(190);
                     grabTimer.reset();
                     autoState = AutoState.MOVE_GRADUALLY;
-
+                    break;
                 }
                 break;
             case MOVE_GRADUALLY: {
-                if ((detectedColor.equals("Red")) || (detectedColor.equals("Blue"))) {
+                if (detectedColor.equals("Red"))  {
                     // increase for more cycles, will NOT WORK
                     grabTimer.reset();
                     tiltMotor.setPower(0);
@@ -259,7 +266,7 @@ public class SensingAutoObservationSide extends OpMode {
                     autoState = AutoState.GRAB_FIRST_SAMPLE;
                     break;
                 } else if (isIncrementing) {
-                    SlideGrabTarget += 5; // Increment the target position
+                    SlideGrabTarget += 10; // Increment the target position
                     slideMotor.setTargetPosition(SlideGrabTarget);
                     isIncrementing = false; // Wait before the next increment
                 }
@@ -268,7 +275,7 @@ public class SensingAutoObservationSide extends OpMode {
                     isIncrementing = true;
 
                     // Stop incrementing after reaching the desired total movement
-                    if (SlideGrabTarget >= SlideGrabStart + 20) {
+                    if (SlideGrabTarget >= SlideGrabStart + 50 ) {
                         grabTimer.reset();
                         tiltMotor.setPower(0);
                         autoState = AutoState.GRAB_FIRST_SAMPLE;
@@ -284,6 +291,7 @@ public class SensingAutoObservationSide extends OpMode {
                     if (grabTimer.seconds() >= 0.8) {
                         slideMotor.setTargetPosition(0);
                         autoState = AutoState.TURN_TO_OBSERVATION;
+                        break;
                     }
                 }
                 break;
@@ -299,52 +307,49 @@ public class SensingAutoObservationSide extends OpMode {
 
             case EXTEND_TO_OBSERVATION:
                 if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 4) &&
-                        (Math.abs(drive.getPoseEstimate().getY() - -39) <= 4) && grabTimer.seconds() >= 1){
-                    slideMotor.setTargetPosition(300);
-                    tiltMotor.setTargetPosition(565);
-                    if (slideMotor.getCurrentPosition() >= 290){
+                        (Math.abs(drive.getPoseEstimate().getY() - -39) <= 4) && grabTimer.seconds() >= 1.5){
+                    slideMotor.setTargetPosition(250);
+                    tiltMotor.setTargetPosition(400);
+                    if (slideMotor.getCurrentPosition() >= 250){
                         intake_claw_servo.setPosition(Claws_open);
-                        grabTimer.reset();
-                        tiltMotor.setTargetPosition(535);
+                        testTimer.reset();
+                        tiltMotor.setTargetPosition(500);
                         intakeWristServo.setPosition(WristCenter);
                         drive.followTrajectorySequenceAsync(goPickUpSecond);
                         autoState = AutoState.MOVE_GRADUALLY_SECOND_SAMPLE;
-                    }
-                }
-                break;
-            case MOVE_GRADUALLY_SECOND_SAMPLE: {
-                if ((detectedColor.equals("Red")) || (detectedColor.equals("Blue"))) {
-                    // increase for more cycles, will NOT WORK
-                    grabTimer.reset();
-                    tiltMotor.setPower(0);
-                    //PoseXWhenCollect = drive.getPoseEstimate().getX();
-                    //PoseYWhenCollect = drive.getPoseEstimate().getY();
-                    //HeadingWhenCollect = drive.getPoseEstimate().getHeading();
-                    //TiltWhenCollect = tiltMotor.getCurrentPosition();
-                    //SlideWhenCollect = slideMotor.getCurrentPosition();)
-                    autoState = AutoState.GRAB_SECOND_SAMPLE;
-                    break;
-                } else if (isIncrementing) {
-                    SlideGrabTarget += 5; // Increment the target position
-                    slideMotor.setTargetPosition(SlideGrabTarget);
-                    isIncrementing = false; // Wait before the next increment
-                }
-                // Check if the motor reached the current target
-                else if (!slideMotor.isBusy()) {
-                    isIncrementing = true;
-
-                    // Stop incrementing after reaching the desired total movement
-                    if (SlideGrabTarget >= SlideGrabStart + 20) {
-                        grabTimer.reset();
-                        tiltMotor.setPower(0);
-                        autoState = AutoState.GRAB_SECOND_SAMPLE;
                         break;
                     }
                 }
                 break;
+            case MOVE_GRADUALLY_SECOND_SAMPLE: {
+                if (Math.abs(tiltMotor.getCurrentPosition() - 500) <= TiltTickThreshold) {
+                    slideMotor.setTargetPosition(250);
+                    if (detectedColor.equals("Red")) {
+                        grabTimer.reset();
+                        tiltMotor.setPower(0);
+                        autoState = AutoState.GRAB_SECOND_SAMPLE;
+                        break;
+                    } else if (isIncrementingTWO) {
+                        //SlideGrabSecondTarget += 10; // Increment the target position
+                        slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 10);
+                        isIncrementingTWO = false; // Wait before the next increment
+                    }
+                    // Check if the motor reached the current target
+                    else if (!slideMotor.isBusy()) {
+                        isIncrementingTWO = true;
+
+                        // Stop incrementing after reaching the desired total movement
+                        if (SlideGrabSecondTarget >= SlideGrabSecond + 50) {
+                            grabTimer.reset();
+                            tiltMotor.setPower(0);
+                            autoState = AutoState.GRAB_SECOND_SAMPLE;
+                        }
+                    }
+                }
             }
+            break;
             case GRAB_SECOND_SAMPLE:
-                if (grabTimer.seconds() > 2){
+                if (grabTimer.seconds() > 2 && (slideMotor.getCurrentPosition() >= 300) ){
                         tiltMotor.setPower(0);
                         grabAgainTimer.reset();
                         autoState = AutoState.GO_OBSERVATION_AGAIN;

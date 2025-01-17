@@ -304,7 +304,7 @@ public class StateMachineAutoObservationSide extends OpMode {
                         tiltMotor.setTargetPosition(600);
                         intakeWristServo.setPosition(WristCenter);
                         drive.followTrajectorySequenceAsync(goPickUpSecond);
-                        autoState = AutoState.GRAB_SECOND_SAMPLE;
+                        autoState = AutoState.FINISH;
                     }
                 }
                 break;

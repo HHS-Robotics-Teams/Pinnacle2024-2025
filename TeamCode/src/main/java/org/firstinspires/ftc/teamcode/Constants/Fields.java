@@ -64,8 +64,10 @@ public class Fields {
     public static int SlidePickupPosition = 300; //Robot actual max is 550, this is the 42in box backwards scoring
     public static int SlideMaxPosition = 550;
     public static int SlideHighBucketBackwards = 515;
-    public static int SlideGrabStart = slideMotor.getCurrentPosition();
+    public static int SlideGrabStart = 190;
     public static int SlideGrabTarget = SlideGrabStart;
+    public static int SlideGrabSecond  = 250;
+    public static int SlideGrabSecondTarget = SlideGrabSecond;
 
     // Wrist Positions
 
@@ -92,6 +94,7 @@ public class Fields {
 
     // Flags
     public static Boolean isIncrementing = true;
+    public static Boolean isIncrementingTWO = true;
     public static Boolean IntakeWristPositionReached = false;
     public static Boolean climbPositionReached = false;
     public static Boolean armRetractingHighBasket = false;
