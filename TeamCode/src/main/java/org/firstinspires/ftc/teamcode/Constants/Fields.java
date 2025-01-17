@@ -43,6 +43,8 @@ public class Fields {
     public static int TiltHighBucketBackwards = 1980;
     // Tilt motor positions auto
     public static int TiltHighBucketBackwardsAuto = 1980;
+    public static int TiltGrabStart = tiltMotor.getCurrentPosition();
+    public static int TiltGrabTarget = TiltGrabStart;
 
 
     // slide motor positions
@@ -62,7 +64,8 @@ public class Fields {
     public static int SlidePickupPosition = 300; //Robot actual max is 550, this is the 42in box backwards scoring
     public static int SlideMaxPosition = 550;
     public static int SlideHighBucketBackwards = 515;
-
+    public static int SlideGrabStart = slideMotor.getCurrentPosition();
+    public static int SlideGrabTarget = SlideGrabStart;
 
     // Wrist Positions
 

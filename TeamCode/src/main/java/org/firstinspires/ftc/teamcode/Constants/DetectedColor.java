@@ -4,6 +4,29 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
 public class DetectedColor {
+
+    /*
+    This code uses a Rev V3 color sensor to see the difference between the floor tiles red, yellow, and blue,
+    make sure to implement these 2 lines in the loop to properly call the class
+        DetectedColor.updateColor(colorSensor);
+        String detectedColor = DetectedColor.getColor();
+
+    to use the color sensor to follow a action in loop change "Yellow"
+    to one of the other options for a a action off that sensed color
+        detectedColor.equals("Yellow")
+
+
+    to view telemetry use this line
+        telemetry.addData("Detected Color", DetectedColor.getColor());
+
+    to view the Color int values
+        telemetry.addData("Red", red);
+        telemetry.addData("Green", green);
+        telemetry.addData("Blue", blue);
+
+    to view if the light is detected
+        telemetry.addData("Light Detected", (OpticalDistanceSensor) colorSensor);
+     */
     public static int red;
     public static int green;
     public static int blue;
