@@ -83,12 +83,14 @@ public class SensingAutoObservationSide extends OpMode {
         GO_OBSERVATION_AGAIN,
         DROP_SPECIMEN_AGAIN,
         GO_TO_CHAMBER,
+        LIFT_SLOWLY,
         GRAB_FIRST_SPECIMEN,
         LIFT_FIRST_SPECIMEN,
         SCORE_FIRST_SPECIMEN,
         SCORE_HIGH_CHAMBER,
         LET_GO_OF_SPECIMEN,
         GRAB_SECOND_SPECIMEN,
+        LIFT_SLOWLY_SECOND,
         DRIVE_TO_SCORE_SECOND_SPECIMEN,
         SCORE_SECOND_SPECIMEN,
         PARK,
@@ -253,9 +255,8 @@ public class SensingAutoObservationSide extends OpMode {
                     break;
                 }
                 break;
-            case MOVE_GRADUALLY: {
+            case MOVE_GRADUALLY:
                 if (detectedColor.equals("Red"))  {
-                    // increase for more cycles, will NOT WORK
                     grabTimer.reset();
                     tiltMotor.setPower(0);
                     //PoseXWhenCollect = drive.getPoseEstimate().getX();
@@ -266,8 +267,7 @@ public class SensingAutoObservationSide extends OpMode {
                     autoState = AutoState.GRAB_FIRST_SAMPLE;
                     break;
                 } else if (isIncrementing) {
-                    SlideGrabTarget += 10; // Increment the target position
-                    slideMotor.setTargetPosition(SlideGrabTarget);
+                    slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 10);
                     isIncrementing = false; // Wait before the next increment
                 }
                 // Check if the motor reached the current target
@@ -275,7 +275,7 @@ public class SensingAutoObservationSide extends OpMode {
                     isIncrementing = true;
 
                     // Stop incrementing after reaching the desired total movement
-                    if (SlideGrabTarget >= SlideGrabStart + 50 ) {
+                    if (SlideGrabTarget >= (slideMotor.getCurrentPosition() + 50) ) {
                         grabTimer.reset();
                         tiltMotor.setPower(0);
                         autoState = AutoState.GRAB_FIRST_SAMPLE;
@@ -283,7 +283,7 @@ public class SensingAutoObservationSide extends OpMode {
                     }
                 }
                 break;
-            }
+
 
             case GRAB_FIRST_SAMPLE:
                 if (grabTimer.seconds() >= 0.5) {
@@ -315,39 +315,39 @@ public class SensingAutoObservationSide extends OpMode {
                         testTimer.reset();
                         tiltMotor.setTargetPosition(500);
                         intakeWristServo.setPosition(WristCenter);
+                        isIncrementing = true;
                         drive.followTrajectorySequenceAsync(goPickUpSecond);
                         autoState = AutoState.MOVE_GRADUALLY_SECOND_SAMPLE;
                         break;
                     }
                 }
                 break;
-            case MOVE_GRADUALLY_SECOND_SAMPLE: {
-                if (Math.abs(tiltMotor.getCurrentPosition() - 500) <= TiltTickThreshold) {
-                    slideMotor.setTargetPosition(250);
+            case MOVE_GRADUALLY_SECOND_SAMPLE:
+                if ((Math.abs(tiltMotor.getCurrentPosition() - 500) <= TiltTickThreshold) && testTimer.seconds() >= 1) {
                     if (detectedColor.equals("Red")) {
                         grabTimer.reset();
                         tiltMotor.setPower(0);
                         autoState = AutoState.GRAB_SECOND_SAMPLE;
                         break;
-                    } else if (isIncrementingTWO) {
-                        //SlideGrabSecondTarget += 10; // Increment the target position
+                    } else if (isIncrementing) {
+
                         slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 10);
-                        isIncrementingTWO = false; // Wait before the next increment
+                        isIncrementing = false; // Wait before the next increment
                     }
                     // Check if the motor reached the current target
                     else if (!slideMotor.isBusy()) {
-                        isIncrementingTWO = true;
+                        isIncrementing = true;
 
                         // Stop incrementing after reaching the desired total movement
-                        if (SlideGrabSecondTarget >= SlideGrabSecond + 50) {
+                        if (slideMotor.getCurrentPosition() >= (250 + 50)) {
                             grabTimer.reset();
                             tiltMotor.setPower(0);
                             autoState = AutoState.GRAB_SECOND_SAMPLE;
+                            break;
                         }
                     }
                 }
-            }
-            break;
+                break;
             case GRAB_SECOND_SAMPLE:
                 if (grabTimer.seconds() > 2 && (slideMotor.getCurrentPosition() >= 300) ){
                         tiltMotor.setPower(0);
@@ -361,7 +361,7 @@ public class SensingAutoObservationSide extends OpMode {
                     intake_claw_servo.setPosition(Claws_closed);
                     if (grabAgainTimer.seconds() >= 0.8) {
                         tiltMotor.setPower(1);
-                        slideMotor.setTargetPosition(115);
+                        slideMotor.setTargetPosition(250);
                         tiltMotor.setTargetPosition(590);
                         drive.followTrajectorySequenceAsync(goDepositSecond);
                         grabTimer.reset();
@@ -379,22 +379,42 @@ public class SensingAutoObservationSide extends OpMode {
                     slideMotor.setTargetPosition(300);
                     if (slideMotor.getCurrentPosition() >= 280) {
                         intake_claw_servo.setPosition(Claws_open);
-                        grabAgainTimer.reset();
-                        autoState = AutoState.GRAB_FIRST_SPECIMEN;
+                        autoState = AutoState.LIFT_SLOWLY;
                     }
                 }
                 break;
-            case GRAB_FIRST_SPECIMEN:
+            case LIFT_SLOWLY:
                 intakeWristServo.setPosition(WristRight);
                 intakeElbowServo.setPosition(ElbowLeft);
-                if (grabAgainTimer.seconds() >= 0.5 && Math.abs(tiltMotor.getCurrentPosition() - 660) <= 10){
+                grabAgainTimer.reset();
+                isIncrementingTWO = true;
+                if (grabAgainTimer.seconds() >= 0.5 && Math.abs(tiltMotor.getCurrentPosition() - 660) <= 10) {
                     slideMotor.setTargetPosition(430);
-                    if (slideMotor.getCurrentPosition() >= 430){
+                    autoState = AutoState.GRAB_FIRST_SPECIMEN;
+                    break;
+                }
+                break;
+            case GRAB_FIRST_SPECIMEN: {
+                if (Math.abs(slideMotor.getCurrentPosition() - 430) <= SlideTickThreshold) {
+                    if (detectedColor.equals("Red")) {
                         intake_claw_servo.setPosition(Claws_closed);
                         grabTimer.reset();
                         autoState = AutoState.LIFT_FIRST_SPECIMEN;
+                        break;
+                    } else if (isIncrementingTWO){
+                        tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + 10);
+                        isIncrementingTWO = false;
+                    } else if (!tiltMotor.isBusy()){
+                        isIncrementingTWO = true;
+                        if (tiltMotor.getCurrentPosition() >= 700){
+                            intake_claw_servo.setPosition(Claws_closed);
+                            grabTimer.reset();
+                            autoState = AutoState.LIFT_FIRST_SPECIMEN;
+                            break;
+                        }
                     }
                 }
+            }
                 break;
             case LIFT_FIRST_SPECIMEN:
                 if (grabTimer.seconds() >= 0.5){
@@ -434,19 +454,38 @@ public class SensingAutoObservationSide extends OpMode {
                     autoState = AutoState.GRAB_SECOND_SPECIMEN;
                 }
                 break;
-
-            case GRAB_SECOND_SPECIMEN:
-                if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2)
-                        && (Math.abs(drive.getPoseEstimate().getY() + 39) <= 2)
-                            && Math.abs(tiltMotor.getCurrentPosition() - 665) <= 10){
+            case LIFT_SLOWLY_SECOND:
+                if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2) && (Math.abs(drive.getPoseEstimate().getY() + 39) <= 2)
+                    && Math.abs(tiltMotor.getCurrentPosition() - 665) <= 10){
                     intakeElbowServo.setPosition(ElbowLeft);
                     intakeWristServo.setPosition(WristRight);
                     slideMotor.setTargetPosition(1130);
-                    if (slideMotor.getCurrentPosition() >= 1120){
+                    isIncrementingTWO = true;
+                    autoState =AutoState.GRAB_SECOND_SPECIMEN;
+                    break;
+                }
+                break;
+
+            case GRAB_SECOND_SPECIMEN:
+                if (slideMotor.getCurrentPosition() >= 1130){
+                    if (detectedColor.equals("Red")){
                         intake_claw_servo.setPosition(Claws_closed);
                         tiltMotor.setTargetPosition(800);
                         grabTimer.reset();
                         autoState = AutoState.DRIVE_TO_SCORE_SECOND_SPECIMEN;
+                        break;
+                    } else if (isIncrementingTWO){
+                        tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition()+10);
+                        isIncrementingTWO = false;
+                    }else if (!tiltMotor.isBusy()){
+                        isIncrementingTWO = true;
+                        if (tiltMotor.getCurrentPosition() >= 750){
+                            intake_claw_servo.setPosition(Claws_closed);
+                            tiltMotor.setTargetPosition(800);
+                            grabTimer.reset();
+                            autoState = AutoState.DRIVE_TO_SCORE_SECOND_SPECIMEN;
+                            break;
+                        }
                     }
                 }
                 break;
@@ -457,6 +496,8 @@ public class SensingAutoObservationSide extends OpMode {
                     autoState = AutoState.SCORE_SECOND_SPECIMEN;
                 }
                 break;
+
+
             case SCORE_SECOND_SPECIMEN:
                 if ((Math.abs(drive.getPoseEstimate().getX() - 24) <= 2)
                         && (Math.abs(drive.getPoseEstimate().getY() - (-2)) <= 2)) {
