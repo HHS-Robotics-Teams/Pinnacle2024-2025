@@ -42,7 +42,7 @@ public class Fields {
     public static int TiltSlowSlowPosition = 1780;
     public static int TiltHighBucketBackwards = 1980;
     // Tilt motor positions auto
-    public static int TiltHighBucketBackwardsAuto = 1980;
+    public static int TiltHighBucketBackwardsAuto = 1825;
     public static int TiltGrabStart = tiltMotor.getCurrentPosition();
     public static int TiltGrabTarget = TiltGrabStart;
 
@@ -93,8 +93,8 @@ public class Fields {
     public static double Claws_closed = 0;
 
     // Flags
-    public static Boolean isIncrementing = true;
-    public static Boolean isIncrementingTWO = true;
+    public static Boolean isSlideIncrementing = true;
+    public static Boolean isTiltIncrementing = true;
     public static Boolean IntakeWristPositionReached = false;
     public static Boolean climbPositionReached = false;
     public static Boolean armRetractingHighBasket = false;

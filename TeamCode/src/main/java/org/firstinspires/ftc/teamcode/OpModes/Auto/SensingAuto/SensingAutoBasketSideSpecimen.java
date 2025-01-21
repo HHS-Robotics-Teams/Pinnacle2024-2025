@@ -18,7 +18,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSampleBucketScore;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.isIncrementing;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.isSlideIncrementing;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.colorSensor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
@@ -142,9 +142,10 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                 .build();
         goScore = drive.trajectorySequenceBuilder(new Pose2d(13, 39, Math.toRadians(0)))
                 .turn(Math.toRadians(-47))
+                .back(4)
                 .build();
-        turnAgain = drive.trajectorySequenceBuilder(new Pose2d(13, 39, Math.toRadians(-47)))
-                .splineToLinearHeading(new Pose2d(13, 41, Math.toRadians(18)), Math.toRadians(-45))
+        turnAgain = drive.trajectorySequenceBuilder(new Pose2d(10, 42, Math.toRadians(-47)))
+                .splineToLinearHeading(new Pose2d(13, 49, Math.toRadians(0)), Math.toRadians(-45))
                 .build();
         turnBacktoScore = drive.trajectorySequenceBuilder(new Pose2d(13, 41, Math.toRadians(17)))
                 .turn(Math.toRadians(-68))
@@ -252,12 +253,12 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                         tiltMotor.setPower(0);
                         autoState = AutoState.GRABSAMPLE;
                         break;
-                    } else if (isIncrementing){
+                    } else if (isSlideIncrementing){
                         slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 10);
-                        isIncrementing = false;
+                        isSlideIncrementing = false;
                     }
                     else if (!slideMotor.isBusy()){
-                        isIncrementing = true;
+                        isSlideIncrementing = true;
                         if (slideMotor.getCurrentPosition() >= (383 + 50)){
                             grabTimer.reset();
                             tiltMotor.setPower(0);
@@ -342,7 +343,7 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                 if (Math.abs(tiltMotor.getCurrentPosition() - 525) < 25 && extendToSecondSampleTimer.seconds() > 2.5) {
                     slideMotor.setTargetPosition(416);
                         grabTimer.reset();
-                        isIncrementing = true;
+                    isSlideIncrementing = true;
                         autoState = AutoState.MOVE_GRADUALLY_SECOND_SAMPLE;
                         break;
                     }
@@ -355,12 +356,12 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                     tiltMotor.setPower(0);
                     autoState = AutoState.COLLECT_TWO;
                     break;
-                } else if (isIncrementing){
+                } else if (isSlideIncrementing){
                     slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 10);
-                    isIncrementing = false;
+                    isSlideIncrementing = false;
                 }
                 else if (!slideMotor.isBusy()){
-                    isIncrementing = true;
+                    isSlideIncrementing = true;
                     if (slideMotor.getCurrentPosition() >= (416 + 50)){
                         grabTimer.reset();
                         tiltMotor.setPower(0);
@@ -447,24 +448,23 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                     slideMotor.setTargetPosition(535);
                     intakeElbowServo.setPosition(ElbowLeft);
                     intakeWristServo.setPosition(WristCenter);
-                    isIncrementing = true;
+                    isSlideIncrementing = true;
                     autoState = AutoState.MOVE_GRADUALLY_THIRD_SAMPLE;
                     break;
                 }
                 break;
-            case MOVE_GRADUALLY_THIRD_SAMPLE:
-                if (slideMotor.getCurrentPosition() >= 535){
+            case MOVE_GRADUALLY_THIRD_SAMPLE:{
                     if (detectedColor.equals("Yellow")){
                         grabTimer.reset();
                         tiltMotor.setPower(0);
                         autoState = AutoState.GRAB_LAST_SAMPLE;
                         break;
-                    } else if (isIncrementing){
+                    } else if (isSlideIncrementing){
                         slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 10);
-                        isIncrementing = false;
+                        isSlideIncrementing = false;
                     }
                     else if (!slideMotor.isBusy()){
-                        isIncrementing = true;
+                        isSlideIncrementing = true;
                         if (slideMotor.getCurrentPosition() >= (535 + 50)){
                             grabTimer.reset();
                             tiltMotor.setPower(0);
