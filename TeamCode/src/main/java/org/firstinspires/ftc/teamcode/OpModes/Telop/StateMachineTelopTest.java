@@ -194,7 +194,7 @@ public class StateMachineTelopTest extends OpMode {
                     currentClawStep++;
                     break;
                 case (2):
-                    if (elbowRotate && Deposit_Timer.seconds() > .35) {
+                    if (elbowRotate && Deposit_Timer.seconds() > .25) {
                         telemetry.speak("Another score Good job Khang");
                         intakeWristServo.setPosition(WristRight);
                         elbowRotate = false;
@@ -316,6 +316,7 @@ public class StateMachineTelopTest extends OpMode {
         }
 
         // ---------- Specimen Wall Pickup ----------
+
         if (gamepad1.right_stick_button) {
             IntakeWristPositionReached = true;
             specimenMode = true;
@@ -327,44 +328,78 @@ public class StateMachineTelopTest extends OpMode {
 
                 case (1):
                     slideMotor.setTargetPosition(SlideMinPosition);
-                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
-                        intake_claw_servo.setPosition(Claws_open);
-                        currentRetractionStep++;
-                    }
-                    break;
-
-                case (2):
-                    tiltMotor.setTargetPosition(TiltWallPickupPosition - 40);
-                    slideMotor.setTargetPosition(SlideWallPickup);
-                    intakeWristServo.setPosition(WristRight);
-                    intakeElbowServo.setPosition(ElbowLeft);
-                    currentRetractionStep++;
-
-                    break;
-                case (3): {
-                    if (detectedColor.equals("Red")) {
-                        intake_claw_servo.setPosition(Claws_closed);
-                        currentRetractionStep++;
-                        break;
-                    } else if (isTiltIncrementing) {
-                        tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + 20);
-                        isTiltIncrementing = false;
-                    } else if (!tiltMotor.isBusy()) {
-                        isTiltIncrementing = true;
-                        if (tiltMotor.getCurrentPosition() >= 650) {
-                            intake_claw_servo.setPosition(Claws_closed);
+                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
+                        if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
+                            intake_claw_servo.setPosition(Claws_open);
                             currentRetractionStep++;
                             break;
                         }
                     }
-                }
-                case (4):
-                    tiltMotor.setTargetPosition(750);
-                    isTiltIncrementing = true;
-                    currentRetractionStep = 1;
-                    break;
+                        break;
+
+                    case (2):
+                        tiltMotor.setTargetPosition(TiltWallPickupPosition);
+                        slideMotor.setTargetPosition(SlideWallPickup);
+                        intakeWristServo.setPosition(WristRight); // check position
+                        intakeWristServo.setPosition(WristRight);
+                        intakeElbowServo.setPosition(ElbowLeft);
+                        intake_claw_servo.setPosition(Claws_open);
+                        currentRetractionStep = 1;
+                        armRetractingWallPickup = false;
+                        break;
+                    }
             }
-        }
+
+//        if (gamepad1.right_stick_button) {
+//            IntakeWristPositionReached = true;
+//            specimenMode = true;
+//            armRetractingWallPickup = true;
+//        }
+//
+//        if (armRetractingWallPickup) {
+//            switch (currentRetractionStep) {
+//
+//                case (1):
+//                    slideMotor.setTargetPosition(SlideMinPosition);
+//                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
+//                        intake_claw_servo.setPosition(Claws_open);
+//                        currentRetractionStep++;
+//                    }
+//                    break;
+//
+//                case (2):
+//                    tiltMotor.setTargetPosition(TiltWallPickupPosition - 40);
+//                    slideMotor.setTargetPosition(SlideWallPickup);
+//                    intakeWristServo.setPosition(WristRight);
+//                    intakeElbowServo.setPosition(ElbowLeft);
+//                    isTiltIncrementing = true;
+//                    currentRetractionStep++;
+//
+//                    break;
+//                case (3): {
+//                    if (detectedColor.equals("Red")) {
+//                        intake_claw_servo.setPosition(Claws_closed);
+//                        currentRetractionStep++;
+//                        break;
+//                    } else if (isTiltIncrementing) {
+//                        tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + 20);
+//                        isTiltIncrementing = false;
+//                    } else if (!tiltMotor.isBusy()) {
+//                        isTiltIncrementing = true;
+//                        if (tiltMotor.getCurrentPosition() >= 650) {
+//                            intake_claw_servo.setPosition(Claws_closed);
+//                            currentRetractionStep++;
+//                            break;
+//                        }
+//                    }
+//                }
+//                case (4):
+//                    tiltMotor.setTargetPosition(750);
+//                    isTiltIncrementing = false;
+//                    currentRetractionStep = 1;
+//                    break;
+//            }
+//        }
             // ------------ Sample Floor Pickup ---------------
             if (input.b.down()) {
                 armRetractingFloorPickup = true;
