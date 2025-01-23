@@ -334,7 +334,7 @@ public class StateMachineTelopTest extends OpMode {
                     break;
 
                 case (2):
-                    tiltMotor.setTargetPosition(TiltWallPickupPosition);
+                    tiltMotor.setTargetPosition(TiltWallPickupPosition - 40);
                     slideMotor.setTargetPosition(SlideWallPickup);
                     intakeWristServo.setPosition(WristRight);
                     intakeElbowServo.setPosition(ElbowLeft);

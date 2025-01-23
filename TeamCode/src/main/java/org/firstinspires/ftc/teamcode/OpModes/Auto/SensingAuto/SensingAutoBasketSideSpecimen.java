@@ -138,26 +138,26 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                 .back(8)
                 .build();
         goCollect = drive.trajectorySequenceBuilder(new Pose2d(16, 0, Math.toRadians(0)))
-                .splineToConstantHeading(new Vector2d(13, 39), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(13, 39), Math.toRadians(-2))
                 .build();
-        goScore = drive.trajectorySequenceBuilder(new Pose2d(13, 39, Math.toRadians(0)))
+        goScore = drive.trajectorySequenceBuilder(new Pose2d(13, 39, Math.toRadians(-2)))
                 .turn(Math.toRadians(-47))
-                .back(4)
+                .back(9)
                 .build();
-        turnAgain = drive.trajectorySequenceBuilder(new Pose2d(10, 42, Math.toRadians(-47)))
+        turnAgain = drive.trajectorySequenceBuilder(new Pose2d(6, 46, Math.toRadians(-47)))
                 .splineToLinearHeading(new Pose2d(13, 49, Math.toRadians(0)), Math.toRadians(-45))
                 .build();
         turnBacktoScore = drive.trajectorySequenceBuilder(new Pose2d(13, 41, Math.toRadians(17)))
-                .turn(Math.toRadians(-68))
+                .turn(Math.toRadians(-45))
                 .build();
-        turntoCollectLast = drive.trajectorySequenceBuilder(new Pose2d(13, 41, Math.toRadians(-46)))
-                .turn(Math.toRadians(91))
+        turntoCollectLast = drive.trajectorySequenceBuilder(new Pose2d(13, 41, Math.toRadians(-45)))
+                .turn(Math.toRadians(72))
                 .build();
-        turntoScoreLast = drive.trajectorySequenceBuilder(new Pose2d(13, 41, Math.toRadians(41)))
+        turntoScoreLast = drive.trajectorySequenceBuilder(new Pose2d(13, 41, Math.toRadians(21)))
                 //.splineToLinearHeading(new Pose2d(13, 39, Math.toRadians(-50)), Math.toRadians(42))
-                .turn(Math.toRadians(-94))
+                .turn(Math.toRadians(-54))
                 .build();
-        park = drive.trajectorySequenceBuilder(new Pose2d(13, 41, Math.toRadians(-50)))
+        park = drive.trajectorySequenceBuilder(new Pose2d(13, 41, Math.toRadians(-10)))
                 .splineToLinearHeading(new Pose2d(53, 20, Math.toRadians(-54)), Math.toRadians(-52))
                 .build();
         /*goCollectAgain = drive.trajectorySequenceBuilder(new Pose2d(13, 39, Math.toRadians(0)))
@@ -231,15 +231,15 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
             case COLLECT_ONE:
                 intakeElbowServo.setPosition(ElbowLeft);
                 intakeWristServo.setPosition(WristCenter);
-                tiltMotor.setTargetPosition(525);
+                tiltMotor.setTargetPosition(518);
                 LowerTileTimer.reset();
                 autoState = AutoState.EXTEND;
                 break;
             case EXTEND:
 
                 if ((Math.abs(drive.getPoseEstimate().getX() - 14) <= 2) && (Math.abs(drive.getPoseEstimate().getY() - 40) <= 2)
-                        && Math.abs(tiltMotor.getCurrentPosition() - 525) <= 5 && LowerTileTimer.seconds() >= 2.5) {
-                    slideMotor.setTargetPosition(383);
+                        && Math.abs(tiltMotor.getCurrentPosition() - 518) <= 5 && LowerTileTimer.seconds() >= 2.5) {
+                    slideMotor.setTargetPosition(373);
                     grabTimer.reset();
                     autoState = AutoState.MOVE_GRADUALLY;
                     break;
@@ -247,7 +247,7 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
 //
                 break;
             case  MOVE_GRADUALLY:
-                if (slideMotor.getCurrentPosition() >= 383){
+                if (slideMotor.getCurrentPosition() >= 373){
                     if (detectedColor.equals("Yellow")){
                         grabTimer.reset();
                         tiltMotor.setPower(0);
@@ -259,19 +259,20 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                     }
                     else if (!slideMotor.isBusy()){
                         isSlideIncrementing = true;
-                        if (slideMotor.getCurrentPosition() >= (383 + 50)){
+                        if (slideMotor.getCurrentPosition() >= (400)){
                             grabTimer.reset();
                             tiltMotor.setPower(0);
-                            autoState =AutoState.GRABSAMPLE;
+                            autoState = AutoState.GRABSAMPLE;
                             break;
                         }
                     }
                 }
+                break;
 
             case GRABSAMPLE:
-                if (grabTimer.seconds() >= 0.5) {
+                if (grabTimer.seconds() >= 0.6) {
                     intake_claw_servo.setPosition(Claws_closed);
-                    if (grabTimer.seconds() >= 0.8) {
+                    if (grabTimer.seconds() >= 1.7) {
                         tiltMotor.setPower(1);
                         autoState = AutoState.TURNTOSCORE;
                         break;
@@ -286,7 +287,7 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
 
             case TILTTOSCORE:
                 if (slideMotor.getCurrentPosition() <= 10) {
-                    tiltMotor.setTargetPosition(TiltHighBucketBackwardsAuto + 4);
+                    tiltMotor.setTargetPosition(TiltHighBucketBackwardsAuto);
                     intakeElbowServo.setPosition(ElbowRight);
                     tiltTimer.reset();
                     autoState = AutoState.EXTENDTOSCORE;
@@ -326,7 +327,7 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                     //intakeElbowServo.setPosition(ElbowLeft);
                     intakeWristServo.setPosition(WristCenter);
                     drive.update();
-                    if ((Math.abs(drive.getPoseEstimate().getX() - 13) <= 2) && (Math.abs(drive.getPoseEstimate().getY() - 41) <= 2) &&
+                    if ((Math.abs(drive.getPoseEstimate().getX() - 6) <= 2) && (Math.abs(drive.getPoseEstimate().getY() - 45) <= 2) &&
                             (extendToSecondSampleTimer.seconds() > 0.7)) {
                         slideMotor.setTargetPosition(0);
                         if (slideMotor.getCurrentPosition() <= SlideTickThreshold) {
@@ -341,7 +342,7 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                 break;
             case LOWER_SLIDE_RESET:
                 if (Math.abs(tiltMotor.getCurrentPosition() - 525) < 25 && extendToSecondSampleTimer.seconds() > 2.5) {
-                    slideMotor.setTargetPosition(416);
+                    slideMotor.setTargetPosition(405);
                         grabTimer.reset();
                     isSlideIncrementing = true;
                         autoState = AutoState.MOVE_GRADUALLY_SECOND_SAMPLE;
@@ -350,7 +351,7 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                 break;
 
             case MOVE_GRADUALLY_SECOND_SAMPLE:
-                if (slideMotor.getCurrentPosition() >= 416){
+                if (slideMotor.getCurrentPosition() >= 405){
                 if (detectedColor.equals("Yellow")){
                     grabTimer.reset();
                     tiltMotor.setPower(0);
@@ -362,7 +363,7 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                 }
                 else if (!slideMotor.isBusy()){
                     isSlideIncrementing = true;
-                    if (slideMotor.getCurrentPosition() >= (416 + 50)){
+                    if (slideMotor.getCurrentPosition() >= (416)){
                         grabTimer.reset();
                         tiltMotor.setPower(0);
                         autoState =AutoState.COLLECT_TWO;
@@ -386,12 +387,12 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
             case RESET_FOR_PATH_UPDATE:
                 slideMotor.setTargetPosition(0);
                 if ((slideMotor.getCurrentPosition() < SlideTickThreshold) && grabTimer.seconds() >= 2) {
-                    tiltMotor.setTargetPosition(TiltHighBucketBackwardsAuto - 26);
+                    tiltMotor.setTargetPosition(TiltHighBucketBackwardsAuto);
 /*                    if (tiltMotor.getCurrentPosition() > 2300){
                         slideMotor.setPower(0);
                     }*/
 
-                    if (Math.abs(tiltMotor.getCurrentPosition() - (TiltHighBucketBackwardsAuto - 26)) - 5 <= TiltTickThreshold) {
+                    if (Math.abs(tiltMotor.getCurrentPosition() - (TiltHighBucketBackwardsAuto)) - 5 <= TiltTickThreshold) {
                         slideMotor.setTargetPosition(SlideHighBucketBackwardsAuto);
                         intakeElbowServo.setPosition(ElbowRight);
                         autoState = AutoState.EXTENTOSCORE_TWO;
@@ -425,7 +426,7 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                 }
                 break;
             case TURN_TO_SCORE_LAST:
-                if (slideMotor.getCurrentPosition() < 300) {
+                if (slideMotor.getCurrentPosition() <= 300) {
                     tiltMotor.setTargetPosition(890);
                     intakeElbowServo.setPosition(ElbowLeft);
                 }
@@ -437,15 +438,15 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                 break;
             case RESET_TILT_FOR_LAST_CYCLE:
                 if (slideMotor.getCurrentPosition() <= SlideTickThreshold) {
-                    tiltMotor.setTargetPosition(610);
+                    tiltMotor.setTargetPosition(535);
                     tiltTimer.reset();
                     autoState = AutoState.EXTEND_TO_THIRD_SAMPLE;
                     break;
                 }
                 break;
             case EXTEND_TO_THIRD_SAMPLE:
-                if ((Math.abs(tiltMotor.getCurrentPosition() - 610) <= 5) && (tiltTimer.seconds() >= 2)) {
-                    slideMotor.setTargetPosition(535);
+                if (((tiltMotor.getCurrentPosition() - 535) <= 10) && (tiltTimer.seconds() >= 1)) {
+                    slideMotor.setTargetPosition(440);
                     intakeElbowServo.setPosition(ElbowLeft);
                     intakeWristServo.setPosition(WristCenter);
                     isSlideIncrementing = true;
@@ -453,26 +454,28 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                     break;
                 }
                 break;
-            case MOVE_GRADUALLY_THIRD_SAMPLE:{
-                    if (detectedColor.equals("Yellow")){
-                        grabTimer.reset();
-                        tiltMotor.setPower(0);
-                        autoState = AutoState.GRAB_LAST_SAMPLE;
-                        break;
-                    } else if (isSlideIncrementing){
-                        slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 10);
-                        isSlideIncrementing = false;
-                    }
-                    else if (!slideMotor.isBusy()){
-                        isSlideIncrementing = true;
-                        if (slideMotor.getCurrentPosition() >= (535 + 50)){
+            case MOVE_GRADUALLY_THIRD_SAMPLE:
+                    if (slideMotor.getCurrentPosition() >= 440) {
+                        if (detectedColor.equals("Yellow")) {
                             grabTimer.reset();
                             tiltMotor.setPower(0);
-                            autoState =AutoState.GRAB_LAST_SAMPLE;
+                            autoState = AutoState.GRAB_LAST_SAMPLE;
                             break;
+                        } else if (isSlideIncrementing){
+                            slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 20);
+                            isSlideIncrementing = false;
+                        }
+                        else if (!slideMotor.isBusy()){
+                            isSlideIncrementing = true;
+                            if (slideMotor.getCurrentPosition() >= (478)){
+                                grabTimer.reset();
+                                tiltMotor.setPower(0);
+                                autoState =AutoState.GRAB_LAST_SAMPLE;
+                                break;
+                            }
                         }
                     }
-                }
+
                 break;
 
             case GRAB_LAST_SAMPLE:
@@ -494,7 +497,7 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                         slideMotor.setTargetPosition(0);
                         drive.followTrajectorySequenceAsync(turntoScoreLast);
                         if (slideMotor.getCurrentPosition() <= SlideTickThreshold) {
-                            tiltMotor.setTargetPosition(TiltHighBucketBackwardsAuto);
+                            tiltMotor.setTargetPosition(TiltHighBucketBackwardsAuto + 10);
                             intakeElbowServo.setPosition(ElbowRight);
                             autoState = AutoState.EXTEND_TO_SCORE_LAST_SAMPLE;
                             break;
@@ -503,7 +506,7 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                 }
                 break;
             case EXTEND_TO_SCORE_LAST_SAMPLE:
-                if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwardsAuto) <= TiltTickThreshold) {
+                if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwardsAuto + 10) <= TiltTickThreshold) {
                     slideMotor.setTargetPosition(SlideHighBucketBackwardsAuto);
                     if (Math.abs(slideMotor.getCurrentPosition() - SlideHighBucketBackwardsAuto) < SlideTickThreshold) {
                         //intakeElbowServo.setPosition(ElbowRight);

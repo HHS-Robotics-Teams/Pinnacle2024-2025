@@ -42,7 +42,7 @@ public class Fields {
     public static int TiltSlowSlowPosition = 1780;
     public static int TiltHighBucketBackwards = 1980;
     // Tilt motor positions auto
-    public static int TiltHighBucketBackwardsAuto = 1825;
+    public static int TiltHighBucketBackwardsAuto = 1850;
     public static int TiltGrabStart = tiltMotor.getCurrentPosition();
     public static int TiltGrabTarget = TiltGrabStart;
 
@@ -59,7 +59,7 @@ public class Fields {
 
     public static int SlideHighChamber = (int) (450 * .37760416666);
     public static int SlideWallPickup = (int) (1000 * .37760416666);
-    public static int SlideHighBucketBackwardsAuto = 515;
+    public static int SlideHighBucketBackwardsAuto = 510;
     public static int SlideHighBucket = (int) (1455 * .37760416666);
     public static int SlidePickupPosition = 300; //Robot actual max is 550, this is the 42in box backwards scoring
     public static int SlideMaxPosition = 550;

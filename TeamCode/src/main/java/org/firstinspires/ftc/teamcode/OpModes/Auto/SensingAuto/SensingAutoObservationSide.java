@@ -103,6 +103,7 @@ public class SensingAutoObservationSide extends OpMode {
 
     ElapsedTime testTimer = new ElapsedTime();
     ElapsedTime dunkTimer = new ElapsedTime();
+    ElapsedTime dunkAgainTimer = new ElapsedTime();
     ElapsedTime goBackTimer = new ElapsedTime();
     ElapsedTime grabTimer = new ElapsedTime();
     ElapsedTime grabAgainTimer = new ElapsedTime();
@@ -131,34 +132,37 @@ public class SensingAutoObservationSide extends OpMode {
 
 
         goFoward = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .splineToConstantHeading(new Vector2d(24, 4), Math.toRadians(0))
+                .lineToConstantHeading(new Vector2d(24,4))
+                //.splineToConstantHeading(new Vector2d(24, 4), Math.toRadians(0))
                 .build();
         goBack = drive.trajectorySequenceBuilder(new Pose2d(24, 4, Math.toRadians(0)))
                 .back(10)
                 .build();
         goPickUpFirst = drive.trajectorySequenceBuilder(new Pose2d(14, 4, Math.toRadians(0)))
-                .splineToConstantHeading(new Vector2d(20,-39), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(20, -39, Math.toRadians(0)))
+                //.splineToConstantHeading(new Vector2d(20,-39), Math.toRadians(0))
                 .build();
         goObsevationZone = drive.trajectorySequenceBuilder(new Pose2d(20,-39, Math.toRadians(0)))
                 .turn(Math.toRadians(180))
                 .build();
         goPickUpSecond = drive.trajectorySequenceBuilder(new Pose2d(20, -39, Math.toRadians(180)))
-                .turn(Math.toRadians(157))
+                .turn(Math.toRadians(158))
                 .build();
-        goDepositSecond = drive.trajectorySequenceBuilder(new Pose2d(20, -39, Math.toRadians(337)))
+        goDepositSecond = drive.trajectorySequenceBuilder(new Pose2d(20, -39, Math.toRadians(336)))
                 .turn(Math.toRadians(-161))
                 .build();
 /*        goScore = drive.trajectorySequenceBuilder(new Pose2d(40,-48, Math.toRadians(180)))
                 .splineToLinearHeading(new Pose2d(24,0),Math.toRadians(0))
                 .build();*/
         scoreFirstSpecimen = drive.trajectorySequenceBuilder(new Pose2d(20, -39, Math.toRadians(176)))
-                .splineToLinearHeading(new Pose2d(24, 0, Math.toRadians(0)), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(24,1, Math.toRadians(0)))
                 .build();
-        grabSecondSpecimen = drive.trajectorySequenceBuilder(new Pose2d(24, 0, Math.toRadians(0)))
-                .splineToLinearHeading(new Pose2d(20, -39, Math.toRadians(178)), Math.toRadians(0))
+        grabSecondSpecimen = drive.trajectorySequenceBuilder(new Pose2d(24, 1, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(20,-39, Math.toRadians(178)))
                 .build();
         scoreSecondSpecimen = drive.trajectorySequenceBuilder(new Pose2d(20, -39, Math.toRadians(178)))
-                .splineToLinearHeading(new Pose2d(20, -2, Math.toRadians(0)), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(20,-2, Math.toRadians(0)))
+                //.splineToLinearHeading(new Pose2d(20, -2, Math.toRadians(0)), Math.toRadians(0))
                 .build();
 
 //        turnAgain = drive.trajectorySequenceBuilder(new Pose2d(13, 39, Math.toRadians(-47)))
@@ -211,7 +215,7 @@ public class SensingAutoObservationSide extends OpMode {
 
             case DRIVE:
                 slideMotor.setTargetPosition(SlideHighChamber + 12);
-                if (testTimer.seconds() >= 1.75) {
+                if (testTimer.seconds() >= 1.5) {
                     dunkTimer.reset();
                     autoState = AutoState.DUNK;
                     break;
@@ -220,7 +224,7 @@ public class SensingAutoObservationSide extends OpMode {
             case DUNK:
                 intakeWristServo.setPosition(WristRight);
                 tiltMotor.setTargetPosition(1000);
-                if (dunkTimer.seconds() >= 0.4) {
+                if (dunkTimer.seconds() >= 0.3) {
                     intake_claw_servo.setPosition(Claws_open);
                     slideMotor.setTargetPosition(0);
                     drive.followTrajectorySequenceAsync(goBack);
@@ -230,7 +234,7 @@ public class SensingAutoObservationSide extends OpMode {
                 }
                 break;
             case GO_BACK:
-                if (goBackTimer.seconds() > 0.5) {
+                if (goBackTimer.seconds() > 0.3) {
                     tiltMotor.setTargetPosition(525);
                     slideMotor.setTargetPosition(0);
                     drive.followTrajectorySequenceAsync(goPickUpFirst);
@@ -248,7 +252,7 @@ public class SensingAutoObservationSide extends OpMode {
 
             case EXTEND:
                 if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2) && (Math.abs(drive.getPoseEstimate().getY() - (-39)) <= 2)
-                        && Math.abs(tiltMotor.getCurrentPosition() - 420) <= 5 && LowerTileTimer.seconds() >= 1.5) {
+                        && Math.abs(tiltMotor.getCurrentPosition() - 420) <= 5 && LowerTileTimer.seconds() >= 1.25) {
                     slideMotor.setTargetPosition(190);
                     grabTimer.reset();
                     autoState = AutoState.MOVE_GRADUALLY;
@@ -268,7 +272,7 @@ public class SensingAutoObservationSide extends OpMode {
                         autoState = AutoState.GRAB_FIRST_SAMPLE;
                         break;
                     } else if (isSlideIncrementing) {
-                        slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 10);
+                        slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 15);
                         isSlideIncrementing = false; // Wait before the next increment
                     }
                     // Check if the motor reached the current target
@@ -290,7 +294,7 @@ public class SensingAutoObservationSide extends OpMode {
             case GRAB_FIRST_SAMPLE:
                 if (grabTimer.seconds() >= 0.25) {
                     intake_claw_servo.setPosition(Claws_closed);
-                    if (grabTimer.seconds() >= 0.5) {
+                    if (grabTimer.seconds() >= 0.4) {
                         slideMotor.setTargetPosition(0);
                         autoState = AutoState.TURN_TO_OBSERVATION;
                         break;
@@ -301,6 +305,7 @@ public class SensingAutoObservationSide extends OpMode {
                 tiltMotor.setPower(1);
                 tiltMotor.setTargetPosition(712);
                 drive.followTrajectorySequenceAsync(goObsevationZone);
+                drive.update();
                 intakeWristServo.setPosition(WristRight); // check position
                 intakeElbowServo.setPosition(ElbowLeft);
                 grabTimer.reset();
@@ -314,25 +319,26 @@ public class SensingAutoObservationSide extends OpMode {
                     tiltMotor.setTargetPosition(400);
                     if (slideMotor.getCurrentPosition() >= 240){
                         intake_claw_servo.setPosition(Claws_open);
-                        tiltMotor.setTargetPosition(520);
+                        tiltMotor.setTargetPosition(515);
                         intakeWristServo.setPosition(WristCenter);
                         testTimer.reset();
                         isSlideIncrementing = true;
                         drive.followTrajectorySequenceAsync(goPickUpSecond);
+                        drive.update();
                         autoState = AutoState.MOVE_GRADUALLY_SECOND_SAMPLE;
                         break;
                     }
                 }
                 break;
             case MOVE_GRADUALLY_SECOND_SAMPLE:
-                if ((Math.abs(tiltMotor.getCurrentPosition() - 520) <= TiltTickThreshold) && testTimer.seconds() >= .5) {
+                if ((Math.abs(tiltMotor.getCurrentPosition() - 515) <= TiltTickThreshold) && testTimer.seconds() >= .5) {
                     if (detectedColor.equals("Red")) {
                         grabAgainTimer.reset();
                         tiltMotor.setPower(0);
-                        autoState = AutoState.GO_TO_OBSERVATION_AGAIN;
+                        autoState = AutoState.GRAB_SECOND_SAMPLE;
                         break;
                     } else if (isSlideIncrementing) {
-                        slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 10);
+                        slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 15);
                         isSlideIncrementing = false; // Wait before the next increment
                     }
                     // Check if the motor reached the current target
@@ -343,20 +349,19 @@ public class SensingAutoObservationSide extends OpMode {
                         if (slideMotor.getCurrentPosition() >= (300)) {
                             grabAgainTimer.reset();
                             tiltMotor.setPower(0);
-                            autoState = AutoState.GO_TO_OBSERVATION_AGAIN;
+                            autoState = AutoState.GRAB_SECOND_SAMPLE;
                             break;
                         }
                     }
                 }
                 break;
-//            case GRAB_SECOND_SAMPLE:
-//                if (grabTimer.seconds() > .3 ){
-//                        tiltMotor.setPower(0);
-//                        grabAgainTimer.reset();
-//                        autoState = AutoState.GO_OBSERVATION_AGAIN;
-//                    }
-//
-//                break;
+            case GRAB_SECOND_SAMPLE:
+                if (grabTimer.seconds() > 0.3 ){
+                        tiltMotor.setPower(0);
+                        grabAgainTimer.reset();
+                        autoState = AutoState.GO_OBSERVATION_AGAIN;
+                    }
+                break;
             case GO_OBSERVATION_AGAIN:
                 if (grabAgainTimer.seconds() >= 0.3) {
                     intake_claw_servo.setPosition(Claws_closed);
@@ -365,6 +370,7 @@ public class SensingAutoObservationSide extends OpMode {
                         slideMotor.setTargetPosition(250);
                         tiltMotor.setTargetPosition(590);
                         drive.followTrajectorySequenceAsync(goDepositSecond);
+                        drive.update();
                         grabTimer.reset();
                     /*tiltMotor.setTargetPosition(TiltHighChamber + 400);
                     intakeElbowServo.setPosition(ElbowLeft);
@@ -388,10 +394,10 @@ public class SensingAutoObservationSide extends OpMode {
             case LIFT_SLOWLY:
                 intakeWristServo.setPosition(WristRight);
                 intakeElbowServo.setPosition(ElbowLeft);
-                tiltMotor.setTargetPosition(570);
+                tiltMotor.setTargetPosition(560);
                 isTiltIncrementing = true;
-                if (grabAgainTimer.seconds() >= 0.5 && Math.abs(tiltMotor.getCurrentPosition() - 570) <= TiltTickThreshold) {
-                    slideMotor.setTargetPosition(440);
+                if (grabAgainTimer.seconds() >= 0.3 && Math.abs(tiltMotor.getCurrentPosition() - 560) <= TiltTickThreshold) {
+                    slideMotor.setTargetPosition(435);
                     testTimer.reset();
                     autoState = AutoState.GRAB_FIRST_SPECIMEN;
                     break;
@@ -399,8 +405,8 @@ public class SensingAutoObservationSide extends OpMode {
                 break;
             case GRAB_FIRST_SPECIMEN:
             if (testTimer.seconds() > .5){
-                if (Math.abs(slideMotor.getCurrentPosition() - 440) <= SlideTickThreshold) {
-                    if ((detectedColor.equals("Red")) && tiltMotor.getCurrentPosition() >= 590) {
+                if (Math.abs(slideMotor.getCurrentPosition() - 435) <= SlideTickThreshold) {
+                    if ((detectedColor.equals("Red")) && tiltMotor.getCurrentPosition() >= 580) {
                         intake_claw_servo.setPosition(Claws_closed);
                         grabTimer.reset();
                         autoState = AutoState.LIFT_FIRST_SPECIMEN;
@@ -410,7 +416,7 @@ public class SensingAutoObservationSide extends OpMode {
                         isTiltIncrementing = false;
                     } else if (!tiltMotor.isBusy()){
                         isTiltIncrementing = true;
-                        if (tiltMotor.getCurrentPosition() >= 650){
+                        if (tiltMotor.getCurrentPosition() >= 600){
                             intake_claw_servo.setPosition(Claws_closed);
                             grabTimer.reset();
                             autoState = AutoState.LIFT_FIRST_SPECIMEN;
@@ -421,7 +427,7 @@ public class SensingAutoObservationSide extends OpMode {
             }
                 break;
             case LIFT_FIRST_SPECIMEN:
-                if (grabTimer.seconds() >= 0.5){
+                if (grabTimer.seconds() >= 0.4){
                     tiltMotor.setTargetPosition(715);
                     if (tiltMotor.getCurrentPosition() >= 705){
                         slideMotor.setTargetPosition(0);
@@ -434,24 +440,25 @@ public class SensingAutoObservationSide extends OpMode {
                 }
                 break;
             case SCORE_FIRST_SPECIMEN:
+                tiltMotor.setTargetPosition(TiltHighChamber + 400);
                 if ((Math.abs(drive.getPoseEstimate().getX() - 24) <= 2)
                         && (Math.abs(drive.getPoseEstimate().getY() - 0) <= 2)) {
-                    tiltMotor.setTargetPosition(TiltHighChamber + 400);
                     slideMotor.setTargetPosition(SlideHighChamber + 20);
                     intakeElbowServo.setPosition(ElbowLeft);
-                    if (tiltMotor.getCurrentPosition() >= 1370) {
-                        tiltMotor.setTargetPosition(950);
+                    if (tiltMotor.getCurrentPosition() >= 1300) {
+                        tiltMotor.setTargetPosition(900);
                         grabTimer.reset();
                         autoState = AutoState.LET_GO_OF_SPECIMEN;
+                        break;
                     }
                 }
                 break;
             case LET_GO_OF_SPECIMEN:
-                if (grabTimer.seconds() >= 0.8) {
+                if (grabTimer.seconds() >= 0.5) {
                     intake_claw_servo.setPosition(Claws_open);
                     if (dunkTimer.seconds() >= .4) {
                         slideMotor.setTargetPosition(0);
-                        tiltMotor.setTargetPosition(665);
+                        tiltMotor.setTargetPosition(800);
                         intakeWristServo.setPosition(WristCenter);
                         autoState = AutoState.GO_TO_OBSERVATION_AGAIN;
                         break;
@@ -467,11 +474,11 @@ public class SensingAutoObservationSide extends OpMode {
 
             case LIFT_SLOWLY_SECOND:
                 if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2) && (Math.abs(drive.getPoseEstimate().getY() + 39) <= 2)
-                    && Math.abs(tiltMotor.getCurrentPosition() - 665) <= 10){
+                    && Math.abs(tiltMotor.getCurrentPosition() - 800) <= 10){
                     intakeElbowServo.setPosition(ElbowLeft);
                     intakeWristServo.setPosition(WristRight);
                     tiltMotor.setTargetPosition(570);
-                    slideMotor.setTargetPosition(330);
+                    slideMotor.setTargetPosition(365);
                     testTimer.reset();
                     isTiltIncrementing = true;
                     autoState =AutoState.GRAB_SECOND_SPECIMEN;
@@ -480,18 +487,19 @@ public class SensingAutoObservationSide extends OpMode {
                 break;
 
             case GRAB_SECOND_SPECIMEN:
-                    if (slideMotor.getCurrentPosition() >= 330) {
+                 if (testTimer.seconds() >= .2){
+                    if ((Math.abs(slideMotor.getCurrentPosition()- 365) <= 10)) {
                         if (detectedColor.equals("Red")) {
                             intake_claw_servo.setPosition(Claws_closed);
                             grabTimer.reset();
                             autoState = AutoState.DRIVE_TO_SCORE_SECOND_SPECIMEN;
                             break;
                         } else if (isTiltIncrementing) {
-                            tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + 15);
+                            tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + 20);
                             isTiltIncrementing = false;
                         } else if (!tiltMotor.isBusy()) {
                             isTiltIncrementing = true;
-                            if (tiltMotor.getCurrentPosition() >= 400) {
+                            if (tiltMotor.getCurrentPosition() >= 600) {
                                 intake_claw_servo.setPosition(Claws_closed);
                                 grabTimer.reset();
                                 autoState = AutoState.DRIVE_TO_SCORE_SECOND_SPECIMEN;
@@ -499,39 +507,53 @@ public class SensingAutoObservationSide extends OpMode {
                             }
                         }
                     }
-                break;
-
-            case DRIVE_TO_SCORE_SECOND_SPECIMEN:
-                tiltMotor.setTargetPosition(800);
-                if (tiltMotor.getCurrentPosition() >= 780) {
-                    slideMotor.setTargetPosition(0);
-                    intakeWristServo.setPosition(WristRight);
-                    drive.followTrajectorySequenceAsync(scoreSecondSpecimen);
-                    autoState = AutoState.SCORE_SECOND_SPECIMEN;
                 }
                 break;
 
+            case DRIVE_TO_SCORE_SECOND_SPECIMEN:
+                if (grabTimer.seconds() >= .3 ) {
+                    tiltMotor.setTargetPosition(800);
+                    if (tiltMotor.getCurrentPosition() >= 780) {
+                        slideMotor.setTargetPosition(0);
+                        intakeWristServo.setPosition(WristRight);
+                        drive.followTrajectorySequenceAsync(scoreSecondSpecimen);
+                        autoState = AutoState.SCORE_SECOND_SPECIMEN;
+                    }
+                    break;
+                }
+                break;
 
             case SCORE_SECOND_SPECIMEN:
                 if ((Math.abs(drive.getPoseEstimate().getX() - 24) <= 4)
                         && (Math.abs(drive.getPoseEstimate().getY() - (-2)) <= 4)) {
-                    tiltMotor.setTargetPosition(TiltHighChamber + 400);
-                    slideMotor.setTargetPosition(SlideHighChamber + 20);
+                    tiltMotor.setTargetPosition(TiltHighChamber + 100);
+                    slideMotor.setTargetPosition(SlideHighChamber + 170);
                     intakeElbowServo.setPosition(ElbowLeft);
                     drive.update();
-                    if (tiltMotor.getCurrentPosition() >= 1370) {
-                        tiltMotor.setTargetPosition(950);
-                        if (dunkTimer.seconds() >= 0.4) {
-                            intake_claw_servo.setPosition(Claws_open);
-                            slideMotor.setTargetPosition(0);
-                            drive.followTrajectorySequenceAsync(grabSecondSpecimen);
-                            autoState = AutoState.FINISH;
-                        }
+                    if ((tiltMotor.getCurrentPosition() >= 1070) && (slideMotor.getCurrentPosition() >= SlideHighChamber + 170)) {
+                            dunkAgainTimer.reset();
+                            autoState = AutoState.PARK;
+                            break;
                     }
                 }
                 break;
+            case PARK:
+                if (dunkAgainTimer.seconds() >=.4) {
+                    tiltMotor.setTargetPosition(800);
+                    if (dunkAgainTimer.seconds() >= .8) {
+                        intake_claw_servo.setPosition(Claws_open);
+                        drive.followTrajectorySequenceAsync(grabSecondSpecimen);
+                        drive.update();
+                        autoState = AutoState.FINISH;
+                        break;
+                    }
+                }
+            break;
 
             case FINISH:
+                tiltMotor.setTargetPosition(500);
+                slideMotor.setTargetPosition(SlideHighChamber + 50);
+                intakeWristServo.setPosition(WristCenter);
                 drive.update();
                 break;
         }
