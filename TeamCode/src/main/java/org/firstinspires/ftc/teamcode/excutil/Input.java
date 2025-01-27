@@ -67,6 +67,13 @@ public class Input {
     public ButtonState x = new ButtonState();
     public ButtonState y = new ButtonState();
 
+    public ButtonState circle = new ButtonState();
+    public ButtonState cross = new ButtonState();
+    public ButtonState square = new ButtonState();
+    public ButtonState delta = new ButtonState();
+
+    // Tobias did not add this, I edited his code to integrate PS5 controls into his class. - Damien
+
     public DisplacingButtonState left_trigger = new DisplacingButtonState();
     public DisplacingButtonState right_trigger = new DisplacingButtonState();
 
@@ -98,6 +105,11 @@ public class Input {
         updateState(b, gamepad.b);
         updateState(x, gamepad.x);
         updateState(y, gamepad.y);
+
+        updateState(circle, gamepad.circle);
+        updateState(cross, gamepad.cross);
+        updateState(square, gamepad.square);
+        updateState(delta, gamepad.triangle);
 
         updateState(left_trigger, gamepad.left_trigger > 0.3, gamepad.left_trigger);
         updateState(right_trigger, gamepad.right_trigger > 0.3, gamepad.right_trigger);
