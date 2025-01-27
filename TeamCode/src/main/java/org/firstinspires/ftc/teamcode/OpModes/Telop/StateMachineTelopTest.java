@@ -66,7 +66,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Constants.DetectedColor;
+import org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 
@@ -100,8 +100,8 @@ public class StateMachineTelopTest extends OpMode {
 
     @Override
     public void loop() {
-        DetectedColor.updateColor(colorSensor);
-        String detectedColor = DetectedColor.getColor();
+//        DetectedColorAndDistance.updateColor(colorSensor);
+//        String detectedColor = DetectedColorAndDistance.getColor();
 
 
         input.pollGamepad(gamepad1); // Pass gamepad input through custom class
@@ -228,6 +228,7 @@ public class StateMachineTelopTest extends OpMode {
                     slideMotor.setTargetPosition(SlideMinPosition);
                     if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
                         currentRetractionStep++;
+                        break;
                     } // Checks to ensure it is actually at the correct place, then goes to the next step.
                     break;
 
@@ -242,6 +243,7 @@ public class StateMachineTelopTest extends OpMode {
                     if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwards) < TiltTickThreshold) {
                         slideMotor.setTargetPosition(SlideHighBucketBackwards);
                         currentRetractionStep++;
+                        break;
                     }
                     break;
 
@@ -270,6 +272,7 @@ public class StateMachineTelopTest extends OpMode {
                     slideMotor.setTargetPosition(SlideMinPosition);
                     if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
                         currentRetractionStep++;
+                        break;
                     }
                     break;
 
@@ -300,6 +303,7 @@ public class StateMachineTelopTest extends OpMode {
                     slideMotor.setTargetPosition(SlideMinPosition);
                     if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
                         currentRetractionStep++;
+                        break;
                     }
                     break;
 
@@ -321,6 +325,7 @@ public class StateMachineTelopTest extends OpMode {
             IntakeWristPositionReached = true;
             specimenMode = true;
             armRetractingWallPickup = true;
+            telemetry.speak("picking up off the wall");
         }
 
         if (armRetractingWallPickup) {
@@ -413,6 +418,7 @@ public class StateMachineTelopTest extends OpMode {
                         slideMotor.setTargetPosition(SlideMinPosition);
                         if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
                             currentRetractionStep++;
+                            break;
                         }
                         break;
 

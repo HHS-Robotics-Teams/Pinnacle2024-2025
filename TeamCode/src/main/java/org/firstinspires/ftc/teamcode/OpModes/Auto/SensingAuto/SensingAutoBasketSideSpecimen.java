@@ -34,7 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Constants.DetectedColor;
+import org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -169,27 +169,28 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
 
     public void loop() {
 
-        DetectedColor.updateColor(colorSensor);
+        DetectedColorAndDistance.updateColor(colorSensor);
 
-        String detectedColor = DetectedColor.getColor();
+        String detectedColor = DetectedColorAndDistance.getColor();
 
         drive.update();
-        telemetry.addData("Detected Color", DetectedColor.getColor());
+        telemetry.addData("Detected Color", DetectedColorAndDistance.getColor());
         telemetry.addData("state", autoState);
         telemetry.addData("timer", testTimer.seconds());
         telemetry.addData("CURRENT X", drive.getPoseEstimate().getX());
         telemetry.addData("CURRENT Y", drive.getPoseEstimate().getY());
         telemetry.addData("tilt arm pos", tiltMotor.getCurrentPosition());
-        telemetry.addData("heading", drive.getPoseEstimate().getHeading());
-        telemetry.addData("heading in radians", Math.toRadians(drive.getPoseEstimate().getHeading()));
-        telemetry.addData("heading converted", Math.toRadians(Math.abs(((drive.getPoseEstimate().getHeading() * 180) / 3.14159))));
-        telemetry.addData("heading error, should be sub 2 to pass", (Math.abs(((drive.getPoseEstimate().getHeading() * 180) / 3.14159) - 23) <= 2));
+        telemetry.addData("slide ticks", slideMotor.getCurrentPosition());
+//        telemetry.addData("heading", drive.getPoseEstimate().getHeading());
+//        telemetry.addData("heading in radians", Math.toRadians(drive.getPoseEstimate().getHeading()));
+//        telemetry.addData("heading converted", Math.toRadians(Math.abs(((drive.getPoseEstimate().getHeading() * 180) / 3.14159))));
+      //  telemetry.addData("heading error, should be sub 2 to pass", (Math.abs(((drive.getPoseEstimate().getHeading() * 180) / 3.14159) - 23) <= 2));
 
-        telemetry.addData("\nPoseXWhenCollect: ", PoseXWhenCollect);
-        telemetry.addData("PoseYWhenCollect: ", PoseYWhenCollect);
-        telemetry.addData("HeadingWhenCollect: ", HeadingWhenCollect);
-        telemetry.addData("TiltWhenCollect: ", TiltWhenCollect);
-        telemetry.addData("SlideWhenCollect: ", SlideWhenCollect);
+//        telemetry.addData("\nPoseXWhenCollect: ", PoseXWhenCollect);
+//        telemetry.addData("PoseYWhenCollect: ", PoseYWhenCollect);
+//        telemetry.addData("HeadingWhenCollect: ", HeadingWhenCollect);
+//        telemetry.addData("TiltWhenCollect: ", TiltWhenCollect);
+//        telemetry.addData("SlideWhenCollect: ", SlideWhenCollect);
 
         switch (autoState) {
             case PRELOAD:
@@ -295,7 +296,7 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                 }
                 break;
             case EXTENDTOSCORE:
-                if (tiltTimer.seconds() > 1.4) {
+                if (tiltTimer.seconds() > 2) {
                     if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwardsAuto -12) <= TiltTickThreshold) {
                         slideMotor.setTargetPosition(SlideHighBucketBackwardsAuto);
                         if (Math.abs(slideMotor.getCurrentPosition() - SlideHighBucketBackwardsAuto) <= SlideTickThreshold) {

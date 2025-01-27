@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.OpModes.Testing;
 
-import static org.firstinspires.ftc.teamcode.Constants.DetectedColor.blue;
-import static org.firstinspires.ftc.teamcode.Constants.DetectedColor.green;
-import static org.firstinspires.ftc.teamcode.Constants.DetectedColor.red;
+import static org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance.blue;
+import static org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance.green;
+import static org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance.red;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.batteryVoltageSensor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.colorSensor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
-import org.firstinspires.ftc.teamcode.Constants.DetectedColor;
+import org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 
 
@@ -29,9 +29,11 @@ public class PosefinderSimple extends OpMode {
 
     @Override
     public void loop() {
-        DetectedColor.updateColor(colorSensor);
+        DetectedColorAndDistance.updateColor(colorSensor);
 
-        String detectedColor = DetectedColor.getColor();
+        String detectedColor = DetectedColorAndDistance.getColor();
+
+        double detectedDistance = DetectedColorAndDistance.getDistance();
 
         // Display values on telemetry
         telemetry.addData("Light Detected", (OpticalDistanceSensor) colorSensor);
@@ -39,6 +41,7 @@ public class PosefinderSimple extends OpMode {
         telemetry.addData("Green", green);
         telemetry.addData("Blue", blue);
         telemetry.addData("Detected Color", detectedColor);
+        telemetry.addData("Distance (cm)", "%.2f", detectedDistance);
         telemetry.addData("slide pos", slideMotor.getCurrentPosition());
         telemetry.addData("tilt pos", tiltMotor.getCurrentPosition());
         telemetry.update();

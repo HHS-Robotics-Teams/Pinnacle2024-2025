@@ -40,7 +40,7 @@ public class Fields {
     public static int TiltHighBucket = 1366;
     public static int TiltMaxPosition = 1513;
     public static int TiltSlowSlowPosition = 1780;
-    public static int TiltHighBucketBackwards = 1980;
+    public static int TiltHighBucketBackwards = 1900;
     // Tilt motor positions auto
     public static int TiltHighBucketBackwardsAuto = 1850;
     public static int TiltGrabStart = tiltMotor.getCurrentPosition();
@@ -82,11 +82,11 @@ public class Fields {
 
 
     // Elbow positions
-    public static double ElbowRight = 0.12; //ElbowSpecimenScoring
+    public static double ElbowRight = 0.7; //ElbowSpecimenScoring
 
     public static double ElbowSpecimenScoring = .12;
     public static double ElbowCenter = 0.4; //ElbowStarting
-    public static double ElbowLeft = .7;
+    public static double ElbowLeft = .12;
 
     // Claw Positions
     public static double Claws_open = .25;

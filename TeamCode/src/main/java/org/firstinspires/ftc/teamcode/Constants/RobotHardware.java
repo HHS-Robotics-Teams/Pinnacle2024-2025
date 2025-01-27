@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -32,6 +33,7 @@ public class RobotHardware {
 
     public static BHI260IMU imu;
     public static RevColorSensorV3 colorSensor;
+    public static RevColorSensorV3 distanceSensor;
 
     public static void init(HardwareMap hardwareMap) {
         // ---------- Wheels ----------
@@ -59,6 +61,7 @@ public class RobotHardware {
 
         // --------- Color Sensor --------
         colorSensor = hardwareMap.get(RevColorSensorV3.class, "color_sensor");
+        distanceSensor = hardwareMap.get(RevColorSensorV3.class, "distance_sensor"); // Same device
 
 //        /* ============================== Hardware Settings Fixes ============================== */
         // ---------- Reverse Left Side For Proper Strafing ----------

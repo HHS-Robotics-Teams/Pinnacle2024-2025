@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.Constants;
 
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.distanceSensor;
+
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
-public class DetectedColor {
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+public class DetectedColorAndDistance {
 
     /*
     This code uses a Rev V3 color sensor to see the difference between the floor tiles red, yellow, and blue,
@@ -26,6 +30,20 @@ public class DetectedColor {
 
     to view if the light is detected
         telemetry.addData("Light Detected", (OpticalDistanceSensor) colorSensor);
+
+
+    To have the REV v3 color sensor detected distance use the following lines
+    to properly declare and use the class
+     double detectedDistance = DetectedColorAndDistance.getDistance();
+
+    to check the distance to an object
+        detectedDistance <= 0.0
+
+    to view the distance on the driver station
+        telemetry.addData("Distance (cm)", "%.2f", detectedDistance);
+
+    its distance units can me inch, mm, cm, & m. the max distance for the distance range is 6inch
+
      */
     public static int red;
     public static int green;
@@ -33,6 +51,8 @@ public class DetectedColor {
 
     // Static variable to store the detected color
     public static String color = "Unknown"; // Default value
+
+    public static double distance = 0.0;
 
     // Method to update the detected color using the color sensor
     public static void updateColor(ColorSensor colorSensor) {
@@ -56,10 +76,14 @@ public class DetectedColor {
         } else {
             color = "Unknown";
         }
+        distance = distanceSensor.getDistance(DistanceUnit.CM);
     }
 
     // Getter for the detected color
     public static String getColor () {
         return color;
+    }
+    public static double getDistance(){
+        return distance;
     }
 }
