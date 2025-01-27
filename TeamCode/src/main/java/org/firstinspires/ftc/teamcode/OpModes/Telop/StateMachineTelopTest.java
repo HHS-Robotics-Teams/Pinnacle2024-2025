@@ -214,7 +214,7 @@ public class StateMachineTelopTest extends OpMode {
         /* ============================== Scoring ============================== */
 
         // ------------ High Basket -------------
-        if (input.y.down()) {
+        if (input.y.down() || input.delta.down()) {
             armRetractingHighBasket = true;
             IntakeWristPositionReached = false;
             telemetry.speak("High Basket  ");
@@ -260,7 +260,7 @@ public class StateMachineTelopTest extends OpMode {
         }
 
         // ------------ High Chamber --------------
-        if (input.x.down()) {
+        if (input.x.down() || input.square.down()) {
             armRetractingHighChamber = true;
             IntakeWristPositionReached = true;
             telemetry.speak("High Chamber Get ready to dunk");
@@ -406,7 +406,7 @@ public class StateMachineTelopTest extends OpMode {
 //            }
 //        }
             // ------------ Sample Floor Pickup ---------------
-            if (input.b.down()) {
+            if (input.b.down() || input.circle.down()) {
                 armRetractingFloorPickup = true;
                 IntakeWristPositionReached = false;
                 telemetry.speak(" Grab another off the Seafloor");
@@ -456,7 +456,7 @@ public class StateMachineTelopTest extends OpMode {
             } else {
                 leftClaw.setPower(0);
                 rightClaw.setPower(0);
-                telemetry.speak("Hook line and sinker");
+                telemetry.speak("Hook line and sink deez nuts");
             }
 
             /* ============================== Telemetry For Debugging ============================== */
