@@ -35,6 +35,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingFloor
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHighBasket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHome;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingSubPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingWallPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.climbPositionReached;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentClawStep;
@@ -42,6 +43,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.currentClimbStep;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentRetractionStep;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.elbowRotate;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.isTiltIncrementing;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.resetFlags;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.sampleFloorPickUp;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.specimenMode;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ActivelyClimbing;
@@ -75,6 +77,7 @@ public class StateMachineTelopTest extends OpMode {
     public static int ExtensionMax;
 
     public Input input;
+    ElapsedTime StateMachine_Timer = new ElapsedTime();
     ElapsedTime Extend_timer = new ElapsedTime();
     ElapsedTime Claw_timer = new ElapsedTime();
     ElapsedTime Climber_Timer = new ElapsedTime();
@@ -91,7 +94,9 @@ public class StateMachineTelopTest extends OpMode {
 
         // ---------- Add Power ---------
         applyPowers();
-
+        // --------- Reset Flags --------
+        resetFlags();
+        armRetractingHome = true;
         // ---------- Confirmation Printing ----------
         telemetry.addData("Status:", "✅ Robot is initialized.");
         telemetry.update();
@@ -100,10 +105,6 @@ public class StateMachineTelopTest extends OpMode {
 
     @Override
     public void loop() {
-//        DetectedColorAndDistance.updateColor(colorSensor);
-//        String detectedColor = DetectedColorAndDistance.getColor();
-
-
         input.pollGamepad(gamepad1); // Pass gamepad input through custom class
 
         /* ============================== Driving and Wheels ============================== */
@@ -113,7 +114,10 @@ public class StateMachineTelopTest extends OpMode {
         double strafe = -gamepad1.left_stick_x;   // Left stick: left and right
         double drive = -gamepad1.left_stick_y;   //  Left stick: up and down
 
-        // ---------- Slowdown While Arm Up ----------
+        // ---------- Slowdown While Arm Up or Out ----------
+        if (armRetractingFloorPickup || armRetractingWallPickup) {
+            rotate = rotate / 2;
+        }
         if (tiltMotor.getTargetPosition() >= TiltUpThreshold && !ActivelyClimbing) {
             rotate = rotate / 1.5;
             strafe = strafe / 1.5;
@@ -137,12 +141,6 @@ public class StateMachineTelopTest extends OpMode {
         backLeftMotor.setPower(backLeftPower);
         backRightMotor.setPower(backRightPower);
 
-        // ---------- Arm Power Modulation ----------
-//        if (tiltMotor.getCurrentPosition() > 1500){
-//            tiltMotor.setPower(.5); // So it doesn't fling itself onto the floor
-//        }                           // when moving the arm back.
-
-
         // ---------- Manual Arm Tilt ----------
         if (input.dpad_up.held() && (tiltMotor.getCurrentPosition() <= TiltMaxPosition)) {
             tiltMotor.setTargetPosition(tiltMotor.getTargetPosition() + 15); // Arm up
@@ -155,9 +153,9 @@ public class StateMachineTelopTest extends OpMode {
         // ---------- Manual Extension ----------
         {// Manual Extension limit to stop over extension below arm straight out
             if (tiltMotor.getCurrentPosition() <= TiltHomePosition) {
-                ExtensionMax = 515;
+                ExtensionMax = 400;
             } else {
-                ExtensionMax = 550;
+                ExtensionMax = 515;
             }
 
 
@@ -169,14 +167,19 @@ public class StateMachineTelopTest extends OpMode {
                 slideMotor.setTargetPosition(slideMotor.getCurrentPosition() - 80); // Slide in
             }
         }
-//        // ---------- Intake Wrist Servo ----------
-//        if (input.dpad_left.down() && IntakeWristPositionReached) {
-//            intakeWristServo.setPosition(WristCenter);
-//        }
-//
-//        if (input.dpad_right.down() && IntakeWristPositionReached) {
-//            intakeWristServo.setPosition(WristRight);
-//        }
+        /* ============================== Reset State ============================*/
+        if (input.a.down() || input.cross.down()){
+            telemetry.speak("No Way Home");
+            resetFlags();
+        }
+        if (StateMachine_Timer.seconds() > 4){
+            telemetry.speak("You have been timed out");
+            resetFlags();
+        }
+        // manual Wrist Control
+        if (input.dpad_left.down() && armRetractingHighBasket){
+            intakeWristServo.setPosition(WristRight);
+        }
 
         // ---------- Intake Claws  ----------
         if (input.right_trigger.held()) { //
@@ -184,8 +187,8 @@ public class StateMachineTelopTest extends OpMode {
         }
         if (input.right_bumper.held()) {
             clawsOpening = true;
-
         }
+
         if (clawsOpening) {
             switch (currentClawStep) {
                 case (1):
@@ -210,14 +213,13 @@ public class StateMachineTelopTest extends OpMode {
             }
         }
 
-
         /* ============================== Scoring ============================== */
 
         // ------------ High Basket -------------
         if (input.y.down() || input.delta.down()) {
             armRetractingHighBasket = true;
             IntakeWristPositionReached = false;
-            telemetry.speak("High Basket  ");
+            telemetry.speak("High Basket");
         }
 
         if (armRetractingHighBasket) {
@@ -252,6 +254,7 @@ public class StateMachineTelopTest extends OpMode {
                         elbowRotate = true;
                         intakeWristServo.setPosition(WristSampleBucketScore);
                         //intakeElbowServo.setPosition(ElbowRight);
+                        StateMachine_Timer.reset();
                         currentRetractionStep = 1; // These two assignment statements reset the state for
                         armRetractingHighBasket = false; // next time the button is pressed.
                         break;
@@ -281,6 +284,7 @@ public class StateMachineTelopTest extends OpMode {
                     slideMotor.setTargetPosition(SlideHighChamber);
                     intakeWristServo.setPosition(WristRight); // check position
                     intakeElbowServo.setPosition(ElbowLeft);
+                    StateMachine_Timer.reset();
                     currentRetractionStep = 1;
                     armRetractingHighChamber = false;
                     break;
@@ -333,78 +337,28 @@ public class StateMachineTelopTest extends OpMode {
 
                 case (1):
                     slideMotor.setTargetPosition(SlideMinPosition);
-                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
-                        if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
+                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
                             intake_claw_servo.setPosition(Claws_open);
                             currentRetractionStep++;
                             break;
-                        }
+
                     }
                         break;
 
                     case (2):
                         tiltMotor.setTargetPosition(TiltWallPickupPosition);
                         slideMotor.setTargetPosition(SlideWallPickup);
-                        intakeWristServo.setPosition(WristRight); // check position
+                        intakeWristServo.setPosition(WristRight);
                         intakeWristServo.setPosition(WristRight);
                         intakeElbowServo.setPosition(ElbowLeft);
                         intake_claw_servo.setPosition(Claws_open);
+                        StateMachine_Timer.reset();
                         currentRetractionStep = 1;
                         armRetractingWallPickup = false;
                         break;
                     }
             }
 
-//        if (gamepad1.right_stick_button) {
-//            IntakeWristPositionReached = true;
-//            specimenMode = true;
-//            armRetractingWallPickup = true;
-//        }
-//
-//        if (armRetractingWallPickup) {
-//            switch (currentRetractionStep) {
-//
-//                case (1):
-//                    slideMotor.setTargetPosition(SlideMinPosition);
-//                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
-//                        intake_claw_servo.setPosition(Claws_open);
-//                        currentRetractionStep++;
-//                    }
-//                    break;
-//
-//                case (2):
-//                    tiltMotor.setTargetPosition(TiltWallPickupPosition - 40);
-//                    slideMotor.setTargetPosition(SlideWallPickup);
-//                    intakeWristServo.setPosition(WristRight);
-//                    intakeElbowServo.setPosition(ElbowLeft);
-//                    isTiltIncrementing = true;
-//                    currentRetractionStep++;
-//
-//                    break;
-//                case (3): {
-//                    if (detectedColor.equals("Red")) {
-//                        intake_claw_servo.setPosition(Claws_closed);
-//                        currentRetractionStep++;
-//                        break;
-//                    } else if (isTiltIncrementing) {
-//                        tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + 20);
-//                        isTiltIncrementing = false;
-//                    } else if (!tiltMotor.isBusy()) {
-//                        isTiltIncrementing = true;
-//                        if (tiltMotor.getCurrentPosition() >= 650) {
-//                            intake_claw_servo.setPosition(Claws_closed);
-//                            currentRetractionStep++;
-//                            break;
-//                        }
-//                    }
-//                }
-//                case (4):
-//                    tiltMotor.setTargetPosition(750);
-//                    isTiltIncrementing = false;
-//                    currentRetractionStep = 1;
-//                    break;
-//            }
-//        }
             // ------------ Sample Floor Pickup ---------------
             if (input.b.down() || input.circle.down()) {
                 armRetractingFloorPickup = true;
@@ -428,12 +382,14 @@ public class StateMachineTelopTest extends OpMode {
                         intakeWristServo.setPosition(WristCenter);
                         intakeElbowServo.setPosition(ElbowLeft);
                         intake_claw_servo.setPosition(Claws_open);
+                        StateMachine_Timer.reset();
                         armRetractingFloorPickup = false;
                         sampleFloorPickUp = true;
                         currentRetractionStep = 1;
                         break;
                 }
             }
+
 
 
 //        /* ============================== Climbing ============================== */
@@ -456,7 +412,7 @@ public class StateMachineTelopTest extends OpMode {
             } else {
                 leftClaw.setPower(0);
                 rightClaw.setPower(0);
-                telemetry.speak("Hook line and sink deez nuts");
+                telemetry.speak("Hook line and sinker");
             }
 
             /* ============================== Telemetry For Debugging ============================== */
@@ -477,6 +433,11 @@ public class StateMachineTelopTest extends OpMode {
             telemetry.addData("Current Slide Position ", slideMotor.getCurrentPosition());
 
             // ---------- Flags -----------
+            telemetry.addData("High basket status", armRetractingHighBasket ? "True" : "False");
+            telemetry.addData("High Chamber status", armRetractingHighChamber ? "True" : "False");
+            telemetry.addData("Floor Pickup status", armRetractingFloorPickup ? "True" : "False");
+            telemetry.addData("Home status", armRetractingHome ? "True" : "False");
+            telemetry.addData("Wall Pickup status", armRetractingWallPickup ? "True" : "False");
             telemetry.addData("Climb control status", climbPositionReached ? "True" : "False");
             telemetry.addData("Wrist control status", IntakeWristPositionReached ? "True" : "False");
 

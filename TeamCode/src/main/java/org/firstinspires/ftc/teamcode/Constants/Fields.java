@@ -24,7 +24,7 @@ public class Fields {
 
 
     // tilt motor positions
-    public static int TiltTickThreshold = 20;
+    public static int TiltTickThreshold = 30;
 
     public static int TiltMinPosition = 34;
     public static int IntakeRotateThreshold = 223; //100
@@ -32,7 +32,7 @@ public class Fields {
     public static int TiltLowChamber = 446;
     public static int TiltFloorPickup = 519;
     public static int TiltHomePosition = 535;
-    public static int TiltWallPickupPosition = 540;
+    public static int TiltWallPickupPosition = 545;
     public static int TiltUpThreshold = 1210;
 
     public static int TiltHighChamber = 970;
@@ -63,7 +63,7 @@ public class Fields {
     public static int SlideHighBucket = (int) (1455 * .37760416666);
     public static int SlidePickupPosition = 300; //Robot actual max is 550, this is the 42in box backwards scoring
     public static int SlideMaxPosition = 550;
-    public static int SlideHighBucketBackwards = 515;
+    public static int SlideHighBucketBackwards = 510;
     public static int SlideGrabStart = 190;
     public static int SlideGrabTarget = SlideGrabStart;
     public static int SlideGrabSecond  = 250;
@@ -103,7 +103,6 @@ public class Fields {
     public static Boolean armRetractingSubPickup = false;
     public static Boolean armRetractingHome = false;
     public static Boolean armRetractingWallPickup = false;
-
     public static Boolean sampleFloorPickUp = false;
     public static Boolean specimenMode = false;
     public static Boolean buttonPressInitiate = false;
@@ -111,7 +110,23 @@ public class Fields {
     public static Boolean ActivelyClimbing = false;
     public static Boolean PreppingClimbers = false;
     public static Boolean elbowRotate = false;
-
+    public static void resetFlags(){
+        IntakeWristPositionReached = false;
+        climbPositionReached = false;
+        armRetractingHighBasket = false;
+        armRetractingHighChamber = false;
+        armRetractingFloorPickup = false;
+        armRetractingSubPickup = false;
+        armRetractingHome = false;
+        armRetractingWallPickup = false;
+        sampleFloorPickUp = false;
+        specimenMode = false;
+        buttonPressInitiate = false;
+        clawsOpening = false;
+        ActivelyClimbing = false;
+        PreppingClimbers = false;
+        elbowRotate = false;
+    }
 
     // Timers
 
