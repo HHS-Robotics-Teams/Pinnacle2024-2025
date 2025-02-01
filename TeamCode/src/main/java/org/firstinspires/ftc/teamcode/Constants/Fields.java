@@ -40,9 +40,10 @@ public class Fields {
     public static int TiltHighBucket = 1366;
     public static int TiltMaxPosition = 1513;
     public static int TiltSlowSlowPosition = 1780;
-    public static int TiltHighBucketBackwards = 1900;
+    public static int TiltHighBucketBackwards = 1866;
     // Tilt motor positions auto
     public static int TiltHighBucketBackwardsAuto = 1850;
+    public static int TiltHighBucketLastSpeciemnAuto = 1875;
     public static int TiltGrabStart = tiltMotor.getCurrentPosition();
     public static int TiltGrabTarget = TiltGrabStart;
 
@@ -122,10 +123,9 @@ public class Fields {
         sampleFloorPickUp = false;
         specimenMode = false;
         buttonPressInitiate = false;
-        clawsOpening = false;
         ActivelyClimbing = false;
         PreppingClimbers = false;
-        elbowRotate = false;
+
     }
 
     // Timers
@@ -170,6 +170,9 @@ public class Fields {
         intakeWristServo.setPosition(WristCenter);
         intakeElbowServo.setPosition(ElbowSpecimenScoring);
     }
+
+    public static double OldDetectedDistance = 0.0;
+    public static double NewDetectedDistance = 0.0;
 
 }
 

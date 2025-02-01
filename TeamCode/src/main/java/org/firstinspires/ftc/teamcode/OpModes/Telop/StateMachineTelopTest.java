@@ -94,9 +94,11 @@ public class StateMachineTelopTest extends OpMode {
 
         // ---------- Add Power ---------
         applyPowers();
+
         // --------- Reset Flags --------
         resetFlags();
         armRetractingHome = true;
+
         // ---------- Confirmation Printing ----------
         telemetry.addData("Status:", "✅ Robot is initialized.");
         telemetry.update();
@@ -116,7 +118,7 @@ public class StateMachineTelopTest extends OpMode {
 
         // ---------- Slowdown While Arm Up or Out ----------
         if (armRetractingFloorPickup || armRetractingWallPickup) {
-            rotate = rotate / 2;
+            rotate = rotate / 3;
         }
         if (tiltMotor.getTargetPosition() >= TiltUpThreshold && !ActivelyClimbing) {
             rotate = rotate / 1.5;
@@ -153,9 +155,9 @@ public class StateMachineTelopTest extends OpMode {
         // ---------- Manual Extension ----------
         {// Manual Extension limit to stop over extension below arm straight out
             if (tiltMotor.getCurrentPosition() <= TiltHomePosition) {
-                ExtensionMax = 400;
+                ExtensionMax = 455;
             } else {
-                ExtensionMax = 515;
+                ExtensionMax = 510;
             }
 
 
@@ -170,10 +172,14 @@ public class StateMachineTelopTest extends OpMode {
         /* ============================== Reset State ============================*/
         if (input.a.down() || input.cross.down()){
             telemetry.speak("No Way Home");
+            currentRetractionStep = 1;
             resetFlags();
+
         }
-        if (StateMachine_Timer.seconds() > 4){
+        if (StateMachine_Timer.seconds() > 3){
             telemetry.speak("You have been timed out");
+            currentRetractionStep = 1;
+            StateMachine_Timer.reset();
             resetFlags();
         }
         // manual Wrist Control
@@ -228,7 +234,7 @@ public class StateMachineTelopTest extends OpMode {
                 case (1): // Step 1: Move the wrist back to center then retract the arm slide to min position.
                     intakeWristServo.setPosition(WristCenter);
                     slideMotor.setTargetPosition(SlideMinPosition);
-                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
+                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) <= SlideTicks) {
                         currentRetractionStep++;
                         break;
                     } // Checks to ensure it is actually at the correct place, then goes to the next step.
@@ -242,7 +248,7 @@ public class StateMachineTelopTest extends OpMode {
                     break;
 
                 case (3): // Step 3: Wait 1 second so tilt can move and inertia can finish, then slide out to high bucket height.
-                    if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwards) < TiltTickThreshold) {
+                    if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwards) <= TiltTickThreshold) {
                         slideMotor.setTargetPosition(SlideHighBucketBackwards);
                         currentRetractionStep++;
                         break;
@@ -250,7 +256,7 @@ public class StateMachineTelopTest extends OpMode {
                     break;
 
                 case (4): // Step 4: Wait a half second then move the elbow and wrist servos to the right positions.
-                    if (Math.abs(slideMotor.getCurrentPosition() - SlideHighBucketBackwards) < SlideTicks) {
+                    if (Math.abs(slideMotor.getCurrentPosition() - SlideHighBucketBackwards) <= SlideTicks) {
                         elbowRotate = true;
                         intakeWristServo.setPosition(WristSampleBucketScore);
                         //intakeElbowServo.setPosition(ElbowRight);
@@ -273,7 +279,7 @@ public class StateMachineTelopTest extends OpMode {
             switch (currentRetractionStep) {
                 case (1):
                     slideMotor.setTargetPosition(SlideMinPosition);
-                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
+                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) <= SlideTicks) {
                         currentRetractionStep++;
                         break;
                     }
@@ -305,7 +311,7 @@ public class StateMachineTelopTest extends OpMode {
                         tiltMotor.setTargetPosition(TiltHomePosition);
                     }
                     slideMotor.setTargetPosition(SlideMinPosition);
-                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
+                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) <= SlideTicks) {
                         currentRetractionStep++;
                         break;
                     }
@@ -337,7 +343,7 @@ public class StateMachineTelopTest extends OpMode {
 
                 case (1):
                     slideMotor.setTargetPosition(SlideMinPosition);
-                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
+                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) <= SlideTicks) {
                             intake_claw_servo.setPosition(Claws_open);
                             currentRetractionStep++;
                             break;
@@ -370,7 +376,7 @@ public class StateMachineTelopTest extends OpMode {
                 switch (currentRetractionStep) {
                     case (1):
                         slideMotor.setTargetPosition(SlideMinPosition);
-                        if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
+                        if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) <= SlideTicks) {
                             currentRetractionStep++;
                             break;
                         }
@@ -433,7 +439,7 @@ public class StateMachineTelopTest extends OpMode {
             telemetry.addData("Current Slide Position ", slideMotor.getCurrentPosition());
 
             // ---------- Flags -----------
-            telemetry.addData("High basket status", armRetractingHighBasket ? "True" : "False");
+            telemetry.addData("High Basket status", armRetractingHighBasket ? "True" : "False");
             telemetry.addData("High Chamber status", armRetractingHighChamber ? "True" : "False");
             telemetry.addData("Floor Pickup status", armRetractingFloorPickup ? "True" : "False");
             telemetry.addData("Home status", armRetractingHome ? "True" : "False");

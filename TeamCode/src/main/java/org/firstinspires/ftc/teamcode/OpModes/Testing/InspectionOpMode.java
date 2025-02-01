@@ -90,14 +90,14 @@ public class InspectionOpMode extends OpMode {
                     break;
 
                 case (2): // Step 2: Move the arm up and back in the position it needs to be for backwards high bucket.
-                    tiltMotor.setTargetPosition(TiltHighBucketBackwards);
+                    tiltMotor.setTargetPosition(TiltHighBucketBackwardsAuto);
                     intakeElbowServo.setPosition(ElbowRight);
                     Extend_timer.reset();
                     currentRetractionStep++;
                     break;
 
                 case (3): // Step 3: Wait 1 second so tilt can move and inertia can finish, then slide out to high bucket height.
-                    if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwards) < TiltTickThreshold) {
+                    if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwardsAuto) < TiltTickThreshold) {
                         slideMotor.setTargetPosition(SlideHighBucketBackwards);
                         currentRetractionStep++;
                         break;
