@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
+@Disabled
 @Autonomous (name = "Strafe left test", group = "drive")
 
 public class StrafeLeftTest extends LinearOpMode {
