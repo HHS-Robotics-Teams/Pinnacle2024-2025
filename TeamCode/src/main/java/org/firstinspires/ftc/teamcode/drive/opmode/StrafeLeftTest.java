@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.resetEncoders;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 
@@ -19,7 +20,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-@Disabled
+
 @Autonomous (name = "Strafe left test", group = "drive")
 
 public class StrafeLeftTest extends LinearOpMode {
@@ -30,12 +31,13 @@ public class StrafeLeftTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         RobotHardware.init(hardwareMap);
+        resetEncoders();
         applyPowers();
 
         while (opModeInInit()) {
             intakeWristServo.setPosition(WristLeft);
             intakeElbowServo.setPosition(ElbowSpecimenScoring);
-            tiltMotor.setTargetPosition(TiltMinPosition);
+            tiltMotor.setTargetPosition(200);
             slideMotor.setTargetPosition(0);
 
             SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);

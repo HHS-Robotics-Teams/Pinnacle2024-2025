@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.resetEncoders;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
@@ -49,7 +50,7 @@ import java.util.Objects;
  * user to reset the position of the bot in the event that it drifts off the path.
  * Pressing B/O (Xbox/PS4) will cede control back to the tuning process.
  */
-@Disabled
+
 @Config
 @Autonomous(group = "drive")
 public class ManualFeedforwardTuner extends LinearOpMode {
@@ -83,12 +84,13 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
         drive = new SampleMecanumDrive(hardwareMap);
         RobotHardware.init(hardwareMap);
+        resetEncoders();
         applyPowers();
 
         while (opModeInInit()) {
             intakeWristServo.setPosition(WristLeft);
             intakeElbowServo.setPosition(ElbowSpecimenScoring);
-            tiltMotor.setTargetPosition(TiltMinPosition);
+            tiltMotor.setTargetPosition(200);
             slideMotor.setTargetPosition(0);
         }
 

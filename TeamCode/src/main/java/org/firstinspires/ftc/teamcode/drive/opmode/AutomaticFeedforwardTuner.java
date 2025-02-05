@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.resetEncoders;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
@@ -39,7 +40,7 @@ import java.util.List;
  *   4. Adjust the encoder data based on the velocity tuning data and find kA with another linear
  *      regression.
  */
-@Disabled
+
 @Config
 
 @Autonomous(group = "drive")
@@ -60,12 +61,13 @@ public class AutomaticFeedforwardTuner extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         RobotHardware.init(hardwareMap);
+        resetEncoders();
         applyPowers();
 
         while (opModeInInit()) {
             intakeWristServo.setPosition(WristLeft);
             intakeElbowServo.setPosition(ElbowSpecimenScoring);
-            tiltMotor.setTargetPosition(TiltMinPosition);
+            tiltMotor.setTargetPosition(200);
             slideMotor.setTargetPosition(0);
         }
 

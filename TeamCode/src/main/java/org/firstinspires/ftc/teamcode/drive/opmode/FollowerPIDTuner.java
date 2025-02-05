@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.resetEncoders;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 
@@ -32,22 +33,24 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
  * If you are using SampleTankDrive, you should be tuning AXIAL_PID, CROSS_TRACK_PID, and HEADING_PID.
  * These coefficients can be tuned live in dashboard.
  */
-@Disabled
+
 @Config
 @Autonomous(group = "drive")
 public class FollowerPIDTuner extends LinearOpMode {
     public static double DISTANCE = 48; // in
 
-    @Override
+
     public void runOpMode() throws InterruptedException {
-        RobotHardware.init(hardwareMap);
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        RobotHardware.init(hardwareMap);
+        resetEncoders();
         applyPowers();
 
         while (opModeInInit()) {
             intakeWristServo.setPosition(WristLeft);
             intakeElbowServo.setPosition(ElbowSpecimenScoring);
-            tiltMotor.setTargetPosition(TiltMinPosition);
+            tiltMotor.setTargetPosition(200);
             slideMotor.setTargetPosition(0);
 
 

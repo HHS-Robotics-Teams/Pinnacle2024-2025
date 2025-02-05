@@ -92,7 +92,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.00001, 0.00001, Math.toRadians(0.2 )), 30);
+                new Pose2d(0.5, 0.5, Math.toRadians(5)), .75);
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
@@ -133,10 +133,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
         // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
-        front_left = hardwareMap.get(DcMotorEx.class, "back_left_motor");
-        front_right = hardwareMap.get(DcMotorEx.class, "back_right_motor");
-        back_left = hardwareMap.get(DcMotorEx.class, "front_left_motor");
-        back_right = hardwareMap.get(DcMotorEx.class, "front_right_motor");
+        front_left = hardwareMap.get(DcMotorEx.class, "front_left_motor");
+        front_right = hardwareMap.get(DcMotorEx.class, "front_right_motor");
+        back_left = hardwareMap.get(DcMotorEx.class, "back_left_motor");
+        back_right = hardwareMap.get(DcMotorEx.class, "back_right_motor");
 
         motors = Arrays.asList(front_left, back_left, front_right, back_right);
 

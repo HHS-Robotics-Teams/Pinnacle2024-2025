@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.resetEncoders;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 
@@ -44,7 +45,7 @@ import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
  * for the forward offset. You can run this procedure as many times as necessary until a
  * satisfactory result is produced.
  */
-@Disabled
+
 @Config
 @Autonomous(group="drive")
 public class TrackingWheelForwardOffsetTuner extends LinearOpMode {
@@ -58,12 +59,13 @@ public class TrackingWheelForwardOffsetTuner extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         RobotHardware.init(hardwareMap);
+        resetEncoders();
         applyPowers();
 
         while (opModeInInit()) {
             intakeWristServo.setPosition(WristLeft);
             intakeElbowServo.setPosition(ElbowSpecimenScoring);
-            tiltMotor.setTargetPosition(TiltMinPosition);
+            tiltMotor.setTargetPosition(200);
             slideMotor.setTargetPosition(0);
         }
 
