@@ -143,9 +143,9 @@ public class BlindManSensingBlue  extends OpMode {
                 .turn(Math.toRadians(180))
                 .build();
         goPickUpSecond = drive.trajectorySequenceBuilder(new Pose2d(20, -39, Math.toRadians(180)))
-                .turn(Math.toRadians(159))
+                .turn(Math.toRadians(160))
                 .build();
-        goDepositSecond = drive.trajectorySequenceBuilder(new Pose2d(20, -39, Math.toRadians(337)))
+        goDepositSecond = drive.trajectorySequenceBuilder(new Pose2d(20, -39, Math.toRadians(338)))
                 .turn(Math.toRadians(-161))
                 .build();
 /*        goScore = drive.trajectorySequenceBuilder(new Pose2d(40,-48, Math.toRadians(180)))
@@ -253,7 +253,7 @@ public class BlindManSensingBlue  extends OpMode {
                 intakeElbowServo.setPosition(ElbowLeft);
                 if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2) && (Math.abs(drive.getPoseEstimate().getY() - (-39)) <= 2)
                         && Math.abs(tiltMotor.getCurrentPosition() - 420) <= 5 && LowerTileTimer.seconds() >= 1.25) {
-                    slideMotor.setTargetPosition(190);
+                    slideMotor.setTargetPosition(200);
                     OldDetectedDistance = detectedDistance;
                     grabTimer.reset();
                     autoState = AutoState.MOVE_GRADUALLY;
@@ -261,7 +261,7 @@ public class BlindManSensingBlue  extends OpMode {
                 }
                 break;
             case MOVE_GRADUALLY:
-                if (slideMotor.getCurrentPosition() >= 190) {
+                if (slideMotor.getCurrentPosition() >= 200) {
                     if (distance < OldDetectedDistance) {
                         grabTimer.reset();
                         tiltMotor.setPower(0);
@@ -311,8 +311,8 @@ public class BlindManSensingBlue  extends OpMode {
                 autoState = AutoState.EXTEND_TO_OBSERVATION;
                 break;
             case EXTEND_TO_OBSERVATION:
-                if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2) &&
-                        (Math.abs(drive.getPoseEstimate().getY() + 39) <= 2) && grabTimer.seconds() >= 1.5){
+                if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 3) &&
+                        (Math.abs(drive.getPoseEstimate().getY() + 39) <= 3) && grabTimer.seconds() >= 1.5){
                     slideMotor.setTargetPosition(250);
                     tiltMotor.setTargetPosition(400);
                     if (slideMotor.getCurrentPosition() >= 240){
@@ -418,7 +418,7 @@ public class BlindManSensingBlue  extends OpMode {
                             if (detectedDistance >= 2.0){
                                 slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 10);
                             }
-                            if (tiltMotor.getCurrentPosition() >= 600){
+                            if (tiltMotor.getCurrentPosition() >= 595){
                                 intake_claw_servo.setPosition(Claws_closed);
                                 grabTimer.reset();
                                 autoState = AutoState.LIFT_FIRST_SPECIMEN;
@@ -446,13 +446,15 @@ public class BlindManSensingBlue  extends OpMode {
                     tiltMotor.setTargetPosition(TiltHighChamber + 400);
                     if ((Math.abs(drive.getPoseEstimate().getX() - 24) <= 2)
                             && (Math.abs(drive.getPoseEstimate().getY() - 0) <= 2)) {
-                        slideMotor.setTargetPosition(SlideHighChamber + 70);
+                        slideMotor.setTargetPosition(SlideHighChamber + 60);
                         intakeElbowServo.setPosition(ElbowLeft);
-                        if (tiltMotor.getCurrentPosition() >= 1300) {
-                            tiltMotor.setTargetPosition(850);
-                            grabTimer.reset();
-                            autoState = AutoState.LET_GO_OF_SPECIMEN;
-                            break;
+                        if (dunkTimer.seconds() > 1.8) {
+                            if (tiltMotor.getCurrentPosition() >= 1300) {
+                                tiltMotor.setTargetPosition(850);
+                                grabTimer.reset();
+                                autoState = AutoState.LET_GO_OF_SPECIMEN;
+                                break;
+                            }
                         }
                     }
                 }
@@ -488,13 +490,13 @@ public class BlindManSensingBlue  extends OpMode {
                 break;
             case EXTEND_TO_SECOND_SPECIMEN:
                 if (testTimer.seconds() >= 1) {
-                    slideMotor.setTargetPosition(375);
+                    slideMotor.setTargetPosition(360);
                     autoState = AutoState.GRAB_SECOND_SPECIMEN;
                     break;
                 }
                 break;
             case GRAB_SECOND_SPECIMEN:
-                if ((Math.abs(slideMotor.getCurrentPosition()- 375) <= 10)) {
+                if ((Math.abs(slideMotor.getCurrentPosition()- 360) <= 10)) {
                     if (detectedDistance <= 1.8) {
                         intake_claw_servo.setPosition(Claws_closed);
                         grabTimer.reset();
@@ -532,10 +534,11 @@ public class BlindManSensingBlue  extends OpMode {
             case SCORE_SECOND_SPECIMEN:
                 if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2) && (Math.abs(drive.getPoseEstimate().getY() + 2) <= 2)) {
                     tiltMotor.setTargetPosition(TiltHighChamber + 100);
-                    slideMotor.setTargetPosition(SlideHighChamber + 163);
+                    slideMotor.setTargetPosition(SlideHighChamber + 200);
                     intakeElbowServo.setPosition(ElbowLeft);
                     drive.update();
-                    if ((Math.abs(tiltMotor.getCurrentPosition() - 1070) <= 10) && (Math.abs(slideMotor.getCurrentPosition() - 333) <= 5)) {
+                    if ((Math.abs(tiltMotor.getCurrentPosition() - 1070) <= 10) &&
+                            (Math.abs(slideMotor.getCurrentPosition() - (SlideHighChamber + 200)) <= 5)) {
                         dunkAgainTimer.reset();
                         autoState = AutoState.RETRACT_SECOND;
                         break;

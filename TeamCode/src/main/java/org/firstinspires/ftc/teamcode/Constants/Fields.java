@@ -43,7 +43,7 @@ public class Fields {
     public static int TiltHighBucketBackwards = 1866;
     // Tilt motor positions auto
     public static int TiltHighBucketBackwardsAuto = 1850;
-    public static int TiltHighBucketLastSpeciemnAuto = 1875;
+    public static int TiltHighBucketLastSpeciemnAuto = 1876;
     public static int TiltGrabStart = tiltMotor.getCurrentPosition();
     public static int TiltGrabTarget = TiltGrabStart;
 
