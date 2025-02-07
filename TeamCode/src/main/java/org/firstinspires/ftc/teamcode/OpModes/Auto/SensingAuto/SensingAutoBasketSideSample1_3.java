@@ -1,16 +1,15 @@
 package org.firstinspires.ftc.teamcode.OpModes.Auto.SensingAuto;
 
-
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighBucketBackwardsAuto;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideTickThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucketBackwardsAuto;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucketLastSpeciemnAuto;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltTickThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
@@ -29,7 +28,6 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.profile.VelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -40,101 +38,102 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Config
-@Autonomous (name = " Sensing Basket side Specimen 1+3", group = "Comp Auto")
-public class SensingAutoBasketSideSpecimen extends OpMode {
+@Autonomous(name = " Sensing Basket side Sample 1+3", group = "Comp Auto")
+public class SensingAutoBasketSideSample1_3 extends OpMode {
 
-    double PoseXWhenCollect = 0;
-    double PoseYWhenCollect = 0;
-    double HeadingWhenCollect = 0;
-    double TiltWhenCollect = 0;
-    double SlideWhenCollect = 0;
+        double PoseXWhenCollect = 0;
+        double PoseYWhenCollect = 0;
+        double HeadingWhenCollect = 0;
+        double TiltWhenCollect = 0;
+        double SlideWhenCollect = 0;
 
-    TrajectorySequence goFoward;
-    TrajectorySequence goCollect;
-    TrajectorySequence goBack;
-    TrajectorySequence goScore;
-    TrajectorySequence goCollectAgain;
-    TrajectorySequence turnAgain;
-    TrajectorySequence turnBacktoScore;
+        TrajectorySequence goBasket;
+        TrajectorySequence goCollect;
+        TrajectorySequence goBack;
+        TrajectorySequence goScore;
+        TrajectorySequence goCollectAgain;
+        TrajectorySequence turnAgain;
+        TrajectorySequence turnBacktoScore;
 
-    TrajectorySequence turntoCollectLast;
-    TrajectorySequence turntoScoreLast;
-    TrajectorySequence park;
+        TrajectorySequence turntoCollectLast;
+        TrajectorySequence turntoScoreLast;
+        TrajectorySequence park;
 
-    SampleMecanumDrive drive;
-
-
-    public enum AutoState {
-        PRELOAD,
-        DRIVE,
-        DUNK,
-        GO_BACK,
-        COLLECT_ONE,
-        EXTEND,
-        MOVE_GRADUALLY,
-        GRAB_SAMPLE,
-        TURN_TO_SCORE,
-        TILT_TO_SCORE,
-        EXTEND_TO_SCORE,
-        RESET_AND_CYCLE_TWO,
-        EXTEND_TO_SECOND_SAMPLE,
-        MOVE_GRADUALLY_SECOND_SAMPLE,
-        LOWER_SLIDE_RESET,
-        COLLECT_TWO,
-        RESET_FOR_PATH_UPDATE,
-        EXTEND_TO_SCORE_TWO,
-        RESET_AND_CYCLE_THREE,
-        TURN_TO_SCORE_LAST,
-        RESET_TILT_FOR_LAST_CYCLE,
-        EXTEND_TO_THIRD_SAMPLE,
-        MOVE_GRADUALLY_THIRD_SAMPLE,
-        GRAB_LAST_SAMPLE,
-        RETRACT_LAST_SAMPLE,
-        EXTEND_TO_SCORE_LAST_SAMPLE,
-        DEPOSIT_LAST_SAMPLE,
-        DRIVE_TO_PARK,
-        FINISH
-    }
-
-    AutoState autoState = AutoState.PRELOAD;
-    boolean beginLoweringArm = false;
-    int cyclesDone = 0;
-
-    ElapsedTime testTimer = new ElapsedTime();
-    ElapsedTime dunkTimer = new ElapsedTime();
-    ElapsedTime goBackTimer = new ElapsedTime();
-    ElapsedTime grabTimer = new ElapsedTime();
-    ElapsedTime depositTimer = new ElapsedTime();
-    ElapsedTime extendToSecondSampleTimer = new ElapsedTime();
-    ElapsedTime tiltTimer = new ElapsedTime();
-
-    ElapsedTime LowerTileTimer = new ElapsedTime();
-
-    public void init() {
-
-        RobotHardware.init(hardwareMap);
-        resetEncoders();
-
-        intakeWristServo.setPosition(.75);
-        intakeElbowServo.setPosition(ElbowRight);
-        tiltMotor.setTargetPosition(TiltMinPosition);
-        slideMotor.setTargetPosition(0);
-        intake_claw_servo.setPosition(Claws_closed);
-
-        applyPowers();
+        SampleMecanumDrive drive;
 
 
-        drive = new SampleMecanumDrive(hardwareMap);
+        public enum AutoState {
+            PRELOAD_SAMPLE,
+            DRIVE,
+            EXTEND_TO_SCORE_PRELOAD,
+            SCORE_PRELOAD,
+            GO_BACK,
+            COLLECT_ONE,
+            EXTEND,
+            MOVE_GRADUALLY,
+            GRAB_SAMPLE,
+            TURN_TO_SCORE,
+            TILT_TO_SCORE,
+            EXTEND_TO_SCORE,
+            RESET_AND_CYCLE_TWO,
+            EXTEND_TO_SECOND_SAMPLE,
+            MOVE_GRADUALLY_SECOND_SAMPLE,
+            LOWER_SLIDE_RESET,
+            COLLECT_TWO,
+            RESET_FOR_PATH_UPDATE,
+            EXTEND_TO_SCORE_TWO,
+            RESET_AND_CYCLE_THREE,
+            TURN_TO_SCORE_LAST,
+            RESET_TILT_FOR_LAST_CYCLE,
+            EXTEND_TO_THIRD_SAMPLE,
+            MOVE_GRADUALLY_THIRD_SAMPLE,
+            GRAB_LAST_SAMPLE,
+            RETRACT_LAST_SAMPLE,
+            EXTEND_TO_SCORE_LAST_SAMPLE,
+            DEPOSIT_LAST_SAMPLE,
+            DRIVE_TO_PARK,
+            FINISH
+        }
+        SensingAutoBasketSideSample1_3.AutoState autoState = AutoState.PRELOAD_SAMPLE;
+
+        boolean beginLoweringArm = false;
+        int cyclesDone = 0;
+
+        ElapsedTime testTimer = new ElapsedTime();
+        ElapsedTime dunkTimer = new ElapsedTime();
+        ElapsedTime goBackTimer = new ElapsedTime();
+        ElapsedTime grabTimer = new ElapsedTime();
+        ElapsedTime depositTimer = new ElapsedTime();
+        ElapsedTime extendToSecondSampleTimer = new ElapsedTime();
+        ElapsedTime tiltTimer = new ElapsedTime();
+
+        ElapsedTime LowerTileTimer = new ElapsedTime();
+
+        public void init() {
+
+            RobotHardware.init(hardwareMap);
+            resetEncoders();
+
+            intakeWristServo.setPosition(.75);
+            intakeElbowServo.setPosition(ElbowRight);
+            tiltMotor.setTargetPosition(TiltMinPosition);
+            slideMotor.setTargetPosition(0);
+            intake_claw_servo.setPosition(Claws_closed);
+
+            applyPowers();
+
+
+            drive = new SampleMecanumDrive(hardwareMap);
 
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
 
 
-        goFoward = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .splineToConstantHeading(new Vector2d(24, 0), Math.toRadians(0))
-                .build();
-        goBack = drive.trajectorySequenceBuilder(new Pose2d(24, 0, Math.toRadians(0)))
-                .back(7.5)
+//        goForward = drive.trajectorySequenceBuilder(new Pose2d(0,0, Math.toRadians(0)))
+//                .splineToConstantHeading(new Vector2d(6,0),Math.toRadians(0))
+//                .build();
+        goBasket = drive.trajectorySequenceBuilder(new Pose2d(6,0, Math.toRadians(0)))
+                .splineToLinearHeading(new Pose2d(13, 39, Math.toRadians(-47)), Math.toRadians(0))
                 .build();
         goCollect = drive.trajectorySequenceBuilder(new Pose2d(16, 0, Math.toRadians(0)))
                 .splineToConstantHeading(new Vector2d(13, 39), Math.toRadians(-10))
@@ -163,27 +162,27 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                 .splineToLinearHeading(new Pose2d(13.00001, 39.00001, Math.toRadians(-47)), Math.toRadians(-47))
                 .build();*/
 
-        drive.followTrajectorySequenceAsync(goFoward);
-    }
+            drive.followTrajectorySequenceAsync(goBasket);
+        }
 
-    public void loop() {
+        public void loop() {
 
-        DetectedColorAndDistance.updateColor(colorSensor);
+            DetectedColorAndDistance.updateColor(colorSensor);
 
-        String detectedColor = DetectedColorAndDistance.getColor();
+            String detectedColor = DetectedColorAndDistance.getColor();
 
-        drive.update();
-        telemetry.addData("Detected Color", DetectedColorAndDistance.getColor());
-        telemetry.addData("state", autoState);
-        telemetry.addData("timer", testTimer.seconds());
-        telemetry.addData("CURRENT X", drive.getPoseEstimate().getX());
-        telemetry.addData("CURRENT Y", drive.getPoseEstimate().getY());
-        telemetry.addData("tilt arm pos", tiltMotor.getCurrentPosition());
-        telemetry.addData("slide ticks", slideMotor.getCurrentPosition());
+            drive.update();
+            telemetry.addData("Detected Color", DetectedColorAndDistance.getColor());
+            telemetry.addData("state", autoState);
+            telemetry.addData("timer", testTimer.seconds());
+            telemetry.addData("CURRENT X", drive.getPoseEstimate().getX());
+            telemetry.addData("CURRENT Y", drive.getPoseEstimate().getY());
+            telemetry.addData("tilt arm pos", tiltMotor.getCurrentPosition());
+            telemetry.addData("slide ticks", slideMotor.getCurrentPosition());
 //        telemetry.addData("heading", drive.getPoseEstimate().getHeading());
 //        telemetry.addData("heading in radians", Math.toRadians(drive.getPoseEstimate().getHeading()));
 //        telemetry.addData("heading converted", Math.toRadians(Math.abs(((drive.getPoseEstimate().getHeading() * 180) / 3.14159))));
-      //  telemetry.addData("heading error, should be sub 2 to pass", (Math.abs(((drive.getPoseEstimate().getHeading() * 180) / 3.14159) - 23) <= 2));
+            //  telemetry.addData("heading error, should be sub 2 to pass", (Math.abs(((drive.getPoseEstimate().getHeading() * 180) / 3.14159) - 23) <= 2));
 
 //        telemetry.addData("\nPoseXWhenCollect: ", PoseXWhenCollect);
 //        telemetry.addData("PoseYWhenCollect: ", PoseYWhenCollect);
@@ -191,9 +190,9 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
 //        telemetry.addData("TiltWhenCollect: ", TiltWhenCollect);
 //        telemetry.addData("SlideWhenCollect: ", SlideWhenCollect);
 
-        switch (autoState) {
-            case PRELOAD:
-                tiltMotor.setTargetPosition(TiltHighChamber + 400);
+        switch(autoState) {
+            case PRELOAD_SAMPLE:
+                tiltMotor.setTargetPosition(TiltHomePosition);
                 intakeElbowServo.setPosition(ElbowRight);
                 intakeWristServo.setPosition(WristRight);
                 testTimer.reset();
@@ -201,23 +200,39 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                 break;
 
             case DRIVE:
-                slideMotor.setTargetPosition(SlideHighChamber + 12);
-                if (testTimer.seconds() >= 1.65) {
-                    dunkTimer.reset();
-                    autoState = AutoState.DUNK;
+                if (testTimer.seconds() > 2) {
+                    tiltMotor.setTargetPosition(TiltHighBucketBackwardsAuto);
+                    intakeWristServo.setPosition(WristSampleBucketScore);
+                    tiltTimer.reset();
+                    autoState = AutoState.EXTEND_TO_SCORE_PRELOAD;
                     break;
                 }
                 break;
-            case DUNK:
-                intakeWristServo.setPosition(WristRight);
-                tiltMotor.setTargetPosition(1000);
-                if (dunkTimer.seconds() >= 0.3) {
+
+            case EXTEND_TO_SCORE_PRELOAD:
+                if (tiltTimer.seconds() > 1.4) {
+                    if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwardsAuto) <= TiltTickThreshold) {
+                        slideMotor.setTargetPosition(SlideHighBucketBackwardsAuto);
+                        if (Math.abs(slideMotor.getCurrentPosition() - SlideHighBucketBackwardsAuto) < SlideTickThreshold) {
+                            intakeElbowServo.setPosition(ElbowRight);
+                            depositTimer.reset();
+                            autoState = AutoState.SCORE_PRELOAD;
+                            break;
+                        }
+                    }
+                }
+                break;
+            case SCORE_PRELOAD:
+                if (depositTimer.seconds() > 0.5) {
                     intake_claw_servo.setPosition(Claws_open);
-                    slideMotor.setTargetPosition(0);
-                    drive.followTrajectorySequenceAsync(goBack);
-                    goBackTimer.reset();
-                    autoState = AutoState.GO_BACK;
-                    break;
+                    intakeWristServo.setPosition(WristCenter);
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < 50) {
+                        //tiltMotor.setTargetPosition(605);
+                        goBackTimer.reset();
+                        autoState = AutoState.GO_BACK;
+                        break;
+                    }
                 }
                 break;
             case GO_BACK:

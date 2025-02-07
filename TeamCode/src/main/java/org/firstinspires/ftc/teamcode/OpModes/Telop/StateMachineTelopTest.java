@@ -112,21 +112,21 @@ public class StateMachineTelopTest extends OpMode {
         /* ============================== Driving and Wheels ============================== */
 
         // ---------- Maps Wheels to Joysticks ----------
-        double rotate = (gamepad1.right_stick_x * 0.8); // Right stick: left and right
+        double rotate = -gamepad1.right_stick_x; // Right stick: left and right
         double strafe = -gamepad1.left_stick_x;   // Left stick: left and right
         double drive = -gamepad1.left_stick_y;   //  Left stick: up and down
 
         // ---------- Slowdown While Arm Up or Out ----------
         if (armRetractingFloorPickup || armRetractingWallPickup) {
-            rotate = rotate / 3;
+            rotate = rotate / 5;
         }
         if (tiltMotor.getTargetPosition() >= TiltUpThreshold && !ActivelyClimbing) {
-            rotate = rotate / 1.5;
+            rotate = rotate / 2;
             strafe = strafe / 1.5;
             drive = drive / 1.5;
         }
         if (tiltMotor.getCurrentPosition() >= TiltSlowSlowPosition) {
-            rotate = rotate / 2.5;
+            rotate = rotate / 3.5;
             strafe = strafe / 2.5;
             drive = drive / 2.5;
         }

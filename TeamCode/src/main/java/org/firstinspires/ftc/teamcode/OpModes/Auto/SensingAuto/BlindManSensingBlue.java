@@ -41,7 +41,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 
 @Config
-@Autonomous(name = "Blue Blind Man Observation Side 1+2", group = "Comp Auto")
+@Autonomous(name = "Blind Man Observation Side 1+2", group = "Comp Auto")
 public class BlindManSensingBlue  extends OpMode {
 
     TrajectorySequence goFoward;
