@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes.Telop;
 
 
+import static org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance.distance;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
@@ -107,18 +108,24 @@ public class StateMachineTelopTest extends OpMode {
 
     @Override
     public void loop() {
+        DetectedColorAndDistance.updateColor(colorSensor);
+
+        double detectedDistance = DetectedColorAndDistance.getDistance();
+
+        String detectedColor = DetectedColorAndDistance.getColor();
+
         input.pollGamepad(gamepad1); // Pass gamepad input through custom class
 
         /* ============================== Driving and Wheels ============================== */
 
         // ---------- Maps Wheels to Joysticks ----------
-        double rotate = -gamepad1.right_stick_x; // Right stick: left and right
-        double strafe = -gamepad1.left_stick_x;   // Left stick: left and right
+        double rotate = gamepad1.right_stick_x; // Right stick: left and right
+        double strafe = gamepad1.left_stick_x;   // Left stick: left and right
         double drive = -gamepad1.left_stick_y;   //  Left stick: up and down
 
         // ---------- Slowdown While Arm Up or Out ----------
         if (armRetractingFloorPickup || armRetractingWallPickup) {
-            rotate = rotate / 5;
+            rotate = rotate / 10;
         }
         if (tiltMotor.getTargetPosition() >= TiltUpThreshold && !ActivelyClimbing) {
             rotate = rotate / 2;
@@ -183,7 +190,7 @@ public class StateMachineTelopTest extends OpMode {
             resetFlags();
         }
         // manual Wrist Control
-        if (input.dpad_left.down() && armRetractingHighBasket){
+        if (input.dpad_left.down() && elbowRotate){
             intakeWristServo.setPosition(WristRight);
         }
 
@@ -345,24 +352,35 @@ public class StateMachineTelopTest extends OpMode {
                     slideMotor.setTargetPosition(SlideMinPosition);
                     if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) <= SlideTicks) {
                             intake_claw_servo.setPosition(Claws_open);
-                            currentRetractionStep++;
+                            currentRetractionStep ++;
                             break;
 
                     }
-                        break;
 
                     case (2):
                         tiltMotor.setTargetPosition(TiltWallPickupPosition);
                         slideMotor.setTargetPosition(SlideWallPickup);
                         intakeWristServo.setPosition(WristRight);
-                        intakeWristServo.setPosition(WristRight);
                         intakeElbowServo.setPosition(ElbowLeft);
                         intake_claw_servo.setPosition(Claws_open);
-                        StateMachine_Timer.reset();
-                        currentRetractionStep = 1;
-                        armRetractingWallPickup = false;
+                        Claw_timer.reset();
+                        currentRetractionStep ++ ;
                         break;
+
+                    case (3):
+                        if (detectedColor.equals("Red") ){
+                            intake_claw_servo.setPosition(Claws_closed);
+                            if (Claw_timer.seconds() > .35){
+                                tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + 20);
+                                StateMachine_Timer.reset();
+                                armRetractingWallPickup = false;
+                                currentRetractionStep = 1;
+                                break;
+                            }
+                        }
                     }
+
+
             }
 
             // ------------ Sample Floor Pickup ---------------
@@ -435,6 +453,7 @@ public class StateMachineTelopTest extends OpMode {
             // ---------- Arm and Intake ----------
 //            telemetry.addData("Slide Motor Power: ", slideMotor.getPower());
 //            telemetry.addData("Tilt Motor Power: ", tiltMotor.getPower());
+            telemetry.addData("Distance (cm)", "%.2f", detectedDistance);
             telemetry.addData("Current Tilt Position: ", tiltMotor.getCurrentPosition());
             telemetry.addData("Current Slide Position ", slideMotor.getCurrentPosition());
 
