@@ -8,7 +8,11 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakeWristPositionReached;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighBucketBackwards;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.manualSlideAdjustmentBasketAmount;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.manualSlideAdjustmentChamberAmount;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.manualSlideAdjustmentWallAmount;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.manualSlideChange;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.manualTiltChange;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideTicks;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideWallPickup;
@@ -37,6 +41,9 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.climbPositionReach
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentClawStep;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentRetractionStep;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.elbowRotate;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.manualTiltAdjustmentBasketAmount;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.manualTiltAdjustmentChamberAmount;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.manualTiltAdjustmentWallAmount;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.resetFlags;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.sampleFloorPickUp;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.specimenMode;
@@ -137,11 +144,29 @@ public class SensorStateMachineTelopTest extends OpMode {
 
         // ---------- Manual Arm Tilt ----------
         if (input.dpad_up.held() && (tiltMotor.getCurrentPosition() <= TiltMaxPosition)) {
-            tiltMotor.setTargetPosition(tiltMotor.getTargetPosition() + 15); // Arm up
+            tiltMotor.setTargetPosition(tiltMotor.getTargetPosition() + manualTiltChange); // Arm up
+            if(armRetractingHighBasket){
+                manualTiltAdjustmentBasketAmount++;
+            }
+            if(armRetractingHighChamber){
+                manualTiltAdjustmentChamberAmount++;
+            }
+            if(armRetractingWallPickup){
+                manualTiltAdjustmentWallAmount++;
+            }
         }
 
         if (input.dpad_down.held() && (tiltMotor.getCurrentPosition() >= TiltMinPosition)) {
-            tiltMotor.setTargetPosition(tiltMotor.getTargetPosition() - 15); // Arm down
+            tiltMotor.setTargetPosition(tiltMotor.getTargetPosition() - manualTiltChange); // Arm down
+            if(armRetractingHighBasket){
+                manualTiltAdjustmentBasketAmount--;
+            }
+            if(armRetractingHighChamber){
+                manualTiltAdjustmentChamberAmount--;
+            }
+            if(armRetractingWallPickup){
+                manualTiltAdjustmentWallAmount--;
+            }
         }
 
         // ---------- Manual Extension ----------
@@ -154,11 +179,29 @@ public class SensorStateMachineTelopTest extends OpMode {
 
 
             if (input.left_bumper.held() && (slideMotor.getCurrentPosition() <= ExtensionMax)) {
-                slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 80); // Slide out
+                slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + manualSlideChange); // Slide out
+                if(armRetractingHighBasket){
+                    manualSlideAdjustmentBasketAmount++;
+                }
+                if(armRetractingHighChamber){
+                    manualSlideAdjustmentChamberAmount++;
+                }
+                if(armRetractingWallPickup){
+                    manualSlideAdjustmentWallAmount++;
+                }
             }
 
             if (input.left_trigger.held() && (slideMotor.getCurrentPosition() >= SlideMinPosition)) {
-                slideMotor.setTargetPosition(slideMotor.getCurrentPosition() - 80); // Slide in
+                slideMotor.setTargetPosition(slideMotor.getCurrentPosition() - manualSlideChange); // Slide in
+                if(armRetractingHighBasket){
+                    manualSlideAdjustmentBasketAmount--;
+                }
+                if(armRetractingHighChamber){
+                    manualSlideAdjustmentChamberAmount--;
+                }
+                if(armRetractingWallPickup){
+                    manualSlideAdjustmentWallAmount--;
+                }
             }
         }
         /* ============================== Reset State ============================*/
@@ -233,7 +276,7 @@ public class SensorStateMachineTelopTest extends OpMode {
                     break;
 
                 case (2): // Step 2: Move the arm up and back in the position it needs to be for backwards high bucket.
-                    tiltMotor.setTargetPosition(TiltHighBucketBackwards);
+                    tiltMotor.setTargetPosition(TiltHighBucketBackwards + (manualTiltAdjustmentBasketAmount * manualTiltChange));
                     intakeElbowServo.setPosition(ElbowRight);
                     Extend_timer.reset();
                     currentRetractionStep++;
@@ -241,7 +284,7 @@ public class SensorStateMachineTelopTest extends OpMode {
 
                 case (3): // Step 3: Wait 1 second so tilt can move and inertia can finish, then slide out to high bucket height.
                     if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwards) <= TiltTickThreshold) {
-                        slideMotor.setTargetPosition(SlideHighBucketBackwards);
+                        slideMotor.setTargetPosition(SlideHighBucketBackwards + (manualSlideAdjustmentBasketAmount * manualSlideChange));
                         currentRetractionStep++;
                         break;
                     }
