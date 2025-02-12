@@ -76,7 +76,7 @@ import org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 
-@TeleOp (name = "State Machine Telop", group = "Competition")
+@TeleOp (name = "Sensor State Machine Telop", group = "Competition")
 public class SensorStateMachineTelopTest extends OpMode {
     public static int ExtensionMax;
 
@@ -336,6 +336,10 @@ public class SensorStateMachineTelopTest extends OpMode {
 
                 case (2):
                     tiltMotor.setTargetPosition(getChamberPivotAmount());
+                    if(Math.abs(tiltMotor.getCurrentPosition() - tiltMotor.getTargetPosition()) <= TiltTickThreshold)
+                   break;
+
+                case(3):
                     slideMotor.setTargetPosition(getChamberSlideAmount());
                     intakeWristServo.setPosition(WristRight); // check position
                     intakeElbowServo.setPosition(ElbowLeft);

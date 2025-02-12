@@ -25,16 +25,17 @@ public class FrontDistanceSensorCalculations {
 
     //constants
     static double barWallOffset = 1;
-    static double lengthOfArm = 19;
-    static double armBackOnRobotDistance = 13;
+    static double lengthOfArm = 22;
+    static double armBackOnRobotDistance = 14.5;
     static double armHeightOffGround = 13.125;
-    static double heightToHighChamber = 26 - armHeightOffGround;
-    static double heightToWallPickup = 10 - armHeightOffGround;
+    static double heightToHighChamber = 21 - armHeightOffGround;
+    static double heightToWallPickup = 12 - armHeightOffGround;
+    static double wallPickupOffset = 2;
     // angle above/below ground of the arm
     static double theta;
 
     public static int getPickupPivotAmount() {
-        weightedDistanceValue = calculateDistance();
+        weightedDistanceValue = calculateDistance() + wallPickupOffset;
         theta = Math.toDegrees(Math.atan(heightToWallPickup / weightedDistanceValue));
 
         pivotAmount = (int) (theta * pivotTicksPerDegree);
@@ -47,7 +48,7 @@ public class FrontDistanceSensorCalculations {
     }
 
     public static int getPickupSlideAmount() {
-        weightedDistanceValue = calculateDistance();
+        weightedDistanceValue = calculateDistance() + wallPickupOffset;
 
         // casted to int, pythag theorem to find the length of the slides needed then multiplied by slideTicksPerInch
         slideAmount = (int) (Math.sqrt(Math.pow(heightToWallPickup,2) + Math.pow(weightedDistanceValue,2))
@@ -89,9 +90,9 @@ public class FrontDistanceSensorCalculations {
     private static double calculateDistance() {
         double returnDistance;
         //max
-        double threshold = 30;
+        double threshold = 22;
         //min
-        double threshold2 = 10;
+        double threshold2 = 13;
 
         //Gets distances
         double dLeft = leftDistanceSensor.getDistance(DistanceUnit.INCH);

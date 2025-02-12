@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Constants;
 
 import com.qualcomm.hardware.bosch.BHI260IMU;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -34,8 +35,8 @@ public class RobotHardware {
     public static BHI260IMU imu;
     public static RevColorSensorV3 colorSensor;
     public static RevColorSensorV3 distanceSensor;
-    public static RevColorSensorV3 leftDistanceSensor;
-    public static RevColorSensorV3 rightDistanceSensor;
+    public static Rev2mDistanceSensor leftDistanceSensor;
+    public static Rev2mDistanceSensor rightDistanceSensor;
 
     public static void init(HardwareMap hardwareMap) {
         // ---------- Wheels ----------
@@ -66,8 +67,8 @@ public class RobotHardware {
         distanceSensor = hardwareMap.get(RevColorSensorV3.class, "distance_sensor"); // Same device
 
         // --------- Distance Sensors ---------
-        leftDistanceSensor = hardwareMap.get(RevColorSensorV3.class, "left_distance_sensor");
-        rightDistanceSensor = hardwareMap.get(RevColorSensorV3.class, "right_distance_sensor");
+        leftDistanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "left_distance_sensor");
+        rightDistanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "right_distance_sensor");
 
 //        /* ============================== Hardware Settings Fixes ============================== */
         // ---------- Reverse Left Side For Proper Strafing ----------
