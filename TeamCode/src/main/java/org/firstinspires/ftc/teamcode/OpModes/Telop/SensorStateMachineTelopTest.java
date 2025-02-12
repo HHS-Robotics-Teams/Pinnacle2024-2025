@@ -1,13 +1,16 @@
 package org.firstinspires.ftc.teamcode.OpModes.Telop;
 
 
+import static org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance.distance;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ActivelyClimbing;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.CurrentlyQuickGrabbing;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakeWristPositionReached;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighBucketBackwards;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.currentWallStep;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.manualSlideAdjustmentBasketAmount;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.manualSlideAdjustmentChamberAmount;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.manualSlideAdjustmentWallAmount;
@@ -53,6 +56,7 @@ import static org.firstinspires.ftc.teamcode.Constants.FrontDistanceSensorCalcul
 import static org.firstinspires.ftc.teamcode.Constants.FrontDistanceSensorCalculations.getPickupSlideAmount;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.backLeftMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.backRightMotor;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.colorSensor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.frontLeftMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.frontRightMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
@@ -68,6 +72,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 
@@ -106,18 +111,24 @@ public class SensorStateMachineTelopTest extends OpMode {
 
     @Override
     public void loop() {
+        DetectedColorAndDistance.updateColor(colorSensor);
+
+        double detectedDistance = DetectedColorAndDistance.getDistance();
+
+        String detectedColor = DetectedColorAndDistance.getColor();
+
         input.pollGamepad(gamepad1); // Pass gamepad input through custom class
 
         /* ============================== Driving and Wheels ============================== */
 
         // ---------- Maps Wheels to Joysticks ----------
-        double rotate = -gamepad1.right_stick_x; // Right stick: left and right
-        double strafe = -gamepad1.left_stick_x;   // Left stick: left and right
+        double rotate = gamepad1.right_stick_x; // Right stick: left and right
+        double strafe = gamepad1.left_stick_x;   // Left stick: left and right
         double drive = -gamepad1.left_stick_y;   //  Left stick: up and down
 
         // ---------- Slowdown While Arm Up or Out ----------
         if (armRetractingFloorPickup || armRetractingWallPickup) {
-            rotate = rotate / 5;
+            rotate = rotate / 10;
         }
         if (tiltMotor.getTargetPosition() >= TiltUpThreshold && !ActivelyClimbing) {
             rotate = rotate / 2;
@@ -218,8 +229,11 @@ public class SensorStateMachineTelopTest extends OpMode {
             resetFlags();
         }
         // manual Wrist Control
-        if (input.dpad_left.down() && armRetractingHighBasket){
+        if (input.dpad_left.down() && elbowRotate) {
             intakeWristServo.setPosition(WristRight);
+        }
+        if (input.dpad_right.down() && elbowRotate){
+            intakeWristServo.setPosition(WristSampleBucketScore);
         }
 
         // ---------- Intake Claws  ----------
@@ -396,9 +410,31 @@ public class SensorStateMachineTelopTest extends OpMode {
                         StateMachine_Timer.reset();
                         currentRetractionStep = 1;
                         armRetractingWallPickup = false;
+                        CurrentlyQuickGrabbing = true;
+                        currentWallStep = 1;
                         break;
                     }
             }
+        if (CurrentlyQuickGrabbing) {
+            switch (currentWallStep) {
+                case (1):
+                    if (distance < 2) {
+                        intake_claw_servo.setPosition(Claws_closed);
+                        Claw_timer.reset();
+                        currentWallStep ++;
+                        break;
+                    }
+                    break;
+                case (2):
+                    if (Claw_timer.seconds() > .35) {
+                        tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + 75);
+                        currentWallStep = 1;
+                        CurrentlyQuickGrabbing = false;
+                        break;
+                    }
+            }
+
+        }
 
             // ------------ Sample Floor Pickup ---------------
             if (input.b.down() || input.circle.down()) {
@@ -470,6 +506,7 @@ public class SensorStateMachineTelopTest extends OpMode {
             // ---------- Arm and Intake ----------
 //            telemetry.addData("Slide Motor Power: ", slideMotor.getPower());
 //            telemetry.addData("Tilt Motor Power: ", tiltMotor.getPower());
+            telemetry.addData("Distance (cm)", "%.2f", detectedDistance);
             telemetry.addData("Current Tilt Position: ", tiltMotor.getCurrentPosition());
             telemetry.addData("Current Slide Position ", slideMotor.getCurrentPosition());
 
