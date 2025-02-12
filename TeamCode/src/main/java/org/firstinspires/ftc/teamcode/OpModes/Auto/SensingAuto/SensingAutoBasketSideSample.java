@@ -419,7 +419,6 @@ public class SensingAutoBasketSideSample extends OpMode {
                         if (Math.abs(tiltMotor.getCurrentPosition() - (TiltHighBucketBackwardsAuto)) <= TiltTickThreshold) {
                             slideMotor.setTargetPosition(SlideHighBucketBackwardsAuto);
                             intakeElbowServo.setPosition(ElbowRight);
-                            intakeWristServo.setPosition(.3);
                             autoState = AutoState.EXTEND_TO_SCORE_TWO;
                             break;
                         }

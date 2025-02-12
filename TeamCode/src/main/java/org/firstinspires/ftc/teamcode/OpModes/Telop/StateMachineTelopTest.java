@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.OpModes.Telop;
 import static org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance.distance;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.CurrentlyQuickGrabbing;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakeWristPositionReached;
@@ -42,6 +43,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.climbPositionReach
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentClawStep;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentClimbStep;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentRetractionStep;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.currentWallStep;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.elbowRotate;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.isTiltIncrementing;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.resetFlags;
@@ -177,21 +179,24 @@ public class StateMachineTelopTest extends OpMode {
             }
         }
         /* ============================== Reset State ============================*/
-        if (input.a.down() || input.cross.down()){
+        if (input.a.down() || input.cross.down()) {
             telemetry.speak("No Way Home");
             currentRetractionStep = 1;
             resetFlags();
 
         }
-        if (StateMachine_Timer.seconds() > 3){
+        if (StateMachine_Timer.seconds() > 3) {
             telemetry.speak("You have been timed out");
             currentRetractionStep = 1;
             StateMachine_Timer.reset();
             resetFlags();
         }
         // manual Wrist Control
-        if (input.dpad_left.down() && elbowRotate){
+        if (input.dpad_left.down() && elbowRotate) {
             intakeWristServo.setPosition(WristRight);
+        }
+        if (input.dpad_right.down() && elbowRotate){
+            intakeWristServo.setPosition(WristSampleBucketScore);
         }
 
         // ---------- Intake Claws  ----------
@@ -342,6 +347,7 @@ public class StateMachineTelopTest extends OpMode {
             IntakeWristPositionReached = true;
             specimenMode = true;
             armRetractingWallPickup = true;
+
             telemetry.speak("picking up off the wall");
         }
 
@@ -351,37 +357,46 @@ public class StateMachineTelopTest extends OpMode {
                 case (1):
                     slideMotor.setTargetPosition(SlideMinPosition);
                     if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) <= SlideTicks) {
-                            intake_claw_servo.setPosition(Claws_open);
-                            currentRetractionStep ++;
-                            break;
-
-                    }
-
-                    case (2):
-                        tiltMotor.setTargetPosition(TiltWallPickupPosition);
-                        slideMotor.setTargetPosition(SlideWallPickup);
-                        intakeWristServo.setPosition(WristRight);
-                        intakeElbowServo.setPosition(ElbowLeft);
                         intake_claw_servo.setPosition(Claws_open);
-                        Claw_timer.reset();
-                        currentRetractionStep ++ ;
+                        currentRetractionStep++;
                         break;
 
-                    case (3):
-                        if (detectedColor.equals("Red") ){
-                            intake_claw_servo.setPosition(Claws_closed);
-                            if (Claw_timer.seconds() > .35){
-                                tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + 20);
-                                StateMachine_Timer.reset();
-                                armRetractingWallPickup = false;
-                                currentRetractionStep = 1;
-                                break;
-                            }
-                        }
                     }
 
+                case (2):
+                    tiltMotor.setTargetPosition(TiltWallPickupPosition);
+                    slideMotor.setTargetPosition(SlideWallPickup);
+                    intakeWristServo.setPosition(WristRight);
+                    intakeElbowServo.setPosition(ElbowLeft);
+                    StateMachine_Timer.reset();
+                    armRetractingWallPickup = false;
+                    currentRetractionStep = 1;
+                    CurrentlyQuickGrabbing = true;
+                    currentWallStep = 1;
+                    break;
 
             }
+        }
+        if (CurrentlyQuickGrabbing) {
+            switch (currentWallStep) {
+                case (1):
+                    if (distance < 2) {
+                        intake_claw_servo.setPosition(Claws_closed);
+                        Claw_timer.reset();
+                        currentWallStep ++;
+                        break;
+                    }
+                    break;
+                case (2):
+                    if (Claw_timer.seconds() > .35) {
+                        tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + 75);
+                        currentWallStep = 1;
+                        CurrentlyQuickGrabbing = false;
+                        break;
+                    }
+            }
+
+        }
 
             // ------------ Sample Floor Pickup ---------------
             if (input.b.down() || input.circle.down()) {
@@ -413,7 +428,6 @@ public class StateMachineTelopTest extends OpMode {
                         break;
                 }
             }
-
 
 
 //        /* ============================== Climbing ============================== */
@@ -465,6 +479,7 @@ public class StateMachineTelopTest extends OpMode {
             telemetry.addData("Wall Pickup status", armRetractingWallPickup ? "True" : "False");
             telemetry.addData("Climb control status", climbPositionReached ? "True" : "False");
             telemetry.addData("Wrist control status", IntakeWristPositionReached ? "True" : "False");
+            telemetry.addData("Quick Grab", CurrentlyQuickGrabbing ? "True": "False");
 
             telemetry.addData("Current State", currentRetractionStep);
 

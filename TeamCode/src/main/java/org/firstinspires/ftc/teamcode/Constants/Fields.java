@@ -108,6 +108,7 @@ public class Fields {
     public static Boolean specimenMode = false;
     public static Boolean buttonPressInitiate = false;
     public static Boolean clawsOpening = false;
+    public static Boolean clawsClosing = false;
     public static Boolean ActivelyClimbing = false;
     public static Boolean PreppingClimbers = false;
     public static Boolean elbowRotate = false;
@@ -134,6 +135,7 @@ public class Fields {
     public static int currentClawStep = 1;
     public static int currentRetractionStep = 1;
     public static int currentClimbStep = 1;
+    public static int currentWallStep = 1;
 
 
     public static void applyPowers() {
@@ -148,7 +150,7 @@ public class Fields {
     public static boolean SpecimenMode = false;
     public static boolean CurrentlyScoring = false; // I know some of these already exist with
     public static boolean SampleDropped = false;    // different names, I just don't care :3
-    public static boolean CurrentlyQuickGrabbing = false;
+    public static Boolean CurrentlyQuickGrabbing = false;
     public static boolean KhangCheeredOn = false;
     public static int TiltTickIncrement = 20;
     public static int SlideTickIncrement = 100;

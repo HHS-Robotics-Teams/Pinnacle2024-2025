@@ -23,10 +23,18 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intake_claw
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.resetEncoders;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_VEL;
+
+import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TranslationalVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -36,12 +44,14 @@ import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-
+import java.util.Arrays;
 
 
 @Config
 @Autonomous(name = "Blind Man Observation Side 1+2", group = "Comp Auto")
 public class BlindManSensing1_2  extends OpMode {
+    double targetHeading = Math.toRadians(0);
+    double targetHeading_TWO = Math.toRadians(338);
 
     TrajectorySequence goFoward;
     TrajectorySequence goPickUpFirst;
@@ -126,6 +136,10 @@ public class BlindManSensing1_2  extends OpMode {
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
 
+        TrajectoryVelocityConstraint toFirstPickupLimiter = new MinVelocityConstraint(Arrays.asList(
+           new TranslationalVelocityConstraint(MAX_VEL * .85),
+           new AngularVelocityConstraint(MAX_ANG_VEL * .85)
+        ));
 
         goFoward = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
                 .lineToConstantHeading(new Vector2d(24,4))
@@ -136,10 +150,12 @@ public class BlindManSensing1_2  extends OpMode {
                 .build();
 
         goPickUpFirst = drive.trajectorySequenceBuilder(new Pose2d(14, 4, Math.toRadians(0)))
-                //.lineToLinearHeading(new Pose2d(20, -39, Math.toRadians(0)))
-                .splineToConstantHeading(new Vector2d(20,-39), Math.toRadians(0))
+                .setVelConstraint(toFirstPickupLimiter)
+                .lineToLinearHeading(new Pose2d(20, -39, Math.toRadians(0)))
+                //.splineToConstantHeading(new Vector2d(20,-39), Math.toRadians(0))
                 .build();
         goObsevationZone = drive.trajectorySequenceBuilder(new Pose2d(20,-39, Math.toRadians(0)))
+                .resetConstraints()
                 .turn(Math.toRadians(180))
                 .build();
         goPickUpSecond = drive.trajectorySequenceBuilder(new Pose2d(20, -39, Math.toRadians(180)))
@@ -261,15 +277,10 @@ public class BlindManSensing1_2  extends OpMode {
                 }
                 break;
             case MOVE_GRADUALLY:
-                if (slideMotor.getCurrentPosition() >= 200) {
+                if ((slideMotor.getCurrentPosition() >= 200) && (Math.abs(drive.getPoseEstimate().getHeading() - targetHeading) < Math.toRadians(6))) {
                     if (distance < OldDetectedDistance) {
                         grabTimer.reset();
                         tiltMotor.setPower(0);
-                        //PoseXWhenCollect = drive.getPoseEstimate().getX();
-                        //PoseYWhenCollect = drive.getPoseEstimate().getY();
-                        //HeadingWhenCollect = drive.getPoseEstimate().getHeading();
-                        //TiltWhenCollect = tiltMotor.getCurrentPosition();
-                        //SlideWhenCollect = slideMotor.getCurrentPosition();)
                         autoState = AutoState.GRAB_FIRST_SAMPLE;
                         break;
                     } else if (isSlideIncrementing) {
@@ -330,7 +341,7 @@ public class BlindManSensing1_2  extends OpMode {
                 }
                 break;
             case MOVE_GRADUALLY_SECOND_SAMPLE:
-                if ((Math.abs(tiltMotor.getCurrentPosition() - 515) <= TiltTickThreshold) && testTimer.seconds() >= .5) {
+                if ((Math.abs(tiltMotor.getCurrentPosition() - 515) <= TiltTickThreshold) && (Math.abs(drive.getPoseEstimate().getHeading() - targetHeading_TWO) < Math.toRadians(4))) {
                     if (distance < OldDetectedDistance) {
                         grabAgainTimer.reset();
                         tiltMotor.setPower(0);

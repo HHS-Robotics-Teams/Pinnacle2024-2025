@@ -28,6 +28,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -35,6 +36,7 @@ import org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+@Disabled
 @Config
 @Autonomous(name = "Blind Man Observation Side 1+3", group = "Comp Auto")
 public class BlindManSensing1_3 extends OpMode {
@@ -63,10 +65,12 @@ public class BlindManSensing1_3 extends OpMode {
             GO_BACK,
             PICK_UP_FIRST_SAMPLE,
             EXTEND,
+            FLOOR_DISTANCE_CHECK,
             MOVE_GRADUALLY,
             GRAB_FIRST_SAMPLE,
             TURN_TO_OBSERVATION,
             EXTEND_TO_OBSERVATION,
+            FLOOR_DISTANCE_CHECK_TWO,
             MOVE_GRADUALLY_SECOND_SAMPLE,
             GRAB_SECOND_SAMPLE,
             GO_OBSERVATION_AGAIN,
@@ -247,26 +251,39 @@ public class BlindManSensing1_3 extends OpMode {
                     break;
                 case EXTEND:
                     intakeElbowServo.setPosition(ElbowLeft);
-                    if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2.5) && (Math.abs(drive.getPoseEstimate().getY() + 39) <= 2.5)
+                    if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2) && (Math.abs(drive.getPoseEstimate().getY() + 39) <= 2)
                             && Math.abs(tiltMotor.getCurrentPosition() - 430) <= 5 && LowerTileTimer.seconds() >= 1.25) {
                         slideMotor.setTargetPosition(200);
-                        OldDetectedDistance = detectedDistance;
                         grabTimer.reset();
-                        autoState = AutoState.MOVE_GRADUALLY;
+                        isTiltIncrementing = true;
+                        autoState = AutoState.FLOOR_DISTANCE_CHECK;
                         break;
                     }
                     break;
-                case MOVE_GRADUALLY:
+                case FLOOR_DISTANCE_CHECK:
                     if (slideMotor.getCurrentPosition() >= 200) {
-                        if (distance < OldDetectedDistance) {
-                            grabTimer.reset();
-                            tiltMotor.setPower(0);
-                            //PoseXWhenCollect = drive.getPoseEstimate().getX();
-                            //PoseYWhenCollect = drive.getPoseEstimate().getY();
-                            //HeadingWhenCollect = drive.getPoseEstimate().getHeading();
-                            //TiltWhenCollect = tiltMotor.getCurrentPosition();
-                            //SlideWhenCollect = slideMotor.getCurrentPosition();)
-                            autoState = AutoState.GRAB_FIRST_SAMPLE;
+                        if (distance >= 3) {
+                            OldDetectedDistance = detectedDistance;
+                            autoState = AutoState.MOVE_GRADUALLY;
+                            break;
+                        } else if (isTiltIncrementing) {
+                            tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + 15);
+                            isTiltIncrementing = false; // Wait before the next increment
+                        } else if (!tiltMotor.isBusy()) {
+                            isTiltIncrementing = true;
+                            if (distance >= 5) {
+                                grabAgainTimer.reset();
+                                autoState = AutoState.MOVE_GRADUALLY;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                case MOVE_GRADUALLY:
+                    if (distance < OldDetectedDistance) {
+                        grabTimer.reset();
+                        tiltMotor.setPower(0);
+                        autoState = AutoState.GRAB_FIRST_SAMPLE;
                             break;
                         } else if (isSlideIncrementing) {
                             slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 15);
@@ -284,7 +301,7 @@ public class BlindManSensing1_3 extends OpMode {
                                 break;
                             }
                         }
-                    }
+
                     break;
                 case GRAB_FIRST_SAMPLE:
                     if (grabTimer.seconds() >= 0.25) {
@@ -316,15 +333,36 @@ public class BlindManSensing1_3 extends OpMode {
                             tiltMotor.setTargetPosition(515);
                             intakeWristServo.setPosition(WristCenter);
                             testTimer.reset();
-                            isSlideIncrementing = true;
+                            isTiltIncrementing = true;
                             drive.followTrajectorySequenceAsync(goPickUpSecond);
                             drive.update();
                             OldDetectedDistance = detectedDistance;
-                            autoState = AutoState.MOVE_GRADUALLY_SECOND_SAMPLE;
+                            autoState = AutoState.FLOOR_DISTANCE_CHECK_TWO;
                             break;
                         }
                     }
                     break;
+                case FLOOR_DISTANCE_CHECK_TWO:
+//                    if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2) && (Math.abs(drive.getPoseEstimate().getY() + 39) <= 2)) {
+                        if (slideMotor.getCurrentPosition() >= 245) {
+                            if (distance < 3) {
+                                isSlideIncrementing = true;
+                                OldDetectedDistance = detectedDistance;
+                                autoState = AutoState.MOVE_GRADUALLY;
+                                break;
+                            } else if (isTiltIncrementing) {
+                                tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + 15);
+                                isTiltIncrementing = false; // Wait before the next increment
+                            } else if (!tiltMotor.isBusy()) {
+                                isTiltIncrementing = true;
+                                if (distance >= 5) {
+                                    grabAgainTimer.reset();
+                                    autoState = AutoState.MOVE_GRADUALLY_SECOND_SAMPLE;
+                                    break;
+                                }
+                                break;
+                            }
+                        }
                 case MOVE_GRADUALLY_SECOND_SAMPLE:
                     if ((Math.abs(tiltMotor.getCurrentPosition() - 515) <= TiltTickThreshold) && testTimer.seconds() >= .5) {
                         if (distance < OldDetectedDistance) {
