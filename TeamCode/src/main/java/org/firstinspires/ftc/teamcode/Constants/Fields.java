@@ -155,6 +155,17 @@ public class Fields {
     public static int TiltTickIncrement = 20;
     public static int SlideTickIncrement = 100;
     public static int ElementsScored = 0;
+    public static int manualTiltChange = 15;
+    public static int manualSlideChange = 80;
+
+    // --------- Robot Memory of Movement ---------
+    public static int manualTiltAdjustmentWallAmount = 0;
+    public static int manualTiltAdjustmentChamberAmount = 0;
+    public static int manualTiltAdjustmentBasketAmount = 0;
+
+    public static int manualSlideAdjustmentWallAmount = 0;
+    public static int manualSlideAdjustmentChamberAmount = 0;
+    public static int manualSlideAdjustmentBasketAmount = 0;
 
     // I got tired of writing setPower() multiple times
     // so I made a function to cut down on line count.

@@ -34,6 +34,8 @@ public class RobotHardware {
     public static BHI260IMU imu;
     public static RevColorSensorV3 colorSensor;
     public static RevColorSensorV3 distanceSensor;
+    public static RevColorSensorV3 leftDistanceSensor;
+    public static RevColorSensorV3 rightDistanceSensor;
 
     public static void init(HardwareMap hardwareMap) {
         // ---------- Wheels ----------
@@ -62,6 +64,10 @@ public class RobotHardware {
         // --------- Color Sensor --------
         colorSensor = hardwareMap.get(RevColorSensorV3.class, "color_sensor");
         distanceSensor = hardwareMap.get(RevColorSensorV3.class, "distance_sensor"); // Same device
+
+        // --------- Distance Sensors ---------
+        leftDistanceSensor = hardwareMap.get(RevColorSensorV3.class, "left_distance_sensor");
+        rightDistanceSensor = hardwareMap.get(RevColorSensorV3.class, "right_distance_sensor");
 
 //        /* ============================== Hardware Settings Fixes ============================== */
         // ---------- Reverse Left Side For Proper Strafing ----------
