@@ -25,12 +25,12 @@ public class FrontDistanceSensorCalculations {
 
     //constants
     static double barWallOffset = 1;
-    static double lengthOfArm = 22;
-    static double armBackOnRobotDistance = 14.5;
+    static double lengthOfArm = 21.5;
+    static double armBackOnRobotDistance = 14.5 + 7;
     static double armHeightOffGround = 13.125;
-    static double heightToHighChamber = 21 - armHeightOffGround;
-    static double heightToWallPickup = 12 - armHeightOffGround;
-    static double wallPickupOffset = 2;
+    static double heightToHighChamber = 27 - 5 - armHeightOffGround;
+    static double heightToWallPickup =  11 - 2 - armHeightOffGround;
+    static double wallPickupOffset = 0;
     // angle above/below ground of the arm
     static double theta;
 
@@ -54,7 +54,7 @@ public class FrontDistanceSensorCalculations {
     }
 
     public static int getPickupSlideAmount() {
-        weightedDistanceValue = calculateDistance() + wallPickupOffset;
+        weightedDistanceValue = calculateDistance();
 
         if(weightedDistanceValue == bothFailedDistance) {
             slideAmount = SlideWallPickup;
@@ -62,7 +62,8 @@ public class FrontDistanceSensorCalculations {
         }
 
         // casted to int, pythag theorem to find the length of the slides needed then multiplied by slideTicksPerInch
-        slideAmount = (int) (Math.sqrt(Math.pow(heightToWallPickup,2) + Math.pow(weightedDistanceValue,2))
+        slideAmount = (int) (((Math.sqrt(Math.pow(heightToWallPickup,2) + Math.pow(weightedDistanceValue,2)))
+                            - lengthOfArm)
                             * slideTicksPerInch);
 
         if(weightedDistanceValue == bothFailedDistance) {
@@ -73,7 +74,7 @@ public class FrontDistanceSensorCalculations {
     }
 
     public static int getChamberPivotAmount() {
-        weightedDistanceValue = calculateDistance() + barWallOffset;
+        weightedDistanceValue = calculateDistance() - barWallOffset;
 
 
         if(weightedDistanceValue == bothFailedDistance) {
@@ -93,7 +94,7 @@ public class FrontDistanceSensorCalculations {
     }
 
     public static int getChamberSlideAmount() {
-        weightedDistanceValue = calculateDistance() + barWallOffset;
+        weightedDistanceValue = calculateDistance() - barWallOffset;
 
         if(weightedDistanceValue == bothFailedDistance) {
             slideAmount = SlideHighChamber;
@@ -101,8 +102,9 @@ public class FrontDistanceSensorCalculations {
         }
 
         // casted to int, pythag theorem to find the length of the slides needed then multiplied by slideTicksPerInch
-        slideAmount = (int) (Math.sqrt(Math.pow(heightToHighChamber,2) + Math.pow(weightedDistanceValue,2))
-                            * slideTicksPerInch);
+        double distanceDouble = Math.sqrt(Math.pow(heightToHighChamber, 2) + Math.pow(weightedDistanceValue, 2));
+        distanceDouble -= lengthOfArm;
+        slideAmount = (int) (distanceDouble * slideTicksPerInch);
 
         if(weightedDistanceValue == bothFailedDistance) {
             slideAmount = SlideHighChamber;
@@ -137,6 +139,10 @@ public class FrontDistanceSensorCalculations {
 
 
         //Adjusts from distance sensor location to arm location
-        return  returnDistance + armBackOnRobotDistance - lengthOfArm;
+        if(returnDistance == bothFailedDistance) {
+            return returnDistance;
+        } else {
+            return returnDistance + armBackOnRobotDistance;
+        }
     }
 }
