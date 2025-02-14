@@ -36,6 +36,12 @@ public class FrontDistanceSensorCalculations {
 
     public static int getPickupPivotAmount() {
         weightedDistanceValue = calculateDistance() + wallPickupOffset;
+
+        if(weightedDistanceValue == bothFailedDistance) {
+            pivotAmount = TiltWallPickupPosition;
+            return pivotAmount;
+        }
+
         theta = Math.toDegrees(Math.atan(heightToWallPickup / weightedDistanceValue));
 
         pivotAmount = (int) (theta * pivotTicksPerDegree);
@@ -50,6 +56,11 @@ public class FrontDistanceSensorCalculations {
     public static int getPickupSlideAmount() {
         weightedDistanceValue = calculateDistance() + wallPickupOffset;
 
+        if(weightedDistanceValue == bothFailedDistance) {
+            slideAmount = SlideWallPickup;
+            return slideAmount;
+        }
+
         // casted to int, pythag theorem to find the length of the slides needed then multiplied by slideTicksPerInch
         slideAmount = (int) (Math.sqrt(Math.pow(heightToWallPickup,2) + Math.pow(weightedDistanceValue,2))
                             * slideTicksPerInch);
@@ -57,11 +68,19 @@ public class FrontDistanceSensorCalculations {
         if(weightedDistanceValue == bothFailedDistance) {
             slideAmount = SlideWallPickup;
         }
+
         return slideAmount;
     }
 
     public static int getChamberPivotAmount() {
         weightedDistanceValue = calculateDistance() + barWallOffset;
+
+
+        if(weightedDistanceValue == bothFailedDistance) {
+            pivotAmount = TiltHighChamber;
+            return pivotAmount;
+        }
+
         theta = Math.toDegrees(Math.atan(heightToHighChamber / weightedDistanceValue));
 
         pivotAmount = (int) (theta * pivotTicksPerDegree);
@@ -75,7 +94,11 @@ public class FrontDistanceSensorCalculations {
 
     public static int getChamberSlideAmount() {
         weightedDistanceValue = calculateDistance() + barWallOffset;
-        theta = Math.toDegrees(Math.atan(heightToHighChamber / weightedDistanceValue));
+
+        if(weightedDistanceValue == bothFailedDistance) {
+            slideAmount = SlideHighChamber;
+            return slideAmount;
+        }
 
         // casted to int, pythag theorem to find the length of the slides needed then multiplied by slideTicksPerInch
         slideAmount = (int) (Math.sqrt(Math.pow(heightToHighChamber,2) + Math.pow(weightedDistanceValue,2))
@@ -99,18 +122,18 @@ public class FrontDistanceSensorCalculations {
         double dRight = rightDistanceSensor.getDistance(DistanceUnit.INCH);
 
         //Exception Handling for overly close values
-        if(dLeft <= threshold2 && dRight <= threshold2) {returnDistance = threshold2;}
-        else if(dLeft <= threshold2) {dLeft = dRight;}
-        else if(dRight <= threshold2) {dRight = dLeft;}
+        if(dLeft <= threshold2 && dRight <= threshold2) returnDistance = threshold2;
+        else if(dLeft <= threshold2) dLeft = dRight;
+        else if(dRight <= threshold2) dRight = dLeft;
 
         //Exception Handling for overly far values
         if((dLeft >= threshold) && (dRight >= threshold)) returnDistance = bothFailedDistance;
         //Average of two
-        else if ((dLeft < threshold) && (dRight < threshold)) {returnDistance = ((dLeft + dRight) / 2);}
+        else if ((dLeft < threshold) && (dRight < threshold)) returnDistance = ((dLeft + dRight) / 2);
         //More Exception Handling
-        else if (dLeft < threshold && dRight > threshold) {returnDistance = dLeft;}
-        else if (dLeft > threshold) {returnDistance = dRight;}
-        else {returnDistance = bothFailedDistance;}
+        else if (dLeft < threshold && dRight > threshold) returnDistance = dLeft;
+        else if (dLeft > threshold) returnDistance = dRight;
+        else returnDistance = bothFailedDistance;
 
 
         //Adjusts from distance sensor location to arm location

@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 
-@Disabled
+
 @TeleOp (name = "Straffe test")
 public class Straffetestopmode extends OpMode {
 

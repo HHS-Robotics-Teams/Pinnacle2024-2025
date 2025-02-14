@@ -431,7 +431,7 @@ public class SensorStateMachineTelopTest extends OpMode {
                     break;
                 case (2):
                     if (Claw_timer.seconds() > .35) {
-                        tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + 75);
+                        tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + 100);
                         currentWallStep = 1;
                         CurrentlyQuickGrabbing = false;
                         break;
