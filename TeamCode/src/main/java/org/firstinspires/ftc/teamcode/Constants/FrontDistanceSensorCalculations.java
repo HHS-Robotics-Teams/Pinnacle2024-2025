@@ -62,54 +62,45 @@ public class FrontDistanceSensorCalculations {
         }
 
         // casted to int, pythag theorem to find the length of the slides needed then multiplied by slideTicksPerInch
-        slideAmount = (int) (((Math.sqrt(Math.pow(heightToWallPickup,2) + Math.pow(weightedDistanceValue,2)))
-                            - lengthOfArm)
+        slideAmount = (int) (((Math.sqrt(Math.pow(heightToWallPickup,2) + Math.pow(weightedDistanceValue,2))) - lengthOfArm)
                             * slideTicksPerInch);
-
-        if(weightedDistanceValue == bothFailedDistance) {
-            slideAmount = SlideWallPickup;
-        }
 
         return slideAmount;
     }
 
     public static int getChamberPivotAmount() {
-        weightedDistanceValue = calculateDistance() - barWallOffset;
-
+        weightedDistanceValue =  calculateDistance();
 
         if(weightedDistanceValue == bothFailedDistance) {
             pivotAmount = TiltHighChamber;
             return pivotAmount;
         }
 
+        weightedDistanceValue -=  barWallOffset;
+
         theta = Math.toDegrees(Math.atan(heightToHighChamber / weightedDistanceValue));
 
         pivotAmount = (int) (theta * pivotTicksPerDegree);
         pivotAmount = pivotTicksAtPerpendicular + pivotAmount;
 
-        if(weightedDistanceValue == bothFailedDistance) {
-            pivotAmount = TiltHighChamber;
-        }
         return pivotAmount;
     }
 
     public static int getChamberSlideAmount() {
-        weightedDistanceValue = calculateDistance() - barWallOffset;
+        weightedDistanceValue =  calculateDistance();
 
         if(weightedDistanceValue == bothFailedDistance) {
             slideAmount = SlideHighChamber;
             return slideAmount;
         }
 
-        // casted to int, pythag theorem to find the length of the slides needed then multiplied by slideTicksPerInch
+        weightedDistanceValue -= barWallOffset;
+
+        //  pythag theorem to find the length of the slides needed then multiplied by slideTicksPerInch
         double distanceDouble = Math.sqrt(Math.pow(heightToHighChamber, 2) + Math.pow(weightedDistanceValue, 2));
         distanceDouble -= lengthOfArm;
-        slideAmount = (int) (distanceDouble * slideTicksPerInch);
 
-        if(weightedDistanceValue == bothFailedDistance) {
-            slideAmount = SlideHighChamber;
-        }
-        return slideAmount;
+        return (int) (distanceDouble * slideTicksPerInch);
     }
 
     private static double calculateDistance() {
