@@ -10,10 +10,6 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.rightClaw;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 
-import static java.lang.Thread.sleep;
-
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Fields {
 
@@ -44,8 +40,6 @@ public class Fields {
     // Tilt motor positions auto
     public static int TiltHighBucketBackwardsAuto = 1850;
     public static int TiltHighBucketLastSpeciemnAuto = 1876;
-    public static int TiltGrabStart = tiltMotor.getCurrentPosition();
-    public static int TiltGrabTarget = TiltGrabStart;
 
 
     // slide motor positions

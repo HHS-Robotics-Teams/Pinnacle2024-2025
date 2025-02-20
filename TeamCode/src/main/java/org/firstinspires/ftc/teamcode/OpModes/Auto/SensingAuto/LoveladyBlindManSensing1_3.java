@@ -36,7 +36,7 @@ import org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-
+@Disabled
 @Config
 @Autonomous(name = "Lovelady Blind Man Observation Side 1+3", group = "Comp Auto")
 public class LoveladyBlindManSensing1_3 extends OpMode {

@@ -82,6 +82,7 @@ public class SensorStateMachineTelopTest extends OpMode {
 
     public Input input;
     ElapsedTime StateMachine_Timer = new ElapsedTime();
+    ElapsedTime Retract_timer = new ElapsedTime();
     ElapsedTime Extend_timer = new ElapsedTime();
     ElapsedTime Claw_timer = new ElapsedTime();
     ElapsedTime Climber_Timer = new ElapsedTime();
@@ -127,7 +128,7 @@ public class SensorStateMachineTelopTest extends OpMode {
         double drive = -gamepad1.left_stick_y;   //  Left stick: up and down
 
         // ---------- Slowdown While Arm Up or Out ----------
-        if (armRetractingFloorPickup || armRetractingWallPickup) {
+        if (armRetractingFloorPickup || armRetractingWallPickup || (armRetractingHighChamber && slideMotor.getCurrentPosition() > 500)) {
             rotate = rotate / 10;
         }
         if (tiltMotor.getTargetPosition() >= TiltUpThreshold && !ActivelyClimbing) {
@@ -431,7 +432,7 @@ public class SensorStateMachineTelopTest extends OpMode {
                     break;
                 case (2):
                     if (Claw_timer.seconds() > .35) {
-                        tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + 100);
+                        tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + 150);
                         currentWallStep = 1;
                         CurrentlyQuickGrabbing = false;
                         break;
@@ -452,22 +453,25 @@ public class SensorStateMachineTelopTest extends OpMode {
                     case (1):
                         slideMotor.setTargetPosition(SlideMinPosition);
                         if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) <= SlideTicks) {
+                            Retract_timer.reset();
                             currentRetractionStep++;
                             break;
                         }
                         break;
 
                     case (2):
-                        tiltMotor.setTargetPosition(TiltFloorPickup);
-                        slideMotor.setTargetPosition(SlideWallPickup);
-                        intakeWristServo.setPosition(WristCenter);
-                        intakeElbowServo.setPosition(ElbowLeft);
-                        intake_claw_servo.setPosition(Claws_open);
-                        StateMachine_Timer.reset();
-                        armRetractingFloorPickup = false;
-                        sampleFloorPickUp = true;
-                        currentRetractionStep = 1;
-                        break;
+                        if (Retract_timer.seconds() > 0.2) {
+                            tiltMotor.setTargetPosition(TiltFloorPickup);
+                            slideMotor.setTargetPosition(SlideWallPickup);
+                            intakeWristServo.setPosition(WristCenter);
+                            intakeElbowServo.setPosition(ElbowLeft);
+                            intake_claw_servo.setPosition(Claws_open);
+                            StateMachine_Timer.reset();
+                            armRetractingFloorPickup = false;
+                            sampleFloorPickUp = true;
+                            currentRetractionStep = 1;
+                            break;
+                        }
                 }
             }
 

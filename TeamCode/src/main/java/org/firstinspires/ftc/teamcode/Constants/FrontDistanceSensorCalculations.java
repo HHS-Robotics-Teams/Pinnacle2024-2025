@@ -15,7 +15,7 @@ public class FrontDistanceSensorCalculations {
     // (ticks per revolution / degrees per revolution) * gear ratio
     public static final double pivotTicksPerDegree = (3895.9 / 360) * (1/1.25);
 
-    public static final int pivotTicksAtPerpendicular = 597;
+    public static final int pivotTicksAtPerpendicular = 635;
 
     private static int pivotAmount;
     private static int slideAmount;
@@ -26,21 +26,26 @@ public class FrontDistanceSensorCalculations {
     //constants
     static double barWallOffset = 1;
     static double lengthOfArm = 21.5;
-    static double armBackOnRobotDistance = 14.5 + 7;
+    static double armBackOnRobotDistance = 14.5;
     static double armHeightOffGround = 13.125;
-    static double heightToHighChamber = 27 - 5 - armHeightOffGround;
-    static double heightToWallPickup =  11 - 2 - armHeightOffGround;
-    static double wallPickupOffset = 0;
+    static double heightToHighChamber = 33 - armHeightOffGround;
+    static double heightToWallPickup =  9 - armHeightOffGround;
+    static double wallPickupOffset = -4;
     // angle above/below ground of the arm
     static double theta;
 
     public static int getPickupPivotAmount() {
-        weightedDistanceValue = calculateDistance() + wallPickupOffset;
+        weightedDistanceValue = calculateDistance();
 
         if(weightedDistanceValue == bothFailedDistance) {
             pivotAmount = TiltWallPickupPosition;
             return pivotAmount;
         }
+
+        if(weightedDistanceValue <= 15) {
+            weightedDistanceValue -= 2;
+        }
+        weightedDistanceValue -= wallPickupOffset;
 
         theta = Math.toDegrees(Math.atan(heightToWallPickup / weightedDistanceValue));
 
@@ -60,6 +65,8 @@ public class FrontDistanceSensorCalculations {
             slideAmount = SlideWallPickup;
             return slideAmount;
         }
+
+        weightedDistanceValue -= wallPickupOffset;
 
         // casted to int, pythag theorem to find the length of the slides needed then multiplied by slideTicksPerInch
         slideAmount = (int) (((Math.sqrt(Math.pow(heightToWallPickup,2) + Math.pow(weightedDistanceValue,2))) - lengthOfArm)

@@ -138,9 +138,9 @@ public class SensingAutoBasketSideSample extends OpMode {
                 //.back(6)
                 .build();
         goCollect = drive.trajectorySequenceBuilder(new Pose2d(6, 46, Math.toRadians(-47)))
-                .lineToLinearHeading(new Pose2d(13, 41, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(13, 41, Math.toRadians(-1)))
                 .build();
-        goScore = drive.trajectorySequenceBuilder(new Pose2d(13, 39, Math.toRadians(0)))
+        goScore = drive.trajectorySequenceBuilder(new Pose2d(13, 39, Math.toRadians(-1)))
                 .turn(Math.toRadians(-45))
                 .back(8.5)
                 .build();
@@ -410,11 +410,11 @@ public class SensingAutoBasketSideSample extends OpMode {
             case RESET_FOR_PATH_UPDATE:
                 slideMotor.setTargetPosition(0);
                 if ((slideMotor.getCurrentPosition() < SlideTickThreshold) && grabTimer.seconds() >= 2.5) {
-                    tiltMotor.setTargetPosition(TiltHighBucketBackwardsAuto);
+                    tiltMotor.setTargetPosition(TiltHighBucketBackwardsAuto + 5);
                     intakeElbowServo.setPosition(ElbowRight);
 
                     if (testTimer.seconds() > 0.6) {
-                        if (Math.abs(tiltMotor.getCurrentPosition() - (TiltHighBucketBackwardsAuto)) <= TiltTickThreshold) {
+                        if (Math.abs(tiltMotor.getCurrentPosition() - (TiltHighBucketBackwardsAuto + 5)) <= TiltTickThreshold) {
                             slideMotor.setTargetPosition(SlideHighBucketBackwardsAuto);
                             intakeWristServo.setPosition(0.3);
                             autoState = AutoState.EXTEND_TO_SCORE_TWO;

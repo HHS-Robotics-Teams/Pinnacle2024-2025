@@ -137,13 +137,13 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                 .back(7.5)
                 .build();
         goCollect = drive.trajectorySequenceBuilder(new Pose2d(16, 0, Math.toRadians(0)))
-                .splineToConstantHeading(new Vector2d(13, 39), Math.toRadians(-13))
+                .splineToConstantHeading(new Vector2d(13, 39), Math.toRadians(-14))
                 .build();
-        goScore = drive.trajectorySequenceBuilder(new Pose2d(13, 39, Math.toRadians(-13)))
-                .turn(Math.toRadians(-43))
+        goScore = drive.trajectorySequenceBuilder(new Pose2d(13, 39, Math.toRadians(-14)))
+                .turn(Math.toRadians(-40))
                 .back(8.5)
                 .build();
-        turnAgain = drive.trajectorySequenceBuilder(new Pose2d(6, 46, Math.toRadians(-43)))
+        turnAgain = drive.trajectorySequenceBuilder(new Pose2d(6, 46, Math.toRadians(-40)))
                 .splineToLinearHeading(new Pose2d(13, 49, Math.toRadians(0)), Math.toRadians(-47))
                 .build();
         turnBacktoScore = drive.trajectorySequenceBuilder(new Pose2d(13, 41, Math.toRadians(19)))
@@ -346,7 +346,7 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                 }
                 break;
             case LOWER_SLIDE_RESET:
-                if (Math.abs(tiltMotor.getCurrentPosition() - 533) < 25 && extendToSecondSampleTimer.seconds() > 1.8) {
+                if (Math.abs(tiltMotor.getCurrentPosition() - 533) < 25 && extendToSecondSampleTimer.seconds() > 2.0) {
                     slideMotor.setTargetPosition(370);
                     grabTimer.reset();
                     isSlideIncrementing = true;
