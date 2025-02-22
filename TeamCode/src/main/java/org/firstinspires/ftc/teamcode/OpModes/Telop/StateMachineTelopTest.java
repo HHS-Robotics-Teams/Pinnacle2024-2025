@@ -128,7 +128,7 @@ public class StateMachineTelopTest extends OpMode {
 
         // ---------- Slowdown While Arm Up or Out ----------
         if (armRetractingFloorPickup || armRetractingWallPickup) {
-            rotate = rotate / 10;
+            rotate = rotate / 14;
         }
         if (tiltMotor.getTargetPosition() >= TiltUpThreshold && !ActivelyClimbing) {
             rotate = rotate / 2;
@@ -262,6 +262,7 @@ public class StateMachineTelopTest extends OpMode {
 
                 case (3): // Step 3: Wait 1 second so tilt can move and inertia can finish, then slide out to high bucket height.
                     if (Math.abs(tiltMotor.getCurrentPosition() - TiltHighBucketBackwards) <= TiltTickThreshold) {
+                        intakeWristServo.setPosition(0.3);
                         slideMotor.setTargetPosition(SlideHighBucketBackwards);
                         currentRetractionStep++;
                         break;

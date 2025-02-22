@@ -36,10 +36,10 @@ public class Fields {
     public static int TiltHighBucket = 1366;
     public static int TiltMaxPosition = 1513;
     public static int TiltSlowSlowPosition = 1780;
-    public static int TiltHighBucketBackwards = 1866;
+    public static int TiltHighBucketBackwards = 1875;
     // Tilt motor positions auto
     public static int TiltHighBucketBackwardsAuto = 1850;
-    public static int TiltHighBucketLastSpeciemnAuto = 1876;
+    public static int TiltHighBucketLastSpeciemnAuto = 1880;
 
 
     // slide motor positions
@@ -63,6 +63,7 @@ public class Fields {
     public static int SlideGrabTarget = SlideGrabStart;
     public static int SlideGrabSecond  = 250;
     public static int SlideGrabSecondTarget = SlideGrabSecond;
+    public static  int SlidePickupAdjust;
 
     // Wrist Positions
 
@@ -90,6 +91,7 @@ public class Fields {
     // Flags
     public static Boolean isSlideIncrementing = true;
     public static Boolean isTiltIncrementing = true;
+    public static Boolean TiltIncremented = false;
     public static Boolean IntakeWristPositionReached = false;
     public static Boolean climbPositionReached = false;
     public static Boolean armRetractingHighBasket = false;

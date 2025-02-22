@@ -15,7 +15,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltTickThreshold;
 
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristHorizontalPickup;
-
+import static org.firstinspires.ftc.teamcode.Constants.Fields.SlidePickupAdjust;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.isSlideIncrementing;
@@ -40,6 +40,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TranslationalVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -52,7 +53,7 @@ import java.util.Arrays;
 
 
 @Config
-@Autonomous(name = "Blind Man Observation Side 1+2", group = "Comp Auto")
+@Autonomous(name = "BLUE Blind Man Observation Side 1+2", group = "Comp Auto")
 public class BlindManSensing1_2  extends OpMode {
     double targetHeading = Math.toRadians(0);
     double targetHeading_TWO = Math.toRadians(336);
@@ -82,10 +83,12 @@ public class BlindManSensing1_2  extends OpMode {
         GO_BACK,
         PICK_UP_FIRST_SAMPLE,
         EXTEND,
+        CHECK_DISTANCE_FIRST,
         MOVE_GRADUALLY,
         GRAB_FIRST_SAMPLE,
         TURN_TO_OBSERVATION,
         EXTEND_TO_OBSERVATION,
+        CHECK_DISTANCE_SECOND,
         MOVE_GRADUALLY_SECOND_SAMPLE,
         GRAB_SECOND_SAMPLE,
         GO_OBSERVATION_AGAIN,
@@ -144,8 +147,8 @@ public class BlindManSensing1_2  extends OpMode {
         drive.setPoseEstimate(startPose);
 
         TrajectoryVelocityConstraint toFirstPickupLimiter = new MinVelocityConstraint(Arrays.asList(
-           new TranslationalVelocityConstraint(MAX_VEL * 0.3),
-           new AngularVelocityConstraint(MAX_ANG_VEL * 0.3)
+           new TranslationalVelocityConstraint(MAX_VEL * 0.32),
+           new AngularVelocityConstraint(MAX_ANG_VEL * 0.32)
         ));
         TrajectoryVelocityConstraint toScoring = new MinVelocityConstraint(Arrays.asList(
                 new TranslationalVelocityConstraint(MAX_VEL * 0.6),
@@ -207,10 +210,11 @@ public class BlindManSensing1_2  extends OpMode {
 
         drive.update();
         telemetry.addData("state", autoState);
-        telemetry.addData("Detected Color", DetectedColorAndDistance.getColor());
         telemetry.addData("Distance (cm)", "%.2f", detectedDistance);
+        telemetry.addData("Old Distance " ,"%.2f", OldDetectedDistance);
         telemetry.addData("Tilt power", tiltMotor.getPower());
-        telemetry.addData("timer", testTimer.seconds());
+        telemetry.addData("Test timer", testTimer.seconds());
+        telemetry.addData("Extend Timer " , extendTimer.seconds());
         telemetry.addData("Heading", drive.getPoseEstimate().getHeading());
         telemetry.addData("CURRENT X", drive.getPoseEstimate().getX());
         telemetry.addData("CURRENT Y", drive.getPoseEstimate().getY());
@@ -262,11 +266,10 @@ public class BlindManSensing1_2  extends OpMode {
                 autoState = AutoState.EXTEND;
                 break;
             case EXTEND:
-                intakeElbowServo.setPosition(ElbowLeft);
                 if (((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2.5) && (Math.abs(drive.getPoseEstimate().getY() + 39) <= 2.5)
-                        && Math.abs(tiltMotor.getCurrentPosition() - 430) <= 5 && LowerTileTimer.seconds() >= 2.25) || (LowerTileTimer.seconds() >= 2.7)) {
+                        && Math.abs(tiltMotor.getCurrentPosition() - 430) <= 5 && LowerTileTimer.seconds() >= 2.25)) {
+                    slideMotor.setTargetPosition(200);
                     OldDetectedDistance = detectedDistance;
-                    slideMotor.setTargetPosition(195);
                     extendTimer.reset();
                     autoState = AutoState.MOVE_GRADUALLY;
                     break;
@@ -274,9 +277,8 @@ public class BlindManSensing1_2  extends OpMode {
                 break;
 
             case MOVE_GRADUALLY:
-                if ((slideMotor.getCurrentPosition() >= 195) && (Math.abs(drive.getPoseEstimate().getHeading() - targetHeading) < Math.toRadians(7))) {
-
-                    if ((distance < OldDetectedDistance ))  {
+                if (Math.abs(tiltMotor.getCurrentPosition()- 430) <= TiltTickThreshold) {
+                    if ((detectedDistance < 5.5))  {
                         grabTimer.reset();
                         tiltMotor.setPower(0);
                         autoState = AutoState.GRAB_FIRST_SAMPLE;
@@ -290,7 +292,7 @@ public class BlindManSensing1_2  extends OpMode {
                         isSlideIncrementing = true;
 
                         // Stop incrementing after reaching the desired total movement
-                        if ((slideMotor.getCurrentPosition() >= 220) || (extendTimer.seconds() > 1)){
+                        if (slideMotor.getCurrentPosition() >= 225) {
                             grabTimer.reset();
                             tiltMotor.setPower(0);
                             autoState = AutoState.GRAB_FIRST_SAMPLE;
@@ -300,9 +302,9 @@ public class BlindManSensing1_2  extends OpMode {
                 }
                 break;
             case GRAB_FIRST_SAMPLE:
-                if (grabTimer.seconds() >= 0.25) {
+                if (grabTimer.seconds() >= 0.35) {
                     intake_claw_servo.setPosition(Claws_closed);
-                    if (grabTimer.seconds() >= 0.4) {
+                    if (grabTimer.seconds() >= 0.5) {
                         slideMotor.setTargetPosition(0);
                         autoState = AutoState.TURN_TO_OBSERVATION;
                         break;
@@ -324,7 +326,7 @@ public class BlindManSensing1_2  extends OpMode {
                         (Math.abs(drive.getPoseEstimate().getY() + 39) <= 3) && grabTimer.seconds() >= 1.5){
                     slideMotor.setTargetPosition(250);
                     tiltMotor.setTargetPosition(400);
-                    if ((slideMotor.getCurrentPosition() >= 240) || grabTimer.seconds() > 2){
+                    if ((slideMotor.getCurrentPosition() >= 240)){
                         intake_claw_servo.setPosition(Claws_open);
                         tiltMotor.setTargetPosition(515);
                         intakeWristServo.setPosition(WristCenter);
@@ -340,13 +342,13 @@ public class BlindManSensing1_2  extends OpMode {
                 break;
             case MOVE_GRADUALLY_SECOND_SAMPLE:
                 if ((Math.abs(tiltMotor.getCurrentPosition() - 515) <= TiltTickThreshold) && (Math.abs(drive.getPoseEstimate().getHeading() - targetHeading_TWO) < Math.toRadians(7))) {
-                    if (distance < OldDetectedDistance ) {
+                    if (detectedDistance < 5.5 ) {
                         grabAgainTimer.reset();
                         tiltMotor.setPower(0);
                         autoState = AutoState.GRAB_SECOND_SAMPLE;
                         break;
                     } else if (isSlideIncrementing) {
-                        slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 15);
+                        slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 20);
                         isSlideIncrementing = false; // Wait before the next increment
                     }
                     // Check if the motor reached the current target
@@ -354,7 +356,7 @@ public class BlindManSensing1_2  extends OpMode {
                         isSlideIncrementing = true;
 
                         // Stop incrementing after reaching the desired total movement
-                        if ((slideMotor.getCurrentPosition() >= (280) || testTimer.seconds() > 1)) {
+                        if (slideMotor.getCurrentPosition() >= 290) {
                             grabAgainTimer.reset();
                             tiltMotor.setPower(0);
                             autoState = AutoState.GRAB_SECOND_SAMPLE;
@@ -413,29 +415,29 @@ public class BlindManSensing1_2  extends OpMode {
                 }
                 break;
             case GRAB_FIRST_SPECIMEN:
-                if (testTimer.seconds() > .5){
-                    if (Math.abs(slideMotor.getCurrentPosition() - 460) <= SlideTickThreshold) {
-                        if ((distance < 1.8) && tiltMotor.getCurrentPosition() >= 575) {
+                if (testTimer.seconds() > .5) {
+                        if ((distance < 2.0) && tiltMotor.getCurrentPosition() >= 575) {
                             intake_claw_servo.setPosition(Claws_closed);
                             grabTimer.reset();
                             autoState = AutoState.LIFT_FIRST_SPECIMEN;
                             break;
-                        } else if (isTiltIncrementing){
+                        } else if (isTiltIncrementing) {
                             tiltMotor.setTargetPosition(tiltMotor.getCurrentPosition() + 20);
                             isTiltIncrementing = false;
-                        } else if (!tiltMotor.isBusy()){
+
+                        } else if (!tiltMotor.isBusy()) {
                             isTiltIncrementing = true;
-                            if (distance >= 1.8){
+                            if (detectedDistance >= 2.0) {
                                 slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 20);
                             }
-                            if ((tiltMotor.getCurrentPosition() >= 591) || testTimer.seconds() > 1.5) {
+                            if (tiltMotor.getCurrentPosition() >= 590) {
                                 intake_claw_servo.setPosition(Claws_closed);
+                                telemetry.speak("all the way up ");
                                 grabTimer.reset();
                                 autoState = AutoState.LIFT_FIRST_SPECIMEN;
                                 break;
                             }
                         }
-                    }
                 }
                 break;
             case LIFT_FIRST_SPECIMEN:
@@ -445,7 +447,7 @@ public class BlindManSensing1_2  extends OpMode {
                         slideMotor.setTargetPosition(0);
                         drive.followTrajectorySequenceAsync(scoreFirstSpecimen);
                         dunkTimer.reset();
-                        autoState = AutoState.EXTEND_TO_SCORE_FIRST;
+                        autoState = AutoState.EXTEND_TO_SCORE_SECOND;
                         break;
                     }
                 }
@@ -514,7 +516,7 @@ public class BlindManSensing1_2  extends OpMode {
                 }
                 break;
             case GRAB_SECOND_SPECIMEN:
-                if ((Math.abs(slideMotor.getCurrentPosition()- 360) <= 10)) {
+
                     if ((distance < 1.8) && (tiltMotor.getCurrentPosition() >= 545)) {
                         intake_claw_servo.setPosition(Claws_closed);
                         grabTimer.reset();
@@ -528,17 +530,16 @@ public class BlindManSensing1_2  extends OpMode {
                         if (distance > 1.8){
                             slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 20);
                         }
-                        if ((tiltMotor.getCurrentPosition() >= 560) || extendTimer.seconds() > 2 ){
+                        if ((tiltMotor.getCurrentPosition() >= 560) || (extendTimer.seconds() > 2.0 )){
                             intake_claw_servo.setPosition(Claws_closed);
                             grabTimer.reset();
                             autoState = AutoState.DRIVE_TO_SCORE_SECOND_SPECIMEN;
                             break;
                         }
                     }
-                }
                 break;
             case DRIVE_TO_SCORE_SECOND_SPECIMEN:
-                if (grabTimer.seconds() >= .3 ) {
+                if (grabTimer.seconds() >= 0.3 ) {
                     tiltMotor.setTargetPosition(800);
                     if (tiltMotor.getCurrentPosition() >= 780) {
                         slideMotor.setTargetPosition(0);

@@ -137,9 +137,9 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                 .back(7.5)
                 .build();
         goCollect = drive.trajectorySequenceBuilder(new Pose2d(16, 0, Math.toRadians(0)))
-                .splineToConstantHeading(new Vector2d(13, 39), Math.toRadians(-14))
+                .splineToConstantHeading(new Vector2d(13, 39), Math.toRadians(-13))
                 .build();
-        goScore = drive.trajectorySequenceBuilder(new Pose2d(13, 39, Math.toRadians(-14)))
+        goScore = drive.trajectorySequenceBuilder(new Pose2d(13, 39, Math.toRadians(-13)))
                 .turn(Math.toRadians(-40))
                 .back(8.5)
                 .build();
