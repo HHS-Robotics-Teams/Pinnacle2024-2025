@@ -1,10 +1,17 @@
 package org.firstinspires.ftc.teamcode.OpModes.Auto.SensingAuto;
 
+
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.SlidePickupAdjust;
+
+
+
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
+
+import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideTickThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltTickThreshold;
@@ -23,6 +30,7 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_VEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_VEL;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -31,9 +39,12 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TranslationalVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance;
+import org.firstinspires.ftc.teamcode.Constants.DetectedHueAndDistance;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -42,8 +53,8 @@ import java.util.Arrays;
 
 
 @Config
-@Autonomous (name = "Blue Blind Man Observation 1+2", group = "Comp Auto")
-public class BlindManSensing1_2 extends OpMode {
+@Autonomous (name = "Blue Sensing Observation Side 1+2", group = "Comp Auto")
+public class BlueSensingAutoObservationSide extends OpMode {
 
     TrajectorySequence goFoward;
     TrajectorySequence goPickUpFirst;
@@ -201,16 +212,16 @@ public class BlindManSensing1_2 extends OpMode {
 
     @Override
     public void loop() {
-        DetectedColorAndDistance.updateColor(colorSensor);
+        DetectedHueAndDistance.updateColor(colorSensor);
 
-        double detectedDistance = DetectedColorAndDistance.getDistance();
+        double detectedDistance = DetectedHueAndDistance.getDistance();
 
-        String detectedColor = DetectedColorAndDistance.getColor();
+        String detectedHue = DetectedHueAndDistance.getColor();
 
         drive.update();
         telemetry.addData("state", autoState);
         telemetry.addData("isTiltIncrementing", isTiltIncrementing ? "True" : "False");
-        telemetry.addData("Detected Color", DetectedColorAndDistance.getColor());
+        telemetry.addData("Detected Hue", DetectedHueAndDistance.getColor());
         telemetry.addData("Distance (cm)", "%.2f", detectedDistance);
         telemetry.addData("Tilt power", tiltMotor.getPower());
         telemetry.addData("timer", testTimer.seconds());
@@ -275,7 +286,7 @@ public class BlindManSensing1_2 extends OpMode {
                 break;
             case MOVE_GRADUALLY:
                 if (slideMotor.getCurrentPosition() >= 190) {
-                    if (detectedDistance < 5.5) {
+                    if (detectedHue.equals("Blue")) {
                         grabTimer.reset();
                         tiltMotor.setPower(0);
                         autoState = AutoState.GRAB_FIRST_SAMPLE;
@@ -338,7 +349,7 @@ public class BlindManSensing1_2 extends OpMode {
                 break;
             case MOVE_GRADUALLY_SECOND_SAMPLE:
                 if ((Math.abs(tiltMotor.getCurrentPosition() - 515) <= TiltTickThreshold) && testTimer.seconds() >= 0.5) {
-                    if (detectedDistance < 5.5) {
+                    if (detectedHue.equals("Blue")) {
                         grabAgainTimer.reset();
                         tiltMotor.setPower(0);
                         autoState = AutoState.GRAB_SECOND_SAMPLE;

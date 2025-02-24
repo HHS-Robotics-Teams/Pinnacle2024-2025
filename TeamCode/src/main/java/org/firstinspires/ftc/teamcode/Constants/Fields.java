@@ -44,7 +44,7 @@ public class Fields {
 
     // slide motor positions
 
-    public static int SlideTicks = (int) (50 * .37760416666);
+    public static int SlideTicks = 18;
     public static int SlideTickThreshold = 30 ;
     public static int SlideStartPosition = 0;
 
@@ -91,7 +91,7 @@ public class Fields {
     // Flags
     public static Boolean isSlideIncrementing = true;
     public static Boolean isTiltIncrementing = true;
-    public static Boolean TiltIncremented = false;
+    public static Boolean slideIsOut = false;
     public static Boolean IntakeWristPositionReached = false;
     public static Boolean climbPositionReached = false;
     public static Boolean armRetractingHighBasket = false;
