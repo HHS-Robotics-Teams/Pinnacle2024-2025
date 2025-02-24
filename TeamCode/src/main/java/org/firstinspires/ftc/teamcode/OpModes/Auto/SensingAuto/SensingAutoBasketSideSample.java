@@ -32,6 +32,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
+import org.firstinspires.ftc.teamcode.Constants.TiltPowerCalc;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
@@ -44,6 +45,8 @@ public class SensingAutoBasketSideSample extends OpMode {
         double HeadingWhenCollect = 0;
         double TiltWhenCollect = 0;
         double SlideWhenCollect = 0;
+
+        TiltPowerCalc tiltP;
 
         TrajectorySequence goBasket;
         TrajectorySequence goCollect;
@@ -123,6 +126,7 @@ public class SensingAutoBasketSideSample extends OpMode {
 
 
             drive = new SampleMecanumDrive(hardwareMap);
+            tiltP = new TiltPowerCalc();
 
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
@@ -174,6 +178,7 @@ public class SensingAutoBasketSideSample extends OpMode {
             String detectedColor = DetectedColorAndDistance.getColor();
 
             drive.update();
+            telemetry.addData("Tilt Poer", tiltP.setTiltPower());
             telemetry.addData("Detected Color", DetectedColorAndDistance.getColor());
             telemetry.addData("state", autoState);
             telemetry.addData("timer", testTimer.seconds());
