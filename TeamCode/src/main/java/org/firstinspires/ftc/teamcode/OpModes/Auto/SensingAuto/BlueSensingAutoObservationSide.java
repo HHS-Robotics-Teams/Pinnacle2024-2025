@@ -138,7 +138,7 @@ public class BlueSensingAutoObservationSide extends OpMode {
 
         drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
+        Pose2d startPose = new Pose2d(0, -.75, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
         TrajectoryVelocityConstraint toPreloadScore = new MinVelocityConstraint(Arrays.asList(
                 new TranslationalVelocityConstraint(MAX_VEL * 0.80),
@@ -182,7 +182,7 @@ public class BlueSensingAutoObservationSide extends OpMode {
                 .lineToLinearHeading(new Pose2d(20,-39, Math.toRadians(178)))
                 .build();
         scoreSecondSpecimen = drive.trajectorySequenceBuilder(new Pose2d(20, -39, Math.toRadians(178)))
-                .lineToLinearHeading(new Pose2d(20,-1, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(20,0, Math.toRadians(0)))
                 //.splineToLinearHeading(new Pose2d(20, -2, Math.toRadians(0)), Math.toRadians(0))
                 .build();
 
@@ -380,9 +380,9 @@ public class BlueSensingAutoObservationSide extends OpMode {
                 }
                 break;
             case GO_OBSERVATION_AGAIN:
-                if (grabAgainTimer.seconds() >= 0.3) {
+                if (grabAgainTimer.seconds() >= 0.4) {
                     intake_claw_servo.setPosition(Claws_closed);
-                    if (grabAgainTimer.seconds() >= 0.5) {
+                    if (grabAgainTimer.seconds() >= 0.6) {
                         tiltMotor.setPower(1);
                         slideMotor.setTargetPosition(250);
                         tiltMotor.setTargetPosition(590);
@@ -476,7 +476,7 @@ public class BlueSensingAutoObservationSide extends OpMode {
                 break;
             case SCORE_FIRST_SPECIMEN:
                 if (extendTimer.seconds() > 0.8) {
-                    slideMotor.setTargetPosition( slideMotor.getCurrentPosition() + 200);
+                    slideMotor.setTargetPosition( slideMotor.getCurrentPosition() + 195);
                     if (tiltMotor.getCurrentPosition() >= 1400) {
                         tiltMotor.setTargetPosition(850);
                         grabTimer.reset();
@@ -516,7 +516,7 @@ public class BlueSensingAutoObservationSide extends OpMode {
                 break;
             case EXTEND_TO_SECOND_SPECIMEN:
                 if (testTimer.seconds() >= 1) {
-                    slideMotor.setTargetPosition(375);
+                    slideMotor.setTargetPosition(380);
                     isTiltIncrementing = true;
                     isSlideIncrementing = true;
                     autoState = AutoState.GRAB_SECOND_SPECIMEN;
@@ -562,7 +562,7 @@ public class BlueSensingAutoObservationSide extends OpMode {
                 break;
             case SCORE_SECOND_SPECIMEN:
                 intakeWristServo.setPosition(WristHorizontalPickup);
-                if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2) && (Math.abs(drive.getPoseEstimate().getY() + 1) <= 2)) {
+                if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2) && (Math.abs(drive.getPoseEstimate().getY() - 0) <= 2)) {
                     tiltMotor.setTargetPosition(1070);
                     intakeElbowServo.setPosition(ElbowLeft);
                     drive.update();
@@ -586,13 +586,13 @@ public class BlueSensingAutoObservationSide extends OpMode {
                 break;
             case PARK:
                 slideMotor.setTargetPosition(0);
-                drive.followTrajectorySequenceAsync(park);
+                drive.followTrajectorySequenceAsync(grabSecondSpecimen);
                 drive.update();
                 autoState = AutoState.FINISH;
                 break;
             case FINISH:
                 if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2) && (Math.abs(drive.getPoseEstimate().getY() + 39) <= 2)) {
-                    slideMotor.setTargetPosition(SlideHighChamber + 50);
+                    slideMotor.setTargetPosition(300);
                     intakeWristServo.setPosition(WristCenter);
                     drive.update();
                     break;

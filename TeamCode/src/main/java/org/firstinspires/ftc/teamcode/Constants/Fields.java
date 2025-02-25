@@ -20,7 +20,7 @@ public class Fields {
 
 
     // tilt motor positions
-    public static int TiltTickThreshold = 30;
+    public static int TiltTickThreshold = 20;
 
     public static int TiltMinPosition = 34;
     public static int IntakeRotateThreshold = 223; //100
@@ -39,13 +39,13 @@ public class Fields {
     public static int TiltHighBucketBackwards = 1875;
     // Tilt motor positions auto
     public static int TiltHighBucketBackwardsAuto = 1850;
-    public static int TiltHighBucketLastSpeciemnAuto = 1880;
+    public static int TiltHighBucketLastSpeciemnAuto = 1885;
 
 
     // slide motor positions
 
     public static int SlideTicks = 18;
-    public static int SlideTickThreshold = 30 ;
+    public static int SlideTickThreshold = 20 ;
     public static int SlideStartPosition = 0;
 
     public static int SlideMinPosition = (int) (5 * .37760416666);

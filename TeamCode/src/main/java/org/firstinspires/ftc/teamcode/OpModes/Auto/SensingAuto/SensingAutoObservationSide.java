@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideLowChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlidePickupAdjust;
 
 
@@ -138,7 +139,7 @@ public class SensingAutoObservationSide extends OpMode {
 
         drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
+        Pose2d startPose = new Pose2d(0, -.75, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
         TrajectoryVelocityConstraint toPreloadScore = new MinVelocityConstraint(Arrays.asList(
                 new TranslationalVelocityConstraint(MAX_VEL * 0.80),
@@ -542,7 +543,7 @@ public class SensingAutoObservationSide extends OpMode {
                                 autoState = AutoState.DRIVE_TO_SCORE_SECOND_SPECIMEN;
                                 break;
                             }
-                        } else if (isSlideIncrementing && (detectedDistance >2)){
+                        } else if (isSlideIncrementing && (detectedDistance > 2)){
                             isSlideIncrementing = false;
                         }else if (!slideMotor.isBusy()){
                             isSlideIncrementing = true;
@@ -586,13 +587,13 @@ public class SensingAutoObservationSide extends OpMode {
                 break;
             case PARK:
                 slideMotor.setTargetPosition(0);
-                drive.followTrajectorySequenceAsync(park);
+                drive.followTrajectorySequenceAsync(grabSecondSpecimen);
                 drive.update();
                 autoState = AutoState.FINISH;
                 break;
             case FINISH:
                 if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2) && (Math.abs(drive.getPoseEstimate().getY() + 39) <= 2)) {
-                slideMotor.setTargetPosition(SlideHighChamber + 50);
+                slideMotor.setTargetPosition(300);
                 intakeWristServo.setPosition(WristCenter);
                 drive.update();
                 break;
