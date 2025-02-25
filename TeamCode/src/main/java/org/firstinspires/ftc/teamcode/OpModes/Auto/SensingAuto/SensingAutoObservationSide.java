@@ -311,9 +311,9 @@ public class SensingAutoObservationSide extends OpMode {
                 }
                 break;
             case GRAB_FIRST_SAMPLE:
-                if (grabTimer.seconds() >= 0.25) {
+                if (grabTimer.seconds() >= 0.35) {
                     intake_claw_servo.setPosition(Claws_closed);
-                    if (grabTimer.seconds() >= 0.4) {
+                    if (grabTimer.seconds() >= 0.5) {
                         slideMotor.setTargetPosition(0);
                         autoState = AutoState.TURN_TO_OBSERVATION;
                         break;
