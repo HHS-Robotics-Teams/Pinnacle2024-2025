@@ -132,7 +132,8 @@ public class StateMachineTelopTest extends OpMode {
 
         // ---------- Slowdown While Arm Up or Out ----------
         if (slideIsOut) {
-            rotate = rotate / 3;
+            rotate = rotate / 6;
+            strafe = strafe / 1.5;
         }
         if (tiltMotor.getTargetPosition() >= TiltUpThreshold && !ActivelyClimbing) {
             rotate = rotate / 2;
@@ -249,7 +250,6 @@ public class StateMachineTelopTest extends OpMode {
 
         if (armRetractingHighBasket) {
             switch (currentRetractionStep) {
-
                 case (1): // Step 1: Move the wrist back to center then retract the arm slide to min position.
                     intakeWristServo.setPosition(WristCenter);
                     slideMotor.setTargetPosition(SlideMinPosition);
@@ -281,7 +281,6 @@ public class StateMachineTelopTest extends OpMode {
                         intakeWristServo.setPosition(WristSampleBucketScore);
                         //intakeElbowServo.setPosition(ElbowRight);
                         StateMachine_Timer.reset();
-                        slideIsOut = true;
                         elbowRotate = true;
                         currentRetractionStep = 1; // These two assignment statements reset the state for
                         armRetractingHighBasket = false; // next time the button is pressed.
@@ -357,11 +356,10 @@ public class StateMachineTelopTest extends OpMode {
         // ---------- Specimen Wall Pickup ----------
 
         if (gamepad1.right_stick_button) {
+            slideIsOut = true;
             IntakeWristPositionReached = true;
             specimenMode = true;
             armRetractingWallPickup = true;
-
-            //telemetry.speak("picking up off the wall");
         }
 
         if (armRetractingWallPickup) {
@@ -383,9 +381,8 @@ public class StateMachineTelopTest extends OpMode {
                     intakeElbowServo.setPosition(ElbowLeft);
                     StateMachine_Timer.reset();
                     armRetractingWallPickup = false;
-                    currentRetractionStep = 1;
-                    slideIsOut = true;
                     CurrentlyQuickGrabbing = true;
+                    currentRetractionStep = 1;
                     currentWallStep = 1;
                     break;
 
@@ -473,25 +470,14 @@ public class StateMachineTelopTest extends OpMode {
             }
 
             /* ============================== Telemetry For Debugging ============================== */
-
-            // ---------- Wheels and Driving ----------
-//            telemetry.addData("Front Left Power: ", frontLeftPower);
-//            telemetry.addData("Front Right Power: ", frontRightPower);
-//            telemetry.addData("Back Left Power: ", backLeftPower);
-//            telemetry.addData("Back Right Power: ", backRightPower);
-//            telemetry.addData("Drive Power: ", drive);
-//            telemetry.addData("Strafe Power: ", strafe);
-//            telemetry.addData("Rotate Power: ", rotate);
-
             // ---------- Arm and Intake ----------
-//            telemetry.addData("Slide Motor Power: ", slideMotor.getPower());
-//            telemetry.addData("Tilt Motor Power: ", tiltMotor.getPower());
-            telemetry.addData("Tilt Poer", tiltP.setTiltPower());
+            telemetry.addData("Tilt Power", tiltP.setTiltPower());
             telemetry.addData("Distance (cm)", "%.2f", detectedDistance);
             telemetry.addData("Current Tilt Position: ", tiltMotor.getCurrentPosition());
             telemetry.addData("Current Slide Position ", slideMotor.getCurrentPosition());
 
             // ---------- Flags -----------
+            telemetry.addData("Slide out", slideIsOut ? "True" : "False");
             telemetry.addData("High Basket status", armRetractingHighBasket ? "True" : "False");
             telemetry.addData("High Chamber status", armRetractingHighChamber ? "True" : "False");
             telemetry.addData("Floor Pickup status", armRetractingFloorPickup ? "True" : "False");
@@ -500,7 +486,7 @@ public class StateMachineTelopTest extends OpMode {
             telemetry.addData("Climb control status", climbPositionReached ? "True" : "False");
             telemetry.addData("Wrist control status", IntakeWristPositionReached ? "True" : "False");
             telemetry.addData("Quick Grab", CurrentlyQuickGrabbing ? "True": "False");
-
+            telemetry.addData("Sample floor pickup", sampleFloorPickUp ? "True" : "False" );
             telemetry.addData("Current State", currentRetractionStep);
 
             // ---------- Update ----------

@@ -117,7 +117,6 @@ public class Fields {
         armRetractingSubPickup = false;
         armRetractingHome = false;
         armRetractingWallPickup = false;
-        sampleFloorPickUp = false;
         specimenMode = false;
         buttonPressInitiate = false;
         ActivelyClimbing = false;

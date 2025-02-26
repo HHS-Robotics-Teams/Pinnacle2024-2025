@@ -164,7 +164,7 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                 .back(8.5)
                 .build();
         turnAgain = drive.trajectorySequenceBuilder(new Pose2d(6, 46, Math.toRadians(-35)))
-                .splineToLinearHeading(new Pose2d(13, 49, Math.toRadians(0)), Math.toRadians(-47))
+                .splineToLinearHeading(new Pose2d(13, 49, Math.toRadians(0)), Math.toRadians(-46))
                 .build();
 //        turnBacktoScore = drive.trajectorySequenceBuilder(new Pose2d(13, 41, Math.toRadians(19)))
 //                .turn(Math.toRadians(-45))
@@ -561,7 +561,7 @@ public class SensingAutoBasketSideSpecimen extends OpMode {
                     }if (grabTimer.seconds() >= 0.9) {
                         slideMotor.setTargetPosition(0);
                         if (slideMotor.getCurrentPosition() <= 75) {
-                            intakeElbowServo.setPosition(ElbowLeft);
+                            //intakeElbowServo.setPosition(ElbowLeft);
                             //tiltMotor.setTargetPosition(1150);
                             //drive.followTrajectorySequenceAsync(park);
                             autoState = AutoState.FINISH;

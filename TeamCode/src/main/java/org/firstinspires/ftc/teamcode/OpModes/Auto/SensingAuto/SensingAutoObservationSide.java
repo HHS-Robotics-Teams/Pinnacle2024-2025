@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideLowChamber;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlidePickupAdjust;
 
 
@@ -200,8 +201,8 @@ public class SensingAutoObservationSide extends OpMode {
 //                //.splineToLinearHeading(new Pose2d(13, 39, Math.toRadians(-50)), Math.toRadians(42))
 //                .turn(Math.toRadians(-94))
 //                .build();
-        park = drive.trajectorySequenceBuilder(new Pose2d(20,-2, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(0,0, Math.toRadians(0)))
+        park = drive.trajectorySequenceBuilder(new Pose2d(20,-1, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(18,-40, Math.toRadians(0)))
                 .build();
 //        /*goCollectAgain = drive.trajectorySequenceBuilder(new Pose2d(13, 39, Math.toRadians(0)))
 //                .splineToLinearHeading(new Pose2d(13.00001, 39.00001, Math.toRadians(-47)), Math.toRadians(-47))
@@ -587,13 +588,14 @@ public class SensingAutoObservationSide extends OpMode {
                 break;
             case PARK:
                 slideMotor.setTargetPosition(0);
-                drive.followTrajectorySequenceAsync(grabSecondSpecimen);
+                drive.followTrajectorySequenceAsync(park);
                 drive.update();
                 autoState = AutoState.FINISH;
                 break;
             case FINISH:
                 if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2) && (Math.abs(drive.getPoseEstimate().getY() + 39) <= 2)) {
-                slideMotor.setTargetPosition(300);
+                tiltMotor.setTargetPosition(TiltMinPosition);
+                slideMotor.setTargetPosition(SlideMinPosition);
                 intakeWristServo.setPosition(WristCenter);
                 drive.update();
                 break;
