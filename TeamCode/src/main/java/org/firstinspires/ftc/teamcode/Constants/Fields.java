@@ -106,6 +106,7 @@ public class Fields {
     public static Boolean clawsOpening = false;
     public static Boolean clawsClosing = false;
     public static Boolean ActivelyClimbing = false;
+    public static Boolean ActivelyUnspooling = false;
     public static Boolean PreppingClimbers = false;
     public static Boolean elbowRotate = false;
     public static void resetFlags(){

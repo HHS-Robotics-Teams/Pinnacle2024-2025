@@ -40,6 +40,9 @@ public class TiltPowerCalc {
             double scale = (ticks - 1000) / 800.0; // scale ranges from 0 to 1
             // Calculate power: starting at 1.0 and decreasing by up to 0.5.
             double power = 1.0 - (scale * 0.7);
+            if (ticks > 1700){
+                power = 1; // set power back to 1 to stabilize and hold
+            }
             tiltMotor.setPower(power);
             return power;
         }

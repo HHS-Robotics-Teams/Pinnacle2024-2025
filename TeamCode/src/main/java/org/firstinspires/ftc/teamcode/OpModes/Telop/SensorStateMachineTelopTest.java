@@ -460,7 +460,7 @@ public class SensorStateMachineTelopTest extends OpMode {
                         break;
 
                     case (2):
-                        if (Retract_timer.seconds() > 0.2) {
+                        if (Retract_timer.seconds() > 0.2 || !slideMotor.isBusy()) {
                             tiltMotor.setTargetPosition(TiltFloorPickup);
                             slideMotor.setTargetPosition(SlideWallPickup);
                             intakeWristServo.setPosition(WristCenter);

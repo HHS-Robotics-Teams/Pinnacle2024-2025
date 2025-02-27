@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes.Telop;
 
 
 import static org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance.distance;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.ActivelyUnspooling;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.CurrentlyQuickGrabbing;
@@ -84,11 +85,14 @@ public class StateMachineTelopTest extends OpMode {
     TiltPowerCalc tiltP;
 
     public Input input;
+
+    public static double UNSPOOL_TIME = 3.0;
     ElapsedTime StateMachine_Timer = new ElapsedTime();
     ElapsedTime Retract_timer = new ElapsedTime();
     ElapsedTime Extend_timer = new ElapsedTime();
     ElapsedTime Claw_timer = new ElapsedTime();
     ElapsedTime Climber_Timer = new ElapsedTime();
+    ElapsedTime Unspool_Timer = new ElapsedTime();
     ElapsedTime Deposit_Timer = new ElapsedTime();
 
     @Override
@@ -453,6 +457,7 @@ public class StateMachineTelopTest extends OpMode {
 
             if (input.a.down() || input.cross.down()) {
                 ActivelyClimbing = true;
+                ActivelyUnspooling = false;
                 Climber_Timer.reset();
                 slideMotor.setTargetPosition(SlideMinPosition);
                 tiltMotor.setTargetPosition(TiltHighBucket);
@@ -466,13 +471,30 @@ public class StateMachineTelopTest extends OpMode {
             else if (input.back.held()) { // Claw controls made by Benny
                 leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
                 rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
-                leftClaw.setPower(1); // Debugged by Damien
-                rightClaw.setPower(1);
+                ActivelyUnspooling = true;
+                ActivelyClimbing = false;
+                if (Unspool_Timer.seconds() < UNSPOOL_TIME) { // Adjust UNSPOOL_TIME as needed - top of file
+                    leftClaw.setPower(1);
+                    rightClaw.setPower(1);
+                }
+                else {
+                    leftClaw.setPower(0);
+                    rightClaw.setPower(0);
+                }
 
             } else {
                 leftClaw.setPower(0);
                 rightClaw.setPower(0);
-                //telemetry.speak("Hook line and sinker");
+                if (ActivelyUnspooling) {
+                    if (Unspool_Timer.seconds() > UNSPOOL_TIME) {
+                        leftClaw.setPower(0);
+                        rightClaw.setPower(0);
+                        // ActivelyUnspooling = false;  // Climb will reset
+                    }
+                }
+                else {
+                    Unspool_Timer.reset();
+                }
             }
 
             /* ============================== Telemetry For Debugging ============================== */
