@@ -455,22 +455,22 @@ public class StateMachineTelopTest extends OpMode {
 
 //        /* ============================== Climbing ============================== */
 
-            if (input.a.down() || input.cross.down()) {
+            if (input.back.held()) {
                 ActivelyClimbing = true;
                 ActivelyUnspooling = false;
                 Climber_Timer.reset();
                 slideMotor.setTargetPosition(SlideMinPosition);
                 tiltMotor.setTargetPosition(TiltHighBucket);
-                leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
-                rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+                leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+                rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
                 leftClaw.setPower(1);
                 rightClaw.setPower(1);
                 //telemetry.speak("ENDGAME ENDGAME ENDGAME");
             }
 
-            else if (input.back.held()) { // Claw controls made by Benny
-                leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
-                rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+            else if (input.a.held() || input.cross.held()) { // Claw controls made by Benny
+                leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+                rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
                 ActivelyUnspooling = true;
                 ActivelyClimbing = false;
                 if (Unspool_Timer.seconds() < UNSPOOL_TIME) { // Adjust UNSPOOL_TIME as needed - top of file
