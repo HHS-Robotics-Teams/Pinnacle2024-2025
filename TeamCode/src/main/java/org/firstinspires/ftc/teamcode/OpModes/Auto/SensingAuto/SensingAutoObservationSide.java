@@ -202,7 +202,7 @@ public class SensingAutoObservationSide extends OpMode {
 //                .turn(Math.toRadians(-94))
 //                .build();
         park = drive.trajectorySequenceBuilder(new Pose2d(20,-1, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(18,-40, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(10,-47, Math.toRadians(0)))
                 .build();
 //        /*goCollectAgain = drive.trajectorySequenceBuilder(new Pose2d(13, 39, Math.toRadians(0)))
 //                .splineToLinearHeading(new Pose2d(13.00001, 39.00001, Math.toRadians(-47)), Math.toRadians(-47))
@@ -593,8 +593,8 @@ public class SensingAutoObservationSide extends OpMode {
                 autoState = AutoState.FINISH;
                 break;
             case FINISH:
-                if ((Math.abs(drive.getPoseEstimate().getX() - 20) <= 2) && (Math.abs(drive.getPoseEstimate().getY() + 39) <= 2)) {
-                tiltMotor.setTargetPosition(TiltMinPosition);
+                if ((Math.abs(drive.getPoseEstimate().getX() - 10) <= 2) && (Math.abs(drive.getPoseEstimate().getY() + 47) <= 2)) {
+                tiltMotor.setTargetPosition(200);
                 slideMotor.setTargetPosition(SlideMinPosition);
                 intakeWristServo.setPosition(WristCenter);
                 drive.update();

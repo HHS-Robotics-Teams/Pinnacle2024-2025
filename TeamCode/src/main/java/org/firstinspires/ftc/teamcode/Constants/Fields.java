@@ -31,7 +31,7 @@ public class Fields {
     public static int TiltWallPickupPosition = 545;
     public static int TiltUpThreshold = 1210;
 
-    public static int TiltHighChamber = 970;
+    public static int TiltHighChamber = 980;
     public static int TiltLowBucket = 1235;
     public static int TiltHighBucket = 1366;
     public static int TiltMaxPosition = 1513;

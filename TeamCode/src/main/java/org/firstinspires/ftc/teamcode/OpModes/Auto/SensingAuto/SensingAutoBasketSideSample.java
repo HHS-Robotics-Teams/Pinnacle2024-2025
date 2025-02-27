@@ -132,12 +132,7 @@ public class SensingAutoBasketSideSample extends OpMode {
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
 
-
-//        goForward = drive.trajectorySequenceBuilder(new Pose2d(0,0, Math.toRadians(0)))
-//                .splineToConstantHeading(new Vector2d(6,0),Math.toRadians(0))
-//                .build();
         goBasket = drive.trajectorySequenceBuilder(new Pose2d(0,0, Math.toRadians(0)))
-                //.forward(1)
                 .lineToLinearHeading(new Pose2d(7, 45, Math.toRadians(-47)))
                 //.splineToLinearHeading(new Pose2d(13, 39, Math.toRadians(-47)), Math.toRadians(0))
                 //.back(6)
@@ -163,12 +158,9 @@ public class SensingAutoBasketSideSample extends OpMode {
                 .turn(Math.toRadians(-54))
                 .build();
         park = drive.trajectorySequenceBuilder(new Pose2d(13, 41, Math.toRadians(-10)))
-                .splineToLinearHeading(new Pose2d(53, 20, Math.toRadians(-54)), Math.toRadians(-52))
+                //.lineToLinearHeading(new Pose2d(53,19, Math.toRadians(-90)))
+                .splineToLinearHeading(new Pose2d(53, 19, Math.toRadians(0)), Math.toRadians(-90))
                 .build();
-        /*goCollectAgain = drive.trajectorySequenceBuilder(new Pose2d(13, 39, Math.toRadians(0)))
-                .splineToLinearHeading(new Pose2d(13.00001, 39.00001, Math.toRadians(-47)), Math.toRadians(-47))
-                .build();*/
-
             drive.followTrajectorySequenceAsync(goBasket);
         }
 
@@ -555,7 +547,7 @@ public class SensingAutoBasketSideSample extends OpMode {
                         slideMotor.setTargetPosition(0);
                         if (slideMotor.getCurrentPosition() <= 75) {
                             //intakeElbowServo.setPosition(ElbowLeft);
-                            //tiltMotor.setTargetPosition(1150);
+                            //tiltMotor.setTargetPosition(1100);
                             //drive.followTrajectorySequenceAsync(park);
                             autoState = AutoState.FINISH;
                             break;
@@ -563,15 +555,15 @@ public class SensingAutoBasketSideSample extends OpMode {
                     }
                 }
                 break;
-//            case DRIVE_TO_PARK:
-//                if (tiltMotor.getCurrentPosition() > 1150){
-//                    intakeElbowServo.setPosition(ElbowRight);
-//                    intakeWristServo.setPosition(WristLeft);
-//                    slideMotor.setTargetPosition(1350);
-//                    autoState = AutoState.FINISH;
-//                    break;
-//                }
-//                break;
+            case DRIVE_TO_PARK:
+                if ((Math.abs(drive.getPoseEstimate().getX() - 53) <= 2) && (Math.abs(drive.getPoseEstimate().getY() - 19) <= 2)){
+                    //intakeElbowServo.setPosition(ElbowRight);
+                    intakeWristServo.setPosition(WristCenter);
+                    slideMotor.setTargetPosition(360);
+                    autoState = AutoState.FINISH;
+                    break;
+                }
+                break;
             case FINISH:
 
                 drive.update();
