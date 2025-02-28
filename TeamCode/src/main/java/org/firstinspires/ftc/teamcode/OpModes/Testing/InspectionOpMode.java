@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.OpModes.Testing;
 
+import static org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance.blue;
+import static org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance.green;
+import static org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance.red;
+import static org.firstinspires.ftc.teamcode.Constants.DetectedHueAndDistance.brightness;
+import static org.firstinspires.ftc.teamcode.Constants.DetectedHueAndDistance.hue;
+import static org.firstinspires.ftc.teamcode.Constants.DetectedHueAndDistance.saturation;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
@@ -18,25 +24,31 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSampleBucketS
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingFloorPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHighBasket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHome;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingSubPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.buttonPressInitiate;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.climbPositionReached;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentRetractionStep;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.elbowRotate;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.sampleFloorPickUp;
+import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.colorSensor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeElbowServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intakeWristServo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.intake_claw_servo;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.slideMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.tiltMotor;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance;
+import org.firstinspires.ftc.teamcode.Constants.DetectedHueAndDistance;
 import org.firstinspires.ftc.teamcode.Constants.Fields;
 import org.firstinspires.ftc.teamcode.Constants.RobotHardware;
 import org.firstinspires.ftc.teamcode.excutil.Input;
-
+@Disabled
 @TeleOp (name = "Inspection Mode", group = "Inspection")
 public class InspectionOpMode extends OpMode {
 
@@ -67,6 +79,16 @@ public class InspectionOpMode extends OpMode {
 
     @Override
     public void loop() {
+        DetectedColorAndDistance.updateColor(colorSensor);
+
+        String detectedColor = DetectedColorAndDistance.getColor();
+
+        double detectedDistance = DetectedColorAndDistance.getDistance();
+
+        // HSV Color Sensing
+        DetectedHueAndDistance.updateColor(colorSensor);
+
+        String detectedHue = DetectedHueAndDistance.getColor();
 
         input.pollGamepad(gamepad1); // Pass gamepad input through custom class
 
@@ -176,6 +198,45 @@ public class InspectionOpMode extends OpMode {
                     break;
             }
         }
+        if (input.a.down() || input.cross.down()) {
+            armRetractingSubPickup = true;
+            IntakeWristPositionReached = false;
+            telemetry.speak(" Grab another off the Seafloor");
+        }
+
+        if (armRetractingSubPickup) {
+            switch (currentRetractionStep) {
+                case (1):
+                    slideMotor.setTargetPosition(SlideMinPosition);
+                    if (Math.abs(slideMotor.getCurrentPosition() - SlideMinPosition) < SlideTicks) {
+                        currentRetractionStep++;
+                        break;
+                    }
+                    break;
+
+                case (2):
+                    tiltMotor.setTargetPosition(420);
+                    slideMotor.setTargetPosition(190);
+                    intakeWristServo.setPosition(WristCenter);
+                    intakeElbowServo.setPosition(ElbowLeft);
+                    intake_claw_servo.setPosition(Claws_open);
+                    armRetractingFloorPickup = false;
+                    sampleFloorPickUp = true;
+                    currentRetractionStep = 1;
+                    break;
+            }
+        }
+
+        telemetry.addData("Hue Color", detectedHue);
+        telemetry.addData("Hue", hue);
+        telemetry.addData("Saturation", saturation);
+        telemetry.addData("Brightness", brightness);
+        telemetry.addData("Red", red);
+        telemetry.addData("Green", green);
+        telemetry.addData("Blue", blue);
+        telemetry.addData("Detected Color", detectedColor);
+        telemetry.addData("Distance (cm)", "%.2f", detectedDistance);
+
 
         telemetry.addData("Current Tilt Position: ", tiltMotor.getCurrentPosition());
         telemetry.addData("Current Slide Position ", slideMotor.getCurrentPosition());

@@ -13,6 +13,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.SlidePickupAdjust;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
 
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideTickThreshold;
+import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideTicks;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
@@ -384,7 +385,7 @@ public class BlueSensingAutoObservationSide extends OpMode {
             case GO_OBSERVATION_AGAIN:
                 if (grabAgainTimer.seconds() >= 0.4) {
                     intake_claw_servo.setPosition(Claws_closed);
-                    if (grabAgainTimer.seconds() >= 0.6) {
+                    if (grabAgainTimer.seconds() >= 0.7) {
                         tiltMotor.setPower(1);
                         slideMotor.setTargetPosition(250);
                         tiltMotor.setTargetPosition(590);
@@ -417,7 +418,7 @@ public class BlueSensingAutoObservationSide extends OpMode {
                 isTiltIncrementing = true;
                 isSlideIncrementing = true;
                 if (grabAgainTimer.seconds() >= 0.3 && Math.abs(tiltMotor.getCurrentPosition() - 570) <= TiltTickThreshold) {
-                    slideMotor.setTargetPosition(447);
+                    slideMotor.setTargetPosition(450);
                     testTimer.reset();
                     autoState = AutoState.GRAB_FIRST_SPECIMEN;
                     break;
@@ -478,8 +479,8 @@ public class BlueSensingAutoObservationSide extends OpMode {
                 break;
             case SCORE_FIRST_SPECIMEN:
                 if (extendTimer.seconds() > 0.8) {
-                    slideMotor.setTargetPosition( slideMotor.getCurrentPosition() + 195);
-                    if (tiltMotor.getCurrentPosition() >= 1400) {
+                    slideMotor.setTargetPosition( slideMotor.getCurrentPosition() + 188);
+                    if (tiltMotor.getCurrentPosition() >= 1400 && Math.abs(slideMotor.getCurrentPosition() - 188) >= SlideTicks) {
                         tiltMotor.setTargetPosition(850);
                         grabTimer.reset();
                         autoState = AutoState.LET_GO_OF_SPECIMEN;
@@ -518,7 +519,7 @@ public class BlueSensingAutoObservationSide extends OpMode {
                 break;
             case EXTEND_TO_SECOND_SPECIMEN:
                 if (testTimer.seconds() >= 1) {
-                    slideMotor.setTargetPosition(380);
+                    slideMotor.setTargetPosition(388);
                     isTiltIncrementing = true;
                     isSlideIncrementing = true;
                     autoState = AutoState.GRAB_SECOND_SPECIMEN;
@@ -545,6 +546,7 @@ public class BlueSensingAutoObservationSide extends OpMode {
                         break;
                     }
                 } else if (isSlideIncrementing && (detectedDistance >2)){
+                    //slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 20);
                     isSlideIncrementing = false;
                 }else if (!slideMotor.isBusy()){
                     isSlideIncrementing = true;
@@ -568,8 +570,8 @@ public class BlueSensingAutoObservationSide extends OpMode {
                     tiltMotor.setTargetPosition(1070);
                     intakeElbowServo.setPosition(ElbowLeft);
                     drive.update();
-                    if (testTimer.seconds() > 0.6){
-                        slideMotor.setTargetPosition(320);
+                    if (testTimer.seconds() > 0.8){
+                        slideMotor.setTargetPosition(308);
                         dunkAgainTimer.reset();
                         autoState = AutoState.RETRACT_SECOND;
                         break;
@@ -577,9 +579,9 @@ public class BlueSensingAutoObservationSide extends OpMode {
                 }
                 break;
             case RETRACT_SECOND:
-                if (dunkAgainTimer.seconds() >= 0.4) {
+                if (dunkAgainTimer.seconds() >= 0.4 && (Math.abs(slideMotor.getCurrentPosition() - 308) <= 20)) {
                     tiltMotor.setTargetPosition(760);
-                    if (dunkAgainTimer.seconds() >= 1) {
+                    if (dunkAgainTimer.seconds() > 1) {
                         intake_claw_servo.setPosition(Claws_open);
                         autoState = AutoState.PARK;
                         break;

@@ -109,6 +109,7 @@ public class SensingAutoBasketSideSample extends OpMode {
         ElapsedTime depositTimer = new ElapsedTime();
         ElapsedTime extendToSecondSampleTimer = new ElapsedTime();
         ElapsedTime tiltTimer = new ElapsedTime();
+        ElapsedTime park_Timer = new ElapsedTime();
 
         ElapsedTime LowerTileTimer = new ElapsedTime();
 
@@ -165,7 +166,7 @@ public class SensingAutoBasketSideSample extends OpMode {
         }
 
         public void loop() {
-
+            park_Timer.reset();
             DetectedColorAndDistance.updateColor(colorSensor);
 
             String detectedColor = DetectedColorAndDistance.getColor();
@@ -432,7 +433,7 @@ public class SensingAutoBasketSideSample extends OpMode {
                 }
                 break;
             case RESET_AND_CYCLE_THREE:
-                if (depositTimer.seconds() >= 0.25) {
+                if (depositTimer.seconds() >= 0.30) {
                     intake_claw_servo.setPosition(Claws_open);
                     if (depositTimer.seconds() >= 0.9) {
                         //intakeElbowServo.setPosition(ElbowLeft);
@@ -467,7 +468,7 @@ public class SensingAutoBasketSideSample extends OpMode {
                 break;
             case EXTEND_TO_THIRD_SAMPLE:
                 if (((tiltMotor.getCurrentPosition() - 535) <= 10) && (tiltTimer.seconds() >= .9)) {
-                    slideMotor.setTargetPosition(420);
+                    slideMotor.setTargetPosition(395);
                     intakeElbowServo.setPosition(ElbowLeft);
                     intakeWristServo.setPosition(WristCenter);
                     isSlideIncrementing = true;
@@ -476,7 +477,7 @@ public class SensingAutoBasketSideSample extends OpMode {
                 }
                 break;
             case MOVE_GRADUALLY_THIRD_SAMPLE:
-                    if (slideMotor.getCurrentPosition() >= 420) {
+                    if (slideMotor.getCurrentPosition() >= 395) {
                         if (detectedColor.equals("Yellow")) {
                             grabTimer.reset();
                             tiltMotor.setPower(0);
@@ -488,7 +489,7 @@ public class SensingAutoBasketSideSample extends OpMode {
                         }
                         else if (!slideMotor.isBusy()){
                             isSlideIncrementing = true;
-                            if (slideMotor.getCurrentPosition() >= (440)){
+                            if (slideMotor.getCurrentPosition() >= (415)){
                                 grabTimer.reset();
                                 tiltMotor.setPower(0);
                                 autoState = AutoState.GRAB_LAST_SAMPLE;
@@ -545,12 +546,14 @@ public class SensingAutoBasketSideSample extends OpMode {
                         intakeWristServo.setPosition(WristRight);
                     }if (grabTimer.seconds() >= 0.9) {
                         slideMotor.setTargetPosition(0);
-                        if (slideMotor.getCurrentPosition() <= 75) {
+                        if (slideMotor.getCurrentPosition() <= 75 && park_Timer.seconds() > 28.0 ) {
                             //intakeElbowServo.setPosition(ElbowLeft);
-                            //tiltMotor.setTargetPosition(1100);
-                            //drive.followTrajectorySequenceAsync(park);
-                            autoState = AutoState.FINISH;
+                            tiltMotor.setTargetPosition(1100);
+                            drive.followTrajectorySequenceAsync(park);
+                            autoState = AutoState.DRIVE_TO_PARK;
                             break;
+                        } else {
+                            autoState = AutoState.FINISH;
                         }
                     }
                 }

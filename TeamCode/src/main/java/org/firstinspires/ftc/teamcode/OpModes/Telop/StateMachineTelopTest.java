@@ -455,47 +455,26 @@ public class StateMachineTelopTest extends OpMode {
 
 //        /* ============================== Climbing ============================== */
 
-            if (input.back.held()) {
-                ActivelyClimbing = true;
-                ActivelyUnspooling = false;
-                Climber_Timer.reset();
-                slideMotor.setTargetPosition(SlideMinPosition);
-                tiltMotor.setTargetPosition(TiltHighBucket);
-                leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
-                rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
-                leftClaw.setPower(1);
-                rightClaw.setPower(1);
-                //telemetry.speak("ENDGAME ENDGAME ENDGAME");
-            }
+        if (input.start.held()) {
+            ActivelyClimbing = true;
+            slideMotor.setTargetPosition(SlideMinPosition);
+            tiltMotor.setTargetPosition(TiltHighBucket);
+            leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+            leftClaw.setPower(1);
+            rightClaw.setPower(1);
+            //telemetry.speak("ENDGAME ENDGAME ENDGAME");
+        } else if (input.back.held()) { // Claw controls made by Benny
+            leftClaw.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightClaw.setDirection(DcMotorSimple.Direction.FORWARD);
+            leftClaw.setPower(1); // Debugged by Damien
+            rightClaw.setPower(1);
 
-            else if (input.a.held() || input.cross.held()) { // Claw controls made by Benny
-                leftClaw.setDirection(DcMotorSimple.Direction.FORWARD);
-                rightClaw.setDirection(DcMotorSimple.Direction.REVERSE);
-                ActivelyUnspooling = true;
-                ActivelyClimbing = false;
-                if (Unspool_Timer.seconds() < UNSPOOL_TIME) { // Adjust UNSPOOL_TIME as needed - top of file
-                    leftClaw.setPower(1);
-                    rightClaw.setPower(1);
-                }
-                else {
-                    leftClaw.setPower(0);
-                    rightClaw.setPower(0);
-                }
-
-            } else {
-                leftClaw.setPower(0);
-                rightClaw.setPower(0);
-                if (ActivelyUnspooling) {
-                    if (Unspool_Timer.seconds() > UNSPOOL_TIME) {
-                        leftClaw.setPower(0);
-                        rightClaw.setPower(0);
-                        // ActivelyUnspooling = false;  // Climb will reset
-                    }
-                }
-                else {
-                    Unspool_Timer.reset();
-                }
-            }
+        } else {
+            leftClaw.setPower(0);
+            rightClaw.setPower(0);
+            //telemetry.speak("Hook line and sinker");
+        }
 
             /* ============================== Telemetry For Debugging ============================== */
             // ---------- Arm and Intake ----------

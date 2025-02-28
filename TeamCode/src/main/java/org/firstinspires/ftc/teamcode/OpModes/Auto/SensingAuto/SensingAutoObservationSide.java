@@ -417,7 +417,7 @@ public class SensingAutoObservationSide extends OpMode {
                 isTiltIncrementing = true;
                 isSlideIncrementing = true;
                 if (grabAgainTimer.seconds() >= 0.3 && Math.abs(tiltMotor.getCurrentPosition() - 570) <= TiltTickThreshold) {
-                    slideMotor.setTargetPosition(447);
+                    slideMotor.setTargetPosition(450);
                     testTimer.reset();
                     autoState = AutoState.GRAB_FIRST_SPECIMEN;
                     break;
@@ -545,6 +545,7 @@ public class SensingAutoObservationSide extends OpMode {
                                 break;
                             }
                         } else if (isSlideIncrementing && (detectedDistance > 2)){
+                            slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 20);
                             isSlideIncrementing = false;
                         }else if (!slideMotor.isBusy()){
                             isSlideIncrementing = true;
@@ -569,7 +570,7 @@ public class SensingAutoObservationSide extends OpMode {
                     intakeElbowServo.setPosition(ElbowLeft);
                     drive.update();
                     if (testTimer.seconds() > 0.6){
-                        slideMotor.setTargetPosition(320);
+                        slideMotor.setTargetPosition(323);
                             dunkAgainTimer.reset();
                             autoState = AutoState.RETRACT_SECOND;
                             break;
