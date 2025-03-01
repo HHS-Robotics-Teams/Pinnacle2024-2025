@@ -546,15 +546,17 @@ public class SensingAutoBasketSideSample extends OpMode {
                         intakeWristServo.setPosition(WristRight);
                     }if (grabTimer.seconds() >= 0.9) {
                         slideMotor.setTargetPosition(0);
-                        if (slideMotor.getCurrentPosition() <= 75 && park_Timer.seconds() > 28.0 ) {
+                        if (slideMotor.getCurrentPosition() <= 75  ) {
+                        //if (slideMotor.getCurrentPosition() <= 75 && park_Timer.seconds() > 28.0 ) {
                             //intakeElbowServo.setPosition(ElbowLeft);
                             tiltMotor.setTargetPosition(1100);
                             drive.followTrajectorySequenceAsync(park);
                             autoState = AutoState.DRIVE_TO_PARK;
                             break;
-                        } else {
-                            autoState = AutoState.FINISH;
                         }
+//                        else {
+//                            autoState = AutoState.FINISH;
+//                        }
                     }
                 }
                 break;
