@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.OpModes.Telop;
 
 
 import static org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance.distance;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.ActivelyUnspooling;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_closed;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.Claws_open;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.CurrentlyQuickGrabbing;
@@ -11,9 +10,7 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.ElbowRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.IntakeWristPositionReached;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighBucketBackwards;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideHighChamber;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMaxPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideMinPosition;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.SlidePower;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideTickThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideTicks;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.SlideWallPickup;
@@ -22,16 +19,12 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighBucketBackwards;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltHomePosition;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltLowBucket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMaxPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltMinPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltSlowSlowPosition;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltTickThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltUpThreshold;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.TiltWallPickupPosition;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristCenter;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.WristHorizontalPickup;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.WristLeft;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristRight;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.WristSampleBucketScore;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.applyPowers;
@@ -39,21 +32,17 @@ import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingFloor
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHighBasket;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHighChamber;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingHome;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingSubPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.armRetractingWallPickup;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.climbPositionReached;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentClawStep;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.currentClimbStep;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentRetractionStep;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.currentWallStep;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.elbowRotate;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.isTiltIncrementing;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.resetFlags;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.sampleFloorPickUp;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.slideIsOut;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.specimenMode;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.ActivelyClimbing;
-import static org.firstinspires.ftc.teamcode.Constants.Fields.PreppingClimbers;
 import static org.firstinspires.ftc.teamcode.Constants.Fields.clawsOpening;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.backLeftMotor;
 import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.backRightMotor;
@@ -71,7 +60,6 @@ import static org.firstinspires.ftc.teamcode.Constants.RobotHardware.colorSensor
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Constants.DetectedColorAndDistance;
@@ -381,7 +369,7 @@ public class StateMachineTelopTest extends OpMode {
                     }
 
                 case (2):
-                    tiltMotor.setTargetPosition(TiltWallPickupPosition + 10);
+                    tiltMotor.setTargetPosition(TiltWallPickupPosition + 15);
                     slideMotor.setTargetPosition(SlideWallPickup);
                     intakeWristServo.setPosition(WristRight);
                     intakeElbowServo.setPosition(ElbowLeft);

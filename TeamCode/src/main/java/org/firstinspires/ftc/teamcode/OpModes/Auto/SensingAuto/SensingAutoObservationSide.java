@@ -351,7 +351,7 @@ public class SensingAutoObservationSide extends OpMode {
                 }
                 break;
             case MOVE_GRADUALLY_SECOND_SAMPLE:
-                if ((Math.abs(tiltMotor.getCurrentPosition() - 515) <= TiltTickThreshold) && testTimer.seconds() >= 0.5) {
+                if ((Math.abs(tiltMotor.getCurrentPosition() - 515) <= TiltTickThreshold) && testTimer.seconds() >= 1.0) {
                     if (detectedColor.equals("Red")) {
                         grabAgainTimer.reset();
                         tiltMotor.setPower(0);
@@ -376,14 +376,14 @@ public class SensingAutoObservationSide extends OpMode {
                 }
                 break;
             case GRAB_SECOND_SAMPLE:
-                if (grabTimer.seconds() > 0.3 ){
+                if (grabTimer.seconds() > 0.5 ){
                         tiltMotor.setPower(0);
                         grabAgainTimer.reset();
                         autoState = AutoState.GO_OBSERVATION_AGAIN;
                     }
                 break;
             case GO_OBSERVATION_AGAIN:
-                if (grabAgainTimer.seconds() >= 0.3) {
+                if (grabAgainTimer.seconds() >= 0.5) {
                     intake_claw_servo.setPosition(Claws_closed);
                     if (grabAgainTimer.seconds() >= 0.5) {
                         tiltMotor.setPower(1);
@@ -408,7 +408,7 @@ public class SensingAutoObservationSide extends OpMode {
                 }
                 break;
             case RETRACT:
-                tiltMotor.setTargetPosition(570);
+                tiltMotor.setTargetPosition(575);
                 slideMotor.setTargetPosition(0);
                 autoState = AutoState.LIFT_SLOWLY;
                 break;
@@ -418,7 +418,7 @@ public class SensingAutoObservationSide extends OpMode {
                 isTiltIncrementing = true;
                 isSlideIncrementing = true;
                 if (grabAgainTimer.seconds() >= 0.3 && Math.abs(tiltMotor.getCurrentPosition() - 570) <= TiltTickThreshold) {
-                    slideMotor.setTargetPosition(450);
+                    slideMotor.setTargetPosition(455);
                     testTimer.reset();
                     autoState = AutoState.GRAB_FIRST_SPECIMEN;
                     break;
@@ -426,7 +426,7 @@ public class SensingAutoObservationSide extends OpMode {
                 break;
             case GRAB_FIRST_SPECIMEN:
                 if (testTimer.seconds() > 0.5) {
-                    if ((detectedDistance <= 2.0) && (tiltMotor.getCurrentPosition() >= 580)) {
+                    if ((detectedDistance <= 2.2) && (tiltMotor.getCurrentPosition() >= 580)) {
                         telemetry.speak("Grabbed");
                         intake_claw_servo.setPosition(Claws_closed);
                         grabTimer.reset();
@@ -445,7 +445,7 @@ public class SensingAutoObservationSide extends OpMode {
                             break;
                         }
                     } else if (isSlideIncrementing && detectedDistance > 2.0) {
-                        slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 20);
+                        slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 25);
                         isSlideIncrementing = false;
                     } else if (!slideMotor.isBusy()){
                         isSlideIncrementing = true;
@@ -519,7 +519,7 @@ public class SensingAutoObservationSide extends OpMode {
                 break;
             case EXTEND_TO_SECOND_SPECIMEN:
                 if (testTimer.seconds() >= 1) {
-                    slideMotor.setTargetPosition(375);
+                    slideMotor.setTargetPosition(380);
                     isTiltIncrementing = true;
                     isSlideIncrementing = true;
                     autoState = AutoState.GRAB_SECOND_SPECIMEN;
@@ -527,7 +527,7 @@ public class SensingAutoObservationSide extends OpMode {
                 }
                 break;
             case GRAB_SECOND_SPECIMEN:
-                        if ((detectedDistance <= 2)) {
+                        if ((detectedDistance <= 2.2)) {
                             intake_claw_servo.setPosition(Claws_closed);
                             telemetry.speak("Grabbed");
                             grabTimer.reset();
@@ -538,15 +538,15 @@ public class SensingAutoObservationSide extends OpMode {
                             isTiltIncrementing = false;
                         } else if (!tiltMotor.isBusy()) {
                             isTiltIncrementing = true;
-                            if (tiltMotor.getCurrentPosition() >= 590) {
+                            if (tiltMotor.getCurrentPosition() >= 595) {
                                 intake_claw_servo.setPosition(Claws_closed);
                                 telemetry.speak("all the way up");
                                 grabTimer.reset();
                                 autoState = AutoState.DRIVE_TO_SCORE_SECOND_SPECIMEN;
                                 break;
                             }
-                        } else if (isSlideIncrementing && (detectedDistance > 2)){
-                            //slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 20);
+                        } else if (isSlideIncrementing && (detectedDistance > 2.0)){
+                            //slideMotor.setTargetPosition(slideMotor.getCurrentPosition() + 25);
                             isSlideIncrementing = false;
                         }else if (!slideMotor.isBusy()){
                             isSlideIncrementing = true;
@@ -579,8 +579,8 @@ public class SensingAutoObservationSide extends OpMode {
                 }
                 break;
             case RETRACT_SECOND:
-                if (dunkAgainTimer.seconds() >= 0.4 && (Math.abs(slideMotor.getCurrentPosition() - 308) <= 20)) {
-                    tiltMotor.setTargetPosition(760);
+                if (dunkAgainTimer.seconds() >= 0.4 && (Math.abs(slideMotor.getCurrentPosition() - 323) <= 20)) {
+                    tiltMotor.setTargetPosition(750);
                     if (dunkAgainTimer.seconds() >= 1) {
                         intake_claw_servo.setPosition(Claws_open);
                         autoState = AutoState.PARK;

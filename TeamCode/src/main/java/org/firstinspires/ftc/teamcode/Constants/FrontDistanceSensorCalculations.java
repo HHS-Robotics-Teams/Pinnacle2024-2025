@@ -11,27 +11,25 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class FrontDistanceSensorCalculations {
 
+    //TPR * pi*spool ID
     public static final double slideTicksPerInch = (145.1) / (Math.PI * 1.404);
     // (ticks per revolution / degrees per revolution) * gear ratio
     public static final double pivotTicksPerDegree = (3895.9 / 360) * (1/1.25);
-
     public static final int pivotTicksAtPerpendicular = 635;
-
+    //Return Values
     private static int pivotAmount;
     private static int slideAmount;
-
     private static double weightedDistanceValue;
-    private static final double bothFailedDistance = 1e-12;
-
     //constants
-    static double barWallOffset = 1;
+    private static final double bothFailedDistance = 1e-12;
     static double lengthOfArm = 21.5;
     static double armBackOnRobotDistance = 14.5;
     static double armHeightOffGround = 13.125;
     static double heightToHighChamber = 33 - armHeightOffGround;
     static double heightToWallPickup =  9 - armHeightOffGround;
     static double wallPickupOffset = -4;
-    // angle above/below ground of the arm
+    static double barWallOffset = 1;
+    // angle above/below parallel to ground of the arm
     static double theta;
 
     public static int getPickupPivotAmount() {
@@ -103,7 +101,7 @@ public class FrontDistanceSensorCalculations {
 
         weightedDistanceValue -= barWallOffset;
 
-        //  pythag theorem to find the length of the slides needed then multiplied by slideTicksPerInch
+        //  pythag theorem to find the length of the arm then subtract length of arm
         double distanceDouble = Math.sqrt(Math.pow(heightToHighChamber, 2) + Math.pow(weightedDistanceValue, 2));
         distanceDouble -= lengthOfArm;
 
